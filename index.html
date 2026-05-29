@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MAISON — Richard Mille RM 067</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gold: #c9a84c;
+      --white: #f0ede8;
+      --black: #050505;
+      --gray: #888;
+    }
+
+    html { scroll-behavior: auto; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Georgia', serif;
+      overflow-x: hidden;
+    }
+
+    /* ── INTRO ── */
+    #intro {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    #intro-logo {
+      font-family: 'Georgia', serif;
+      font-size: clamp(2rem, 8vw, 7rem);
+      letter-spacing: 0.3em;
+      color: var(--white);
+      text-transform: uppercase;
+      text-align: center;
+      opacity: 0;
+      transform: scale(1);
+      will-change: transform, opacity;
+      line-height: 1.1;
+    }
+
+    #intro-logo span {
+      display: block;
+      font-size: 0.22em;
+      letter-spacing: 0.6em;
+      color: var(--gold);
+      margin-top: 0.5em;
+    }
+
+    #intro-watch-wrap {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #intro-watch {
+      width: min(480px, 80vw);
+      height: min(480px, 80vw);
+      object-fit: contain;
+      filter: drop-shadow(0 0 60px rgba(201,168,76,0.15));
+    }
+
+    /* ── MAIN CONTENT ── */
+    #main {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 2rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      mix-blend-mode: normal;
+    }
+
+    .nav-logo {
+      font-size: 1rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--white);
+      opacity: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+      opacity: 0;
+    }
+
+    .nav-links a {
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--white); }
+
+    /* ── SECTIONS ── */
+    section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      flex-direction: column;
+      background: var(--black);
+    }
+
+    .hero-watch {
+      width: min(420px, 70vw);
+      height: min(420px, 70vw);
+      object-fit: contain;
+      filter: drop-shadow(0 0 80px rgba(201,168,76,0.2));
+      opacity: 0;
+      transform: scale(0.92);
+    }
+
+    .hero-text {
+      margin-top: 3rem;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .hero-text h1 {
+      font-size: clamp(0.7rem, 1.5vw, 1rem);
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+
+    .hero-text p {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      color: var(--white);
+      line-height: 1.3;
+    }
+
+    /* ── SCROLL SECTIONS ── */
+    .watch-section {
+      padding: 8vh 8vw;
+      gap: 6vw;
+    }
+
+    .watch-section.reverse { flex-direction: row-reverse; }
+
+    .watch-section img {
+      width: min(380px, 45vw);
+      height: min(380px, 45vw);
+      object-fit: contain;
+      filter: drop-shadow(0 0 40px rgba(201,168,76,0.15));
+      flex-shrink: 0;
+      opacity: 0;
+      transform: translateX(-40px);
+    }
+
+    .watch-section.reverse img { transform: translateX(40px); }
+
+    .section-text {
+      max-width: 480px;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .section-number {
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+
+    .section-text h2 {
+      font-size: clamp(1.8rem, 3.5vw, 3rem);
+      font-weight: 300;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      color: var(--white);
+    }
+
+    .section-text p {
+      font-size: 0.9rem;
+      line-height: 1.9;
+      color: var(--gray);
+      margin-bottom: 2rem;
+    }
+
+    .spec-list {
+      list-style: none;
+      border-top: 1px solid #1a1a1a;
+    }
+
+    .spec-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #1a1a1a;
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+    }
+
+    .spec-list li span:first-child { color: var(--gray); }
+    .spec-list li span:last-child { color: var(--white); }
+
+    /* ── CTA SECTION ── */
+    #cta {
+      flex-direction: column;
+      text-align: center;
+      background: var(--black);
+      gap: 0;
+    }
+
+    .cta-watch {
+      width: min(360px, 60vw);
+      object-fit: contain;
+      filter: drop-shadow(0 0 100px rgba(201,168,76,0.25));
+      opacity: 0;
+      transform: scale(0.9);
+      margin-bottom: 3rem;
+    }
+
+    .cta-text {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .cta-text h2 {
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-text .price {
+      font-size: 0.8rem;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      margin-bottom: 2.5rem;
+      text-transform: uppercase;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 1rem 3rem;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      transition: all 0.4s;
+      margin: 0 0.5rem;
+    }
+
+    .btn:hover {
+      background: var(--gold);
+      color: var(--black);
+    }
+
+    .btn.solid {
+      background: var(--gold);
+      color: var(--black);
+    }
+
+    .btn.solid:hover {
+      background: transparent;
+      color: var(--gold);
+    }
+
+    /* ── COLLECTION TEASER ── */
+    .collection-teaser {
+      margin-top: 6rem;
+      opacity: 0;
+      transform: translateY(30px);
+      text-align: center;
+      width: 100%;
+      padding: 0 8vw;
+    }
+
+    .collection-teaser h3 {
+      font-size: 0.65rem;
+      letter-spacing: 0.5em;
+      color: var(--gray);
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+    }
+
+    .collection-grid {
+      display: flex;
+      justify-content: center;
+      gap: 4rem;
+      flex-wrap: wrap;
+    }
+
+    .collection-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.3s;
+    }
+
+    .collection-item:hover { opacity: 1; }
+
+    .collection-item img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      filter: grayscale(30%);
+    }
+
+    .collection-item span {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--gray);
+      text-transform: uppercase;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 4rem 8vw;
+      border-top: 1px solid #111;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    footer span {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: #333;
+      text-transform: uppercase;
+    }
+
+    /* ── SCROLL INDICATOR ── */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+    }
+
+    .scroll-hint span {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--gray);
+      text-transform: uppercase;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.2); }
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+      margin: 2rem 0;
+      opacity: 0.5;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .watch-section, .watch-section.reverse {
+        flex-direction: column !important;
+        text-align: center;
+      }
+      .watch-section img { width: min(280px, 80vw); height: min(280px, 80vw); }
+      .spec-list li { font-size: 0.72rem; }
+      nav { padding: 1.5rem 1.5rem; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── INTRO OVERLAY ── -->
+  <div id="intro">
+    <div id="intro-logo">
+      MAISON
+      <span>Horlogerie de Prestige</span>
+    </div>
+    <div id="intro-watch-wrap">
+      <img id="intro-watch" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg" alt="RM 067" />
+    </div>
+  </div>
+
+  <!-- ── MAIN SITE ── -->
+  <div id="main">
+
+    <!-- NAV -->
+    <nav>
+      <div class="nav-logo">Maison</div>
+      <ul class="nav-links">
+        <li><a href="#">Collection</a></li>
+        <li><a href="#">Maison</a></li>
+        <li><a href="#">Atelier</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+
+    <!-- SECTION 1 — HERO -->
+    <section id="hero">
+      <img class="hero-watch" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg" alt="RM 067" />
+      <div class="hero-text">
+        <h1>Richard Mille — RM 067-01</h1>
+        <p>Where architecture<br/>meets horology.</p>
+      </div>
+      <div class="scroll-hint">
+        <span>Discover</span>
+        <div class="scroll-line"></div>
+      </div>
+    </section>
+
+    <!-- SECTION 2 — THINNESS -->
+    <section id="s2" class="watch-section" style="display:flex;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg" alt="RM 067 profile" />
+      <div class="section-text">
+        <span class="section-number">01 — The Thinness</span>
+        <h2>7.75mm.<br/>An impossible feat.</h2>
+        <div class="divider"></div>
+        <p>The RM 067-01 redefines what a mechanical watch can be. At just 7.75mm thin, it sits on the wrist like a second skin — barely there, yet unmistakably present.</p>
+        <ul class="spec-list">
+          <li><span>Total Thickness</span><span>7.75 mm</span></li>
+          <li><span>Case Width</span><span>38.70 mm</span></li>
+          <li><span>Case Height</span><span>47.52 mm</span></li>
+          <li><span>Weight</span><span>35 g</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 3 — DIAL -->
+    <section id="s3" class="watch-section reverse" style="display:flex;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg" alt="RM 067 dial" />
+      <div class="section-text">
+        <span class="section-number">02 — The Dial</span>
+        <h2>Architectural<br/>minimalism.</h2>
+        <div class="divider"></div>
+        <p>Every element on the dial serves a purpose. The skeletonized architecture exposes the CRMA7 calibre beneath — a movement visible through the sapphire crystal, a window into mechanical poetry.</p>
+        <ul class="spec-list">
+          <li><span>Movement</span><span>CRMA7 Calibre</span></li>
+          <li><span>Functions</span><span>Hours, Minutes</span></li>
+          <li><span>Crystal</span><span>Sapphire</span></li>
+          <li><span>Power Reserve</span><span>42 hours</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 4 — CASE -->
+    <section id="s4" class="watch-section" style="display:flex;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg" alt="RM 067 case" />
+      <div class="section-text">
+        <span class="section-number">03 — The Case</span>
+        <h2>Titanium.<br/>Engineered to last.</h2>
+        <div class="divider"></div>
+        <p>The tonneau-shaped case is crafted from grade 5 titanium — the same material used in aerospace engineering. Lightweight, resistant, and sculpted to perfection over hundreds of hours of hand finishing.</p>
+        <ul class="spec-list">
+          <li><span>Material</span><span>Grade 5 Titanium</span></li>
+          <li><span>Water Resistance</span><span>50 metres</span></li>
+          <li><span>Case Shape</span><span>Tonneau</span></li>
+          <li><span>Finishing</span><span>Satin / Polished</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 5 — STRAP -->
+    <section id="s5" class="watch-section reverse" style="display:flex;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg" alt="RM 067 strap" />
+      <div class="section-text">
+        <span class="section-number">04 — The Strap</span>
+        <h2>Worn like<br/>a second skin.</h2>
+        <div class="divider"></div>
+        <p>The hand-stitched alligator leather strap is matched precisely to the titanium case. Supple, structured, and fastened with a titanium deployant clasp that opens and closes with a single gesture.</p>
+        <ul class="spec-list">
+          <li><span>Material</span><span>Alligator Leather</span></li>
+          <li><span>Clasp</span><span>Titanium Deployant</span></li>
+          <li><span>Finish</span><span>Hand Stitched</span></li>
+          <li><span>Interchangeable</span><span>Yes</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 6 — CTA -->
+    <section id="cta">
+      <img class="cta-watch" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg" alt="RM 067" />
+      <div class="cta-text">
+        <h2>RM 067-01 Extra Flat</h2>
+        <p class="price">Price upon request</p>
+        <a href="#" class="btn solid">Acquire This Piece</a>
+        <a href="#" class="btn">View Full Collection</a>
+      </div>
+
+      <div class="collection-teaser">
+        <h3>Also in the Collection</h3>
+        <div class="collection-grid">
+          <div class="collection-item">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg" alt="RM 011" />
+            <span>RM 011</span>
+          </div>
+          <div class="collection-item">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg" alt="RM 035" />
+            <span>RM 035</span>
+          </div>
+          <div class="collection-item">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg" alt="RM 052" />
+            <span>RM 052</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span>© 2025 Maison — All rights reserved</span>
+      <span>Richard Mille Authorised Retailer</span>
+      <span>Paris · Dubai · Geneva</span>
+    </footer>
+
+  </div>
+
+  <!-- ── GSAP ── -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    const intro     = document.getElementById('intro');
+    const introLogo = document.getElementById('intro-logo');
+    const introWatchWrap = document.getElementById('intro-watch-wrap');
+    const main      = document.getElementById('main');
+
+    // ── INTRO TIMELINE ──
+    const tl = gsap.timeline({ delay: 0.3 });
+
+    // Logo fades in
+    tl.to(introLogo, {
+      opacity: 1,
+      duration: 1.2,
+      ease: 'power2.out'
+    })
+
+    // Logo holds
+    .to(introLogo, { duration: 1.2 })
+
+    // Logo scales up (zoom in effect) while watch fades in underneath
+    .to(introLogo, {
+      scale: 18,
+      opacity: 0,
+      duration: 1.8,
+      ease: 'power3.in'
+    }, '+=0.2')
+
+    // Watch fades in as logo zooms
+    .to(introWatchWrap, {
+      opacity: 1,
+      duration: 0.8,
+      ease: 'power2.out'
+    }, '-=1.2')
+
+    // Watch holds
+    .to(introWatchWrap, { duration: 0.8 })
+
+    // Intro fades out, main site reveals
+    .to(intro, {
+      opacity: 0,
+      duration: 0.7,
+      ease: 'power2.inOut',
+      onComplete: () => {
+        intro.style.display = 'none';
+        main.style.visibility = 'visible';
+      }
+    })
+    .to(main, {
+      opacity: 1,
+      duration: 0.5,
+      ease: 'power2.out'
+    }, '-=0.3')
+
+    // Nav animates in
+    .to('.nav-logo, .nav-links', {
+      opacity: 1,
+      duration: 0.6,
+      stagger: 0.15,
+      ease: 'power2.out'
+    }, '-=0.2')
+
+    // Hero watch animates in
+    .to('.hero-watch', {
+      opacity: 1,
+      scale: 1,
+      duration: 0.9,
+      ease: 'power2.out'
+    }, '-=0.4')
+
+    // Hero text animates in
+    .to('.hero-text', {
+      opacity: 1,
+      y: 0,
+      duration: 0.7,
+      ease: 'power2.out'
+    }, '-=0.5')
+
+    // Scroll hint
+    .to('.scroll-hint', {
+      opacity: 1,
+      duration: 0.6,
+      ease: 'power2.out'
+    }, '-=0.2');
+
+
+    // ── SCROLL ANIMATIONS ──
+    // Each section's image and text animate in on scroll
+    const sections = ['s2', 's3', 's4', 's5'];
+
+    sections.forEach(id => {
+      const section = document.getElementById(id);
+      const img     = section.querySelector('img');
+      const text    = section.querySelector('.section-text');
+      const isReverse = section.classList.contains('reverse');
+
+      gsap.to(img, {
+        opacity: 1,
+        x: 0,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 70%',
+          toggleActions: 'play none none reverse'
+        }
+      });
+
+      gsap.to(text, {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: 'power3.out',
+        delay: 0.15,
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 70%',
+          toggleActions: 'play none none reverse'
+        }
+      });
+    });
+
+    // CTA section
+    gsap.to('.cta-watch', {
+      opacity: 1,
+      scale: 1,
+      duration: 1.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '#cta',
+        start: 'top 70%',
+        toggleActions: 'play none none reverse'
+      }
+    });
+
+    gsap.to('.cta-text', {
+      opacity: 1,
+      y: 0,
+      duration: 0.9,
+      ease: 'power3.out',
+      delay: 0.2,
+      scrollTrigger: {
+        trigger: '#cta',
+        start: 'top 70%',
+        toggleActions: 'play none none reverse'
+      }
+    });
+
+    gsap.to('.collection-teaser', {
+      opacity: 1,
+      y: 0,
+      duration: 0.9,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '.collection-teaser',
+        start: 'top 85%',
+        toggleActions: 'play none none reverse'
+      }
+    });
+
+    // Subtle parallax on hero watch
+    gsap.to('.hero-watch', {
+      y: -60,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#hero',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true
+      }
+    });
+
+  </script>
+</body>
+</html>
