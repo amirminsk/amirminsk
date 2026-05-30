@@ -75,8 +75,8 @@
     #intro-section {
       position: relative;
       /* Scroll distance = how long the scrub lasts.
-         200vh = one comfortable scroll gesture covers the whole video. */
-      height: 200vh;
+         Longer = the user scrolls more to play through the whole video. */
+      height: 500vh;
     }
 
     #intro-stage {
@@ -649,7 +649,7 @@
 
       // ── Logo fades out in the first 15% of scroll ──
       // Video fades in simultaneously
-      const crossfade = Math.min(p / 0.15, 1);
+      const crossfade = Math.min(p / 0.08, 1);
       logoLayer.style.opacity  = 1 - crossfade;
       videoLayer.style.opacity = crossfade;
 
