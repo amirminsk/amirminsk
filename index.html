@@ -3,15 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MAISON — Richard Mille RM 067</title>
+  <title>MAISON — Haute Horlogerie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --gold: #c9a84c;
-      --white: #f0ede8;
-      --black: #050505;
-      --gray: #888;
+      --gold:    #c9a84c;
+      --gold2:   #e8c97a;
+      --black:   #070604;
+      --deep:    #0c0b09;
+      --white:   #f0ede8;
+      --gray:    #7a7874;
+      --panel:   rgba(7, 6, 4, 0.85);
     }
 
     html { scroll-behavior: auto; }
@@ -19,64 +25,122 @@
     body {
       background: var(--black);
       color: var(--white);
-      font-family: 'Georgia', serif;
+      font-family: 'Courier Prime', monospace;
       overflow-x: hidden;
     }
 
-    /* ── NAV ── */
-    nav {
+    /* ════════════════════════════════════════
+       PERSISTENT NAV
+       ════════════════════════════════════════ */
+    #nav {
       position: fixed;
       top: 0; left: 0; right: 0;
-      z-index: 200;
-      padding: 2rem 3rem;
+      z-index: 500;
+      padding: 1.6rem 3rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       pointer-events: none;
+      transition: background 0.5s;
+    }
+
+    #nav.scrolled {
+      background: linear-gradient(to bottom, rgba(7,6,4,0.9) 0%, transparent 100%);
     }
 
     .nav-logo {
-      font-size: 0.85rem;
-      letter-spacing: 0.45em;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-weight: 300;
+      letter-spacing: 0.55em;
       text-transform: uppercase;
       color: var(--white);
+      pointer-events: auto;
+      cursor: pointer;
       opacity: 0;
       transition: opacity 0.6s;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 2.4rem;
       pointer-events: auto;
+      opacity: 0;
+      transition: opacity 0.6s;
     }
 
     .nav-links {
       display: flex;
-      gap: 2.5rem;
+      gap: 2.2rem;
       list-style: none;
-      opacity: 0;
-      transition: opacity 0.6s;
-      pointer-events: auto;
     }
 
     .nav-links a {
       color: var(--gray);
       text-decoration: none;
-      font-size: 0.72rem;
-      letter-spacing: 0.2em;
+      font-size: 0.6rem;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
       transition: color 0.3s;
     }
 
-    .nav-links a:hover { color: var(--white); }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a.active { color: var(--gold); }
 
-    nav.visible .nav-logo,
-    nav.visible .nav-links { opacity: 1; }
+    /* Sound toggle */
+    #sound-btn {
+      background: none;
+      border: 1px solid #2a2a27;
+      color: var(--gray);
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 0.45rem 0.9rem;
+      cursor: pointer;
+      transition: border-color 0.3s, color 0.3s;
+    }
 
-    /* ══════════════════════════════════════
-       INTRO SECTION
-       ══════════════════════════════════════ */
+    #sound-btn:hover { border-color: var(--gold); color: var(--gold); }
+    #sound-btn.on { border-color: var(--gold); color: var(--gold); }
 
+    #nav.visible .nav-logo,
+    #nav.visible .nav-right { opacity: 1; }
+
+    /* Skip button */
+    #skip-btn {
+      position: fixed;
+      top: 1.6rem;
+      right: 3rem;
+      z-index: 600;
+      background: none;
+      border: 1px solid #252320;
+      color: var(--gray);
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 0.45rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #skip-btn.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #skip-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ════════════════════════════════════════
+       INTRO — scroll scrub
+       ════════════════════════════════════════ */
     #intro-section {
       position: relative;
-      /* Scroll distance = how long the scrub lasts.
-         Longer = the user scrolls more to play through the whole video. */
-      height: 500vh;
+      height: 600vh;
     }
 
     #intro-stage {
@@ -86,12 +150,9 @@
       width: 100%;
       overflow: hidden;
       background: var(--black);
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
-    /* ── LOGO LAYER (shown first, fades out as scroll begins) ── */
+    /* Logo layer */
     #logo-layer {
       position: absolute;
       inset: 0;
@@ -101,36 +162,39 @@
       justify-content: center;
       z-index: 10;
       pointer-events: none;
-      opacity: 1;
-      transition: none; /* controlled by JS */
     }
 
     #logo-text {
-      font-size: clamp(2.5rem, 8vw, 7rem);
-      letter-spacing: 0.35em;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 10vw, 8rem);
+      font-weight: 300;
+      letter-spacing: 0.45em;
       text-transform: uppercase;
       color: var(--white);
       text-align: center;
       line-height: 1;
     }
 
+    #logo-rule {
+      width: 60px;
+      height: 1px;
+      background: var(--gold);
+      margin: 1.2rem auto 0.9rem;
+      opacity: 0.6;
+    }
+
     #logo-sub {
-      margin-top: 0.8rem;
-      font-size: clamp(0.5rem, 1.2vw, 0.75rem);
-      letter-spacing: 0.6em;
+      font-size: clamp(0.45rem, 1vw, 0.65rem);
+      letter-spacing: 0.7em;
       text-transform: uppercase;
       color: var(--gold);
     }
 
-    /* ── VIDEO LAYER (scrubbed by scroll, starts invisible) ── */
+    /* Video layer */
     #video-layer {
       position: absolute;
       inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       opacity: 0;
-      transition: none; /* controlled by JS */
     }
 
     #scrub-video {
@@ -139,10 +203,19 @@
       object-fit: cover;
     }
 
-    /* ── SCROLL HINT ── */
+    /* Vignette over video */
+    #video-layer::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(7,6,4,0.55) 100%);
+      pointer-events: none;
+    }
+
+    /* Scroll hint */
     #scroll-hint {
       position: absolute;
-      bottom: 2.5rem;
+      bottom: 2.8rem;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
@@ -150,289 +223,346 @@
       align-items: center;
       gap: 0.6rem;
       z-index: 20;
-      transition: opacity 0.4s;
+      pointer-events: none;
     }
 
     #scroll-hint span {
-      font-size: 0.6rem;
-      letter-spacing: 0.35em;
+      font-size: 0.52rem;
+      letter-spacing: 0.42em;
       color: var(--gray);
       text-transform: uppercase;
     }
 
     .scroll-line {
       width: 1px;
-      height: 36px;
+      height: 38px;
       background: linear-gradient(to bottom, var(--gold), transparent);
-      animation: pulse 1.8s ease-in-out infinite;
+      animation: pulse 1.9s ease-in-out infinite;
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 1; }
+      0%, 100% { opacity: 0.25; transform: scaleY(1); }
+      50%       { opacity: 1;    transform: scaleY(1.15); }
     }
 
-    /* ── GOLD PROGRESS BAR ── */
+    /* Progress bar */
     #progress-bar {
       position: fixed;
       top: 0; left: 0;
-      height: 2px;
+      height: 1px;
       width: 0%;
-      background: var(--gold);
-      z-index: 300;
+      background: linear-gradient(to right, transparent, var(--gold), var(--gold2), var(--gold));
+      z-index: 600;
       opacity: 0;
-      transition: opacity 0.3s;
+      transition: opacity 0.4s;
     }
 
-    /* ══════════════════════════════════════
-       HERO — after video settles
-       ══════════════════════════════════════ */
-    #hero {
+    /* ════════════════════════════════════════
+       CINEMATIC STOP SECTIONS
+       Each stop: full viewport, sticky-style
+       backdrop, floating content panel
+       ════════════════════════════════════════ */
+    .stop-section {
+      position: relative;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 6rem 2rem;
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.9s ease, transform 0.9s ease;
+      justify-content: flex-end;
+      padding: 0 8vw;
+      overflow: hidden;
     }
 
-    #hero.visible {
+    .stop-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--black);
+      z-index: 0;
+    }
+
+    /* Mechanical grid background — feels like watch movement */
+    .stop-bg {
+      position: absolute;
+      inset: 0;
+      opacity: 0.06;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 39px, #c9a84c 39px, #c9a84c 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 39px, #c9a84c 39px, #c9a84c 40px);
+      z-index: 1;
+    }
+
+    /* Left: decorative watch fragment art — different per section */
+    .stop-art {
+      position: absolute;
+      left: -2vw;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 55vw;
+      height: 100%;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1.4s ease 0.2s, transform 1.4s ease 0.2s;
+      transform: translateY(-50%) translateX(-40px);
+    }
+
+    .stop-art.in {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(-50%) translateX(0);
     }
 
-    #hero h1 {
-      font-size: clamp(0.65rem, 1.2vw, 0.85rem);
-      letter-spacing: 0.5em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1.2rem;
+    .stop-art svg {
+      width: 100%;
+      height: auto;
+      max-height: 80vh;
     }
 
-    #hero p {
-      font-size: clamp(2rem, 4.5vw, 3.5rem);
-      font-weight: 300;
-      line-height: 1.25;
-      color: var(--white);
-      max-width: 700px;
-    }
-
-    /* ══════════════════════════════════════
-       SCROLL SECTIONS
-       ══════════════════════════════════════ */
-    .watch-section {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8vh 8vw;
-      gap: 6vw;
-    }
-
-    .watch-section.reverse { flex-direction: row-reverse; }
-
-    .section-img {
-      width: min(380px, 42vw);
-      height: min(380px, 42vw);
-      object-fit: contain;
-      filter: drop-shadow(0 0 40px rgba(201,168,76,0.12));
-      flex-shrink: 0;
+    /* Right: content panel */
+    .stop-panel {
+      position: relative;
+      z-index: 10;
+      width: min(520px, 90vw);
+      padding: 3.5rem;
+      background: var(--panel);
+      border: 1px solid #1c1a17;
+      border-left: 3px solid var(--gold);
+      backdrop-filter: blur(6px);
       opacity: 0;
-      transform: translateX(-40px);
-      transition: opacity 0.9s ease, transform 0.9s ease;
+      transform: translateX(50px);
+      transition: opacity 1s ease 0.4s, transform 1s ease 0.4s;
     }
 
-    .watch-section.reverse .section-img {
-      transform: translateX(40px);
+    .stop-panel.in {
+      opacity: 1;
+      transform: translateX(0);
     }
 
-    .section-img.visible { opacity: 1; transform: translateX(0); }
-
-    .section-text {
-      max-width: 460px;
-      opacity: 0;
-      transform: translateY(28px);
-      transition: opacity 0.9s ease 0.15s, transform 0.9s ease 0.15s;
-    }
-
-    .section-text.visible { opacity: 1; transform: translateY(0); }
-
-    .section-number {
+    .stop-index {
       display: block;
-      font-size: 0.62rem;
-      letter-spacing: 0.4em;
+      font-size: 0.52rem;
+      letter-spacing: 0.5em;
       color: var(--gold);
       text-transform: uppercase;
-      margin-bottom: 1.4rem;
+      margin-bottom: 1.6rem;
     }
 
-    .section-text h2 {
-      font-size: clamp(1.7rem, 3vw, 2.8rem);
+    .stop-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.4rem);
       font-weight: 300;
-      line-height: 1.2;
-      margin-bottom: 1.3rem;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      color: var(--white);
     }
 
-    .section-text p {
-      font-size: 0.88rem;
-      line-height: 1.95;
-      color: var(--gray);
-      margin-bottom: 2rem;
-    }
-
-    .divider {
-      width: 36px;
+    .stop-rule {
+      width: 40px;
       height: 1px;
       background: var(--gold);
       opacity: 0.5;
-      margin-bottom: 2rem;
+      margin-bottom: 1.6rem;
     }
 
-    .spec-list { list-style: none; border-top: 1px solid #161616; }
-
-    .spec-list li {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid #161616;
-      font-size: 0.76rem;
-      letter-spacing: 0.04em;
+    .stop-body {
+      font-size: 0.8rem;
+      line-height: 2;
+      color: var(--gray);
+      margin-bottom: 2.4rem;
     }
 
-    .spec-list li span:first-child { color: var(--gray); }
-    .spec-list li span:last-child { color: var(--white); }
-
-    /* ══════════════════════════════════════
-       CTA
-       ══════════════════════════════════════ */
-    #cta {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 6rem 2rem;
-      gap: 0;
-    }
-
-    .cta-watch {
-      width: min(320px, 55vw);
-      object-fit: contain;
-      filter: drop-shadow(0 0 80px rgba(201,168,76,0.2));
-      margin-bottom: 3rem;
-      opacity: 0;
-      transform: scale(0.93);
-      transition: opacity 1s ease, transform 1s ease;
-    }
-
-    .cta-watch.visible { opacity: 1; transform: scale(1); }
-
-    .cta-text {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.9s ease 0.2s, transform 0.9s ease 0.2s;
-    }
-
-    .cta-text.visible { opacity: 1; transform: translateY(0); }
-
-    .cta-text h2 {
-      font-size: clamp(1.4rem, 2.8vw, 2.2rem);
-      font-weight: 300;
-      letter-spacing: 0.08em;
-      margin-bottom: 0.5rem;
-    }
-
-    .cta-text .price {
-      font-size: 0.72rem;
-      letter-spacing: 0.3em;
-      color: var(--gold);
-      margin-bottom: 2.5rem;
-      text-transform: uppercase;
-    }
-
-    .btn {
+    .stop-action {
       display: inline-block;
-      padding: 0.9rem 2.8rem;
+      padding: 0.85rem 2.4rem;
       border: 1px solid var(--gold);
       color: var(--gold);
       text-decoration: none;
-      font-size: 0.72rem;
-      letter-spacing: 0.28em;
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
       transition: all 0.35s;
-      margin: 0 0.4rem;
+      cursor: pointer;
+      background: none;
+      font-family: 'Courier Prime', monospace;
     }
 
-    .btn:hover { background: var(--gold); color: var(--black); }
+    .stop-action:hover {
+      background: var(--gold);
+      color: var(--black);
+    }
 
-    .btn.solid { background: var(--gold); color: var(--black); }
-    .btn.solid:hover { background: transparent; color: var(--gold); }
+    /* Section-specific accent colours */
+    #stop-collection { background: #050403; }
+    #stop-about      { background: #040506; flex-direction: row-reverse; }
+    #stop-about .stop-panel { border-left: none; border-right: 3px solid var(--gold); }
+    #stop-about .stop-art   { left: auto; right: -2vw; transform: translateY(-50%) translateX(40px); }
+    #stop-about .stop-art.in { transform: translateY(-50%) translateX(0); }
+    #stop-appointment { background: #050404; }
+    #stop-why         { background: #040504; flex-direction: row-reverse; }
+    #stop-why .stop-panel   { border-left: none; border-right: 3px solid var(--gold); }
+    #stop-why .stop-art     { left: auto; right: -2vw; transform: translateY(-50%) translateX(40px); }
+    #stop-why .stop-art.in  { transform: translateY(-50%) translateX(0); }
 
-    /* ══════════════════════════════════════
-       COLLECTION TEASER
-       ══════════════════════════════════════ */
-    .collection-teaser {
-      margin-top: 5rem;
-      width: 100%;
+    /* Collection grid inside panel */
+    .brand-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+    }
+
+    .brand-item {
+      border: 1px solid #1c1a17;
+      padding: 1rem;
       text-align: center;
-      padding: 0 8vw;
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.9s ease 0.3s, transform 0.9s ease 0.3s;
+      cursor: pointer;
+      transition: border-color 0.3s, background 0.3s;
     }
 
-    .collection-teaser.visible { opacity: 1; transform: translateY(0); }
+    .brand-item:hover {
+      border-color: var(--gold);
+      background: rgba(201,168,76,0.05);
+    }
 
-    .collection-teaser h3 {
-      font-size: 0.62rem;
-      letter-spacing: 0.5em;
+    .brand-item span {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      color: var(--white);
+    }
+
+    .brand-item small {
+      display: block;
+      font-size: 0.52rem;
+      letter-spacing: 0.2em;
       color: var(--gray);
       text-transform: uppercase;
-      margin-bottom: 2.5rem;
+      margin-top: 0.25rem;
     }
 
-    .collection-grid {
-      display: flex;
-      justify-content: center;
-      gap: 3.5rem;
-      flex-wrap: wrap;
-    }
-
-    .collection-item {
+    /* Appointment form */
+    .appt-fields {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 0.9rem;
-      cursor: pointer;
-      opacity: 0.45;
-      transition: opacity 0.3s;
+      gap: 0.7rem;
+      margin-bottom: 2rem;
     }
 
-    .collection-item:hover { opacity: 1; }
-
-    .collection-item img {
-      width: 110px;
-      height: 110px;
-      object-fit: contain;
-      filter: grayscale(20%);
+    .appt-fields input,
+    .appt-fields select {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid #1c1a17;
+      color: var(--white);
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+      appearance: none;
     }
 
-    .collection-item span {
-      font-size: 0.67rem;
+    .appt-fields input::placeholder { color: #3a3835; }
+
+    .appt-fields input:focus,
+    .appt-fields select:focus { border-color: var(--gold); }
+
+    .appt-fields select option { background: var(--deep); }
+
+    /* Why buy from us — stat row */
+    .why-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: #1c1a17;
+      margin-bottom: 2rem;
+    }
+
+    .why-stat {
+      background: var(--black);
+      padding: 1.1rem 1rem;
+      text-align: center;
+    }
+
+    .why-stat strong {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+
+    .why-stat small {
+      font-size: 0.52rem;
       letter-spacing: 0.2em;
       color: var(--gray);
       text-transform: uppercase;
     }
 
-    /* ── FOOTER ── */
+    /* ════════════════════════════════════════
+       FOOTER
+       ════════════════════════════════════════ */
     footer {
-      padding: 3.5rem 8vw;
-      border-top: 1px solid #111;
+      background: var(--deep);
+      border-top: 1px solid #141210;
+      padding: 5rem 8vw 3rem;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 4rem;
+      padding-bottom: 4rem;
+      border-bottom: 1px solid #141210;
+    }
+
+    .footer-brand h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 300;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-brand p {
+      font-size: 0.72rem;
+      line-height: 1.9;
+      color: var(--gray);
+      max-width: 280px;
+    }
+
+    .footer-col h4 {
+      font-size: 0.55rem;
+      letter-spacing: 0.45em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1.4rem;
+    }
+
+    .footer-col ul { list-style: none; }
+
+    .footer-col ul li {
+      margin-bottom: 0.7rem;
+    }
+
+    .footer-col ul li a {
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      transition: color 0.3s;
+    }
+
+    .footer-col ul li a:hover { color: var(--white); }
+
+    .footer-bottom {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -440,22 +570,39 @@
       gap: 1rem;
     }
 
-    footer span {
-      font-size: 0.67rem;
+    .footer-bottom span {
+      font-size: 0.58rem;
       letter-spacing: 0.18em;
-      color: #2a2a2a;
+      color: #2e2b26;
       text-transform: uppercase;
     }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
-      .watch-section, .watch-section.reverse {
-        flex-direction: column !important;
-        text-align: center;
-      }
-      .section-img { width: min(260px, 75vw); height: min(260px, 75vw); }
-      nav { padding: 1.5rem 1.5rem; }
+    .footer-locations {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .footer-locations span {
+      color: #2e2b26;
+    }
+
+    /* ════════════════════════════════════════
+       RESPONSIVE
+       ════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+      .footer-brand { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 680px) {
+      .stop-section { justify-content: center; padding: 4vh 6vw; }
+      .stop-art { display: none; }
+      #stop-about, #stop-why { flex-direction: column; }
+      .stop-panel { width: 100%; padding: 2rem; }
+      #nav { padding: 1.2rem 1.5rem; }
       .nav-links { display: none; }
+      #skip-btn { right: 1.5rem; top: 1.2rem; }
+      .footer-top { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -465,162 +612,369 @@
 
   <!-- ── NAV ── -->
   <nav id="nav">
-    <div class="nav-logo">Maison</div>
-    <ul class="nav-links">
-      <li><a href="#">Collection</a></li>
-      <li><a href="#">Maison</a></li>
-      <li><a href="#">Atelier</a></li>
-      <li><a href="#">Contact</a></li>
-    </ul>
+    <div class="nav-logo" onclick="scrollToTop()">Maison</div>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="#stop-collection" data-target="stop-collection">Collection</a></li>
+        <li><a href="#stop-about"      data-target="stop-about">About</a></li>
+        <li><a href="#stop-appointment" data-target="stop-appointment">Appointment</a></li>
+        <li><a href="#stop-why"        data-target="stop-why">Our Guarantee</a></li>
+      </ul>
+      <button id="sound-btn" onclick="toggleSound()">&#9654; Sound</button>
+    </div>
   </nav>
 
-  <!-- ══════════════════════════════════
-       INTRO — sticky scroll-scrub
-       ══════════════════════════════════ -->
+  <!-- ── SKIP BUTTON ── -->
+  <button id="skip-btn" onclick="skipIntro()">Skip &#8594;</button>
+
+  <!-- ════════════════════════════════════════
+       INTRO — sticky scroll scrub
+       ════════════════════════════════════════ -->
   <div id="intro-section">
     <div id="intro-stage">
 
-      <!-- Logo shown on load -->
       <div id="logo-layer">
         <div id="logo-text">Maison</div>
-        <div id="logo-sub">Horlogerie de Prestige</div>
+        <div id="logo-rule"></div>
+        <div id="logo-sub">Haute Horlogerie</div>
       </div>
 
-      <!-- Video revealed as user scrolls -->
       <div id="video-layer">
         <video id="scrub-video" muted playsinline preload="auto" src="watch-intro.mp4"></video>
       </div>
 
-      <!-- Scroll hint -->
       <div id="scroll-hint">
-        <span>Scroll to reveal</span>
+        <span>Scroll to enter</span>
         <div class="scroll-line"></div>
       </div>
 
     </div>
   </div>
 
-  <!-- ══════════════════════════════════
-       HERO — fades in after intro
-       ══════════════════════════════════ -->
-  <section id="hero">
-    <h1>Richard Mille — RM 067-01</h1>
-    <p>Where architecture<br/>meets horology.</p>
-  </section>
+  <!-- ════════════════════════════════════════
+       STOP 1 — COLLECTION
+       ════════════════════════════════════════ -->
+  <section class="stop-section" id="stop-collection">
+    <div class="stop-bg"></div>
 
-  <!-- ── SECTION 1 — THINNESS ── -->
-  <section class="watch-section" id="s2">
-    <img class="section-img"
-      src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg"
-      alt="RM 067 thinness" />
-    <div class="section-text">
-      <span class="section-number">01 — The Thinness</span>
-      <h2>7.75mm.<br/>An impossible feat.</h2>
-      <div class="divider"></div>
-      <p>The RM 067-01 redefines what a mechanical watch can be. At just 7.75mm thin, it sits on the wrist like a second skin — barely there, yet unmistakably present.</p>
-      <ul class="spec-list">
-        <li><span>Total Thickness</span><span>7.75 mm</span></li>
-        <li><span>Case Width</span><span>38.70 mm</span></li>
-        <li><span>Case Height</span><span>47.52 mm</span></li>
-        <li><span>Weight</span><span>35 g</span></li>
-      </ul>
+    <!-- Watch gear / crown art -->
+    <div class="stop-art" id="art-collection">
+      <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="200" cy="200" r="195" stroke="#c9a84c" stroke-width="0.5" opacity="0.25"/>
+        <circle cx="200" cy="200" r="160" stroke="#c9a84c" stroke-width="0.3" opacity="0.15"/>
+        <circle cx="200" cy="200" r="120" stroke="#c9a84c" stroke-width="0.5" opacity="0.3"/>
+        <circle cx="200" cy="200" r="80"  stroke="#c9a84c" stroke-width="0.3" opacity="0.2"/>
+        <!-- Gear teeth on outer ring -->
+        <g stroke="#c9a84c" stroke-width="1" opacity="0.5">
+          <!-- 24 tick marks -->
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(0 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(15 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(30 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(45 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(60 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(75 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(90 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(105 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(120 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(135 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(150 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(165 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(180 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(195 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(210 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(225 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(240 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(255 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(270 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(285 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(300 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(315 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(330 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(345 200 200)"/>
+        </g>
+        <!-- Cross-hatch bridge -->
+        <path d="M120 200 L280 200 M200 120 L200 280" stroke="#c9a84c" stroke-width="0.5" opacity="0.2"/>
+        <path d="M144 144 L256 256 M256 144 L144 256" stroke="#c9a84c" stroke-width="0.3" opacity="0.15"/>
+        <!-- Centre jewel -->
+        <circle cx="200" cy="200" r="18" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.5"/>
+        <circle cx="200" cy="200" r="6"  fill="#c9a84c" opacity="0.25"/>
+        <!-- Hour markers -->
+        <rect x="198" y="45"  width="4" height="14" fill="#c9a84c" opacity="0.6" transform="rotate(0 200 200)"/>
+        <rect x="198" y="45"  width="4" height="14" fill="#c9a84c" opacity="0.6" transform="rotate(90 200 200)"/>
+        <rect x="198" y="45"  width="4" height="14" fill="#c9a84c" opacity="0.6" transform="rotate(180 200 200)"/>
+        <rect x="198" y="45"  width="4" height="14" fill="#c9a84c" opacity="0.6" transform="rotate(270 200 200)"/>
+        <!-- Hands -->
+        <line x1="200" y1="200" x2="200" y2="80" stroke="#c9a84c" stroke-width="1.5" opacity="0.7" stroke-linecap="round"/>
+        <line x1="200" y1="200" x2="270" y2="200" stroke="#c9a84c" stroke-width="1" opacity="0.5" stroke-linecap="round"/>
+      </svg>
     </div>
-  </section>
 
-  <!-- ── SECTION 2 — DIAL ── -->
-  <section class="watch-section reverse" id="s3">
-    <img class="section-img"
-      src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg"
-      alt="RM 067 dial" />
-    <div class="section-text">
-      <span class="section-number">02 — The Dial</span>
-      <h2>Architectural<br/>minimalism.</h2>
-      <div class="divider"></div>
-      <p>Every element on the dial serves a purpose. The skeletonized architecture exposes the CRMA7 calibre beneath — a movement visible through the sapphire crystal.</p>
-      <ul class="spec-list">
-        <li><span>Movement</span><span>CRMA7 Calibre</span></li>
-        <li><span>Functions</span><span>Hours, Minutes</span></li>
-        <li><span>Crystal</span><span>Sapphire</span></li>
-        <li><span>Power Reserve</span><span>42 hours</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ── SECTION 3 — CASE ── -->
-  <section class="watch-section" id="s4">
-    <img class="section-img"
-      src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg"
-      alt="RM 067 case" />
-    <div class="section-text">
-      <span class="section-number">03 — The Case</span>
-      <h2>Titanium.<br/>Engineered to last.</h2>
-      <div class="divider"></div>
-      <p>Grade 5 titanium — the same material used in aerospace engineering. Lightweight, resistant, and sculpted to perfection over hundreds of hours of hand finishing.</p>
-      <ul class="spec-list">
-        <li><span>Material</span><span>Grade 5 Titanium</span></li>
-        <li><span>Water Resistance</span><span>50 metres</span></li>
-        <li><span>Case Shape</span><span>Tonneau</span></li>
-        <li><span>Finishing</span><span>Satin / Polished</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ── SECTION 4 — STRAP ── -->
-  <section class="watch-section reverse" id="s5">
-    <img class="section-img"
-      src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg"
-      alt="RM 067 strap" />
-    <div class="section-text">
-      <span class="section-number">04 — The Strap</span>
-      <h2>Worn like<br/>a second skin.</h2>
-      <div class="divider"></div>
-      <p>Hand-stitched alligator leather matched precisely to the titanium case. Fastened with a deployant clasp that opens and closes with a single gesture.</p>
-      <ul class="spec-list">
-        <li><span>Material</span><span>Alligator Leather</span></li>
-        <li><span>Clasp</span><span>Titanium Deployant</span></li>
-        <li><span>Finish</span><span>Hand Stitched</span></li>
-        <li><span>Interchangeable</span><span>Yes</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ── CTA ── -->
-  <section id="cta">
-    <img class="cta-watch"
-      src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg"
-      alt="RM 067" />
-    <div class="cta-text">
-      <h2>RM 067-01 Extra Flat</h2>
-      <p class="price">Price upon request</p>
-      <a href="#" class="btn solid">Acquire This Piece</a>
-      <a href="#" class="btn">View Full Collection</a>
-    </div>
-    <div class="collection-teaser">
-      <h3>Also in the Collection</h3>
-      <div class="collection-grid">
-        <div class="collection-item">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg" alt="RM 011" />
-          <span>RM 011</span>
+    <div class="stop-panel" id="panel-collection">
+      <span class="stop-index">01 — Collection</span>
+      <h2 class="stop-title">Only the most<br/>consequential<br/>pieces.</h2>
+      <div class="stop-rule"></div>
+      <p class="stop-body">We carry an exclusive selection from the four houses that define contemporary haute horlogerie. Each piece is authenticated, serviced, and accompanied by full provenance.</p>
+      <div class="brand-grid">
+        <div class="brand-item">
+          <span>Rolex</span>
+          <small>Est. 1905</small>
         </div>
-        <div class="collection-item">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg" alt="RM 035" />
-          <span>RM 035</span>
+        <div class="brand-item">
+          <span>Audemars Piguet</span>
+          <small>Est. 1875</small>
         </div>
-        <div class="collection-item">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg/800px-Richard_Mille_RM_067-01_Extra_Flat_Automatic.jpg" alt="RM 052" />
-          <span>RM 052</span>
+        <div class="brand-item">
+          <span>Patek Philippe</span>
+          <small>Est. 1839</small>
+        </div>
+        <div class="brand-item">
+          <span>Richard Mille</span>
+          <small>Est. 2001</small>
         </div>
       </div>
+      <a href="#" class="stop-action">Browse Collection</a>
     </div>
   </section>
 
+  <!-- ════════════════════════════════════════
+       STOP 2 — ABOUT US
+       ════════════════════════════════════════ -->
+  <section class="stop-section" id="stop-about">
+    <div class="stop-bg"></div>
+
+    <!-- Escapement wheel art -->
+    <div class="stop-art" id="art-about">
+      <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Escapement wheel — 15 teeth -->
+        <circle cx="200" cy="200" r="140" stroke="#c9a84c" stroke-width="0.5" opacity="0.2"/>
+        <circle cx="200" cy="200" r="90"  stroke="#c9a84c" stroke-width="0.3" opacity="0.15"/>
+        <circle cx="200" cy="200" r="30"  fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.4"/>
+        <!-- Teeth -->
+        <g fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.55">
+          <path d="M200 200 L340 200" transform="rotate(0 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(24 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(48 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(72 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(96 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(120 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(144 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(168 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(192 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(216 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(240 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(264 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(288 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(312 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(336 200 200)"/>
+        </g>
+        <!-- Pallet fork -->
+        <path d="M290 130 L200 200 L310 270" stroke="#c9a84c" stroke-width="1.5" opacity="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="200" cy="200" r="8" fill="#c9a84c" opacity="0.3"/>
+        <!-- Concentric arcs -->
+        <path d="M 60 200 A 140 140 0 0 1 200 60" stroke="#c9a84c" stroke-width="0.3" opacity="0.2"/>
+        <path d="M 340 200 A 140 140 0 0 1 200 340" stroke="#c9a84c" stroke-width="0.3" opacity="0.2"/>
+      </svg>
+    </div>
+
+    <div class="stop-panel" id="panel-about">
+      <span class="stop-index">02 — Maison</span>
+      <h2 class="stop-title">Curated by<br/>those who<br/>understand.</h2>
+      <div class="stop-rule"></div>
+      <p class="stop-body">Founded by collectors, for collectors. Every watch that enters our atelier is personally examined, authenticated and serviced by our master watchmaker before it is ever offered to a client. We do not move volume — we move masterpieces.</p>
+      <p class="stop-body" style="margin-bottom: 0;">Three locations. One standard of excellence. Paris, Dubai, Geneva.</p>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       STOP 3 — BOOK AN APPOINTMENT
+       ════════════════════════════════════════ -->
+  <section class="stop-section" id="stop-appointment">
+    <div class="stop-bg"></div>
+
+    <!-- Balance spring / spiral art -->
+    <div class="stop-art" id="art-appointment">
+      <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Spiral — approximated with arcs -->
+        <path d="M200 200
+          C200 185 215 175 225 185
+          C240 200 230 225 210 235
+          C185 248 160 230 155 205
+          C148 172 172 145 205 140
+          C245 134 280 162 282 200
+          C286 245 255 282 210 285
+          C160 290 118 255 115 205
+          C110 148 148 105 205 100
+          C268 94 320 138 322 200
+          C326 268 280 322 210 325"
+          stroke="#c9a84c" stroke-width="1.2" opacity="0.5" fill="none" stroke-linecap="round"/>
+        <!-- Centre pivot -->
+        <circle cx="200" cy="200" r="10" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.4"/>
+        <circle cx="200" cy="200" r="3"  fill="#c9a84c" opacity="0.35"/>
+        <!-- Radial lines -->
+        <line x1="200" y1="60"  x2="200" y2="80"  stroke="#c9a84c" stroke-width="0.5" opacity="0.3"/>
+        <line x1="320" y1="140" x2="305" y2="153" stroke="#c9a84c" stroke-width="0.5" opacity="0.3"/>
+        <line x1="340" y1="200" x2="318" y2="200" stroke="#c9a84c" stroke-width="0.5" opacity="0.3"/>
+        <line x1="80"  y1="200" x2="100" y2="200" stroke="#c9a84c" stroke-width="0.5" opacity="0.3"/>
+        <!-- Outer decorative circle -->
+        <circle cx="200" cy="200" r="185" stroke="#c9a84c" stroke-width="0.3" stroke-dasharray="4 8" opacity="0.2"/>
+      </svg>
+    </div>
+
+    <div class="stop-panel" id="panel-appointment">
+      <span class="stop-index">03 — Private Visit</span>
+      <h2 class="stop-title">By appointment<br/>only.</h2>
+      <div class="stop-rule"></div>
+      <p class="stop-body">Reserve an hour with one of our curators. Arrive to a private room, a curated selection, and no pressure. We sell time — yours is not to be wasted.</p>
+      <div class="appt-fields">
+        <input type="text"  placeholder="Full Name" />
+        <input type="email" placeholder="Email Address" />
+        <select>
+          <option value="" disabled selected>Preferred Location</option>
+          <option>Paris — 8th Arrondissement</option>
+          <option>Dubai — DIFC</option>
+          <option>Geneva — Rue du Rhône</option>
+        </select>
+        <input type="text"  placeholder="Preferred Date" onfocus="this.type='date'" onblur="this.type='text'" />
+      </div>
+      <button class="stop-action">Request Appointment</button>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       STOP 4 — WHY BUY FROM US
+       ════════════════════════════════════════ -->
+  <section class="stop-section" id="stop-why">
+    <div class="stop-bg"></div>
+
+    <!-- Tourbillon cage art -->
+    <div class="stop-art" id="art-why">
+      <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Outer cage rings -->
+        <circle cx="200" cy="200" r="180" stroke="#c9a84c" stroke-width="0.4" opacity="0.2"/>
+        <circle cx="200" cy="200" r="150" stroke="#c9a84c" stroke-width="0.8" opacity="0.3"/>
+        <circle cx="200" cy="200" r="120" stroke="#c9a84c" stroke-width="0.4" opacity="0.2"/>
+        <circle cx="200" cy="200" r="85"  stroke="#c9a84c" stroke-width="1.2" opacity="0.45"/>
+        <!-- Cage spokes -->
+        <g stroke="#c9a84c" stroke-width="1" opacity="0.4">
+          <line x1="200" y1="115" x2="200" y2="50"  />
+          <line x1="200" y1="285" x2="200" y2="350" />
+          <line x1="115" y1="200" x2="50"  y2="200" />
+          <line x1="285" y1="200" x2="350" y2="200" />
+          <line x1="260" y1="140" x2="300" y2="100" transform="rotate(0 200 200)"/>
+          <line x1="260" y1="140" x2="300" y2="100" transform="rotate(90 200 200)"/>
+          <line x1="260" y1="140" x2="300" y2="100" transform="rotate(180 200 200)"/>
+          <line x1="260" y1="140" x2="300" y2="100" transform="rotate(270 200 200)"/>
+        </g>
+        <!-- Inner flying tourbillon -->
+        <circle cx="200" cy="200" r="55" fill="none" stroke="#c9a84c" stroke-width="0.5" opacity="0.25" stroke-dasharray="3 6"/>
+        <circle cx="200" cy="200" r="35" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.35"/>
+        <circle cx="200" cy="200" r="15" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+        <circle cx="200" cy="200" r="5"  fill="#c9a84c" opacity="0.3"/>
+        <!-- Tiny balance wheel implied by hash marks on inner ring -->
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(0 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(30 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(60 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(90 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(120 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(150 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(180 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(210 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(240 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(270 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(300 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(330 200 200)"/>
+      </svg>
+    </div>
+
+    <div class="stop-panel" id="panel-why">
+      <span class="stop-index">04 — Our Guarantee</span>
+      <h2 class="stop-title">Every piece<br/>earns its<br/>place here.</h2>
+      <div class="stop-rule"></div>
+      <div class="why-stats">
+        <div class="why-stat">
+          <strong>100%</strong>
+          <small>Authenticated</small>
+        </div>
+        <div class="why-stat">
+          <strong>5 yr</strong>
+          <small>Service Warranty</small>
+        </div>
+        <div class="why-stat">
+          <strong>Full</strong>
+          <small>Provenance Docs</small>
+        </div>
+        <div class="why-stat">
+          <strong>Private</strong>
+          <small>Discretion Pledge</small>
+        </div>
+      </div>
+      <p class="stop-body" style="margin-bottom: 2rem;">We source only from private estates, authorised dealers, and personal collections. Every reference is verified against manufacturer records before it reaches your wrist.</p>
+      <a href="#" class="stop-action">Our Philosophy</a>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       FOOTER
+       ════════════════════════════════════════ -->
   <footer>
-    <span>© 2025 Maison — All rights reserved</span>
-    <span>Richard Mille Authorised Retailer</span>
-    <span>Paris · Dubai · Geneva</span>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <h2>Maison</h2>
+        <p>Private dealers in consequence-grade timepieces. By appointment only. Paris · Dubai · Geneva.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Collection</h4>
+        <ul>
+          <li><a href="#">Rolex</a></li>
+          <li><a href="#">Audemars Piguet</a></li>
+          <li><a href="#">Patek Philippe</a></li>
+          <li><a href="#">Richard Mille</a></li>
+          <li><a href="#">View All</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Maison</h4>
+        <ul>
+          <li><a href="#">Our Story</a></li>
+          <li><a href="#">Authentication</a></li>
+          <li><a href="#">Atelier</a></li>
+          <li><a href="#">Concierge</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Visit</h4>
+        <ul>
+          <li><a href="#">Book Appointment</a></li>
+          <li><a href="#">Paris</a></li>
+          <li><a href="#">Dubai</a></li>
+          <li><a href="#">Geneva</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Maison — All rights reserved</span>
+      <div class="footer-locations">
+        <span>Paris</span>
+        <span>Dubai</span>
+        <span>Geneva</span>
+      </div>
+      <span>Authorised Independent Retailer</span>
+    </div>
   </footer>
 
+  <!-- ════════════════════════════════════════
+       AUDIO — mechanical ambient
+       ════════════════════════════════════════ -->
+  <audio id="ambient-audio" loop>
+    <!-- Swap src with actual mechanical ambient track when available -->
+    <!-- <source src="ambient.mp3" type="audio/mpeg" /> -->
+  </audio>
+
   <script>
+    /* ─────────────────────────────────────────
+       INTRO SCROLL SCRUB
+       ───────────────────────────────────────── */
     const introSection = document.getElementById('intro-section');
     const logoLayer    = document.getElementById('logo-layer');
     const videoLayer   = document.getElementById('video-layer');
@@ -628,15 +982,16 @@
     const scrollHint   = document.getElementById('scroll-hint');
     const progressBar  = document.getElementById('progress-bar');
     const nav          = document.getElementById('nav');
+    const skipBtn      = document.getElementById('skip-btn');
 
     let videoReady  = false;
     let targetTime  = 0;
     let currentTime = 0;
-    let navShown    = false;
+    let navVisible  = false;
+    let introComplete = false;
 
     video.addEventListener('loadedmetadata', () => { videoReady = true; });
 
-    // ── Scroll progress within the intro section (0 → 1) ──
     function getIntroProgress() {
       const rect       = introSection.getBoundingClientRect();
       const scrollable = introSection.offsetHeight - window.innerHeight;
@@ -647,39 +1002,51 @@
     function onScroll() {
       const p = getIntroProgress();
 
-      // ── Logo fades out in the first 15% of scroll ──
-      // Video fades in simultaneously
-      const crossfade = Math.min(p / 0.08, 1);
-      logoLayer.style.opacity  = 1 - crossfade;
-      videoLayer.style.opacity = crossfade;
+      // Crossfade logo → video (first 8% of scroll)
+      const cf = Math.min(p / 0.08, 1);
+      logoLayer.style.opacity  = 1 - cf;
+      videoLayer.style.opacity = cf;
 
-      // ── Scrub video ──
+      // Scrub video
       if (videoReady && isFinite(video.duration)) {
         targetTime = p * video.duration;
       }
 
-      // ── Progress bar ──
-      if (p > 0.01) {
-        progressBar.style.opacity = '1';
-        progressBar.style.width   = (p * 100) + '%';
-      } else {
-        progressBar.style.opacity = '0';
-      }
+      // Progress bar
+      progressBar.style.opacity = p > 0.01 ? '1' : '0';
+      progressBar.style.width   = (p * 100) + '%';
 
-      // ── Scroll hint fades once scrolling starts ──
+      // Scroll hint
       scrollHint.style.opacity = p < 0.03 ? '1' : '0';
 
-      // ── Nav appears once intro is complete ──
-      if (p >= 0.98 && !navShown) {
-        navShown = true;
-        nav.classList.add('visible');
-      } else if (p < 0.9 && navShown) {
-        navShown = false;
+      // Skip button shows after a brief scroll
+      if (p > 0.04 && !introComplete) {
+        skipBtn.classList.add('show');
+      }
+
+      // Nav visibility — appears once intro fully scrubbed
+      if (p >= 0.97) {
+        if (!navVisible) {
+          navVisible = true;
+          introComplete = true;
+          nav.classList.add('visible');
+          skipBtn.classList.remove('show');
+        }
+      } else if (p < 0.85 && navVisible) {
+        navVisible = false;
+        introComplete = false;
         nav.classList.remove('visible');
+      }
+
+      // Mark nav as scrolled once user is past intro
+      const pastIntro = window.scrollY > introSection.offsetHeight;
+      nav.classList.toggle('scrolled', pastIntro);
+      if (pastIntro && !navVisible) {
+        navVisible = true;
+        nav.classList.add('visible');
       }
     }
 
-    // ── Smooth video scrub via rAF ──
     function tick() {
       if (videoReady && isFinite(video.duration)) {
         currentTime += (targetTime - currentTime) * 0.1;
@@ -691,21 +1058,97 @@
       requestAnimationFrame(tick);
     }
 
-    // ── IntersectionObserver for scroll sections ──
-    const observer = new IntersectionObserver((entries) => {
+    /* ─────────────────────────────────────────
+       SKIP INTRO
+       ───────────────────────────────────────── */
+    function skipIntro() {
+      const target = introSection.offsetTop + introSection.offsetHeight;
+      window.scrollTo({ top: target, behavior: 'smooth' });
+      skipBtn.classList.remove('show');
+    }
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ─────────────────────────────────────────
+       NAV LINK — SMOOTH SCROLL
+       ───────────────────────────────────────── */
+    document.querySelectorAll('.nav-links a[data-target]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const id  = link.dataset.target;
+        const el  = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    /* ─────────────────────────────────────────
+       SECTION REVEAL — IntersectionObserver
+       ───────────────────────────────────────── */
+    const stopObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.querySelectorAll('.section-img, .section-text, .cta-watch, .cta-text, .collection-teaser, #hero').forEach(el => {
-            el.classList.add('visible');
-          });
-          // Also handle direct targets
-          entry.target.classList.add('visible');
+          const panel = entry.target.querySelector('.stop-panel');
+          const art   = entry.target.querySelector('.stop-art');
+          if (panel) panel.classList.add('in');
+          if (art)   art.classList.add('in');
         }
       });
-    }, { threshold: 0.2 });
+    }, { threshold: 0.25 });
 
-    document.querySelectorAll('#hero, .watch-section, #cta, .collection-teaser').forEach(el => observer.observe(el));
+    document.querySelectorAll('.stop-section').forEach(s => stopObserver.observe(s));
 
+    /* Highlight active nav link based on scroll position */
+    const sections = ['stop-collection','stop-about','stop-appointment','stop-why'];
+    const navLinks = {};
+    sections.forEach(id => {
+      const a = document.querySelector(`.nav-links a[data-target="${id}"]`);
+      if (a) navLinks[id] = a;
+    });
+
+    const activeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const link = navLinks[entry.target.id];
+        if (link) link.classList.toggle('active', entry.isIntersecting);
+      });
+    }, { threshold: 0.5 });
+
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) activeObserver.observe(el);
+    });
+
+    /* ─────────────────────────────────────────
+       SOUND
+       ───────────────────────────────────────── */
+    const audio    = document.getElementById('ambient-audio');
+    const soundBtn = document.getElementById('sound-btn');
+    let soundOn = false;
+
+    function toggleSound() {
+      if (!audio.src || audio.src === window.location.href) {
+        // No audio source yet — update button to indicate unavailable
+        soundBtn.textContent = '— No audio';
+        return;
+      }
+      if (soundOn) {
+        audio.pause();
+        soundOn = false;
+        soundBtn.textContent = '▶ Sound';
+        soundBtn.classList.remove('on');
+      } else {
+        audio.volume = 0.35;
+        audio.play().catch(() => {});
+        soundOn = true;
+        soundBtn.textContent = '■ Sound';
+        soundBtn.classList.add('on');
+      }
+    }
+
+    /* ─────────────────────────────────────────
+       BOOT
+       ───────────────────────────────────────── */
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
     requestAnimationFrame(tick);
