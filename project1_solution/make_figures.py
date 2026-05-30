@@ -1,51 +1,30 @@
-"""Generate comparison figures for the Project 1 report."""
+"""Simple before/after figures for the report."""
 import cv2
-import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
-
-
-def spectrum(img):
-    F = np.fft.fftshift(np.fft.fft2(img.astype(float)))
-    return 20 * np.log1p(np.abs(F))
-
 
 pairs = [
-    ('Picture_P1/1.jpg', 'output_1.jpeg',
-     'Image 1', 'Salt Noise', 'Median Filter (5×5)'),
-    ('Picture_P1/2.jpg', 'output_2.jpeg',
-     'Image 2', 'Gaussian Noise', 'Gaussian Filter (7×7, σ=2.0)'),
-    ('Picture_P1/3.jpg', 'output_3.jpeg',
-     'Image 3', 'Mixed Noise', 'Median (3×3) + Freq-domain LPF'),
+    ('Picture_P1/1.jpg', 'output_1.jpeg', 'fig_image1.png',
+     'Image 1 – Salt noise', 'Denoised (5×5 Median filter)'),
+    ('Picture_P1/2.jpg', 'output_2.jpeg', 'fig_image2.png',
+     'Image 2 – Gaussian noise', 'Denoised (5×5 Gaussian filter, σ=1.5)'),
+    ('Picture_P1/3.jpg', 'output_3.jpeg', 'fig_image3.png',
+     'Image 3 – Periodic noise', 'Denoised (Freq-domain low-pass filter)'),
 ]
 
-for orig_path, out_path, label, noise_label, method_label in pairs:
+for orig_path, out_path, save_path, label_orig, label_out in pairs:
     orig = cv2.imread(orig_path, cv2.IMREAD_GRAYSCALE)
     out  = cv2.imread(out_path,  cv2.IMREAD_GRAYSCALE)
 
-    fig, axes = plt.subplots(1, 4, figsize=(14, 4))
-    fig.suptitle(f'{label}: {noise_label}  →  {method_label}', fontsize=12)
-
-    axes[0].imshow(orig, cmap='gray', vmin=0, vmax=255)
-    axes[0].set_title('Original (noisy)')
-    axes[0].axis('off')
-
-    axes[1].imshow(spectrum(orig), cmap='hot')
-    axes[1].set_title('Frequency Spectrum (original)')
-    axes[1].axis('off')
-
-    axes[2].imshow(out, cmap='gray', vmin=0, vmax=255)
-    axes[2].set_title('Denoised output')
-    axes[2].axis('off')
-
-    axes[3].imshow(spectrum(out), cmap='hot')
-    axes[3].set_title('Frequency Spectrum (denoised)')
-    axes[3].axis('off')
-
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4))
+    ax1.imshow(orig, cmap='gray', vmin=0, vmax=255)
+    ax1.set_title(label_orig)
+    ax1.axis('off')
+    ax2.imshow(out,  cmap='gray', vmin=0, vmax=255)
+    ax2.set_title(label_out)
+    ax2.axis('off')
     plt.tight_layout()
-    fname = f'fig_{label.replace(" ", "").lower()}.png'
-    plt.savefig(fname, dpi=120, bbox_inches='tight')
+    plt.savefig(save_path, dpi=120, bbox_inches='tight')
     plt.close()
-    print(f'Saved {fname}')
+    print(f'Saved {save_path}')

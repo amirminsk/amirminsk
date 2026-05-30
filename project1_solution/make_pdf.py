@@ -1,169 +1,159 @@
-"""Generate report_project1.pdf using reportlab."""
+"""Generate report_project1.pdf"""
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib import colors
 from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, Image as RLImage,
     Table, TableStyle, HRFlowable,
 )
-from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 import os
 
 PAGE_W, PAGE_H = A4
 MARGIN = 2.5 * cm
 
 doc = SimpleDocTemplate(
-    'report_project1.pdf',
-    pagesize=A4,
+    'report_project1.pdf', pagesize=A4,
     leftMargin=MARGIN, rightMargin=MARGIN,
-    topMargin=MARGIN,  bottomMargin=MARGIN,
+    topMargin=MARGIN, bottomMargin=MARGIN,
 )
 
-styles = getSampleStyleSheet()
-title_style  = ParagraphStyle('title',  fontSize=16, alignment=TA_CENTER, spaceAfter=4,  fontName='Helvetica-Bold')
-sub_style    = ParagraphStyle('sub',    fontSize=12, alignment=TA_CENTER, spaceAfter=4)
-h1_style     = ParagraphStyle('h1',     fontSize=13, fontName='Helvetica-Bold', spaceBefore=12, spaceAfter=4)
-h2_style     = ParagraphStyle('h2',     fontSize=11, fontName='Helvetica-Bold', spaceBefore=8,  spaceAfter=4)
-body_style   = ParagraphStyle('body',   fontSize=10, leading=15, alignment=TA_JUSTIFY, spaceAfter=6)
-caption_style= ParagraphStyle('cap',    fontSize=9,  alignment=TA_CENTER, textColor=colors.grey, spaceAfter=8)
+title  = ParagraphStyle('t',  fontSize=16, alignment=TA_CENTER, spaceAfter=4,  fontName='Helvetica-Bold')
+sub    = ParagraphStyle('s',  fontSize=12, alignment=TA_CENTER, spaceAfter=4)
+h1     = ParagraphStyle('h1', fontSize=13, fontName='Helvetica-Bold', spaceBefore=14, spaceAfter=5)
+h2     = ParagraphStyle('h2', fontSize=11, fontName='Helvetica-Bold', spaceBefore=10, spaceAfter=4)
+body   = ParagraphStyle('b',  fontSize=10, leading=15, alignment=TA_JUSTIFY, spaceAfter=6)
+cap    = ParagraphStyle('c',  fontSize=9,  alignment=TA_CENTER, textColor=colors.grey, spaceAfter=8)
 
+W = PAGE_W - 2 * MARGIN
 story = []
 
-# ── Cover ─────────────────────────────────────────────────────────────────
-story += [
-    Paragraph('Harbin Institute of Technology (Shenzhen)', title_style),
-    Paragraph('Project Report', title_style),
-    Spacer(1, 0.4*cm),
-    Paragraph('Image Processing (COMP5033)', sub_style),
-    Paragraph('2025–2026 Spring Semester', sub_style),
-    Paragraph('Lecturer: Prof. Weizheng Zhang', sub_style),
-    Spacer(1, 0.6*cm),
-]
+# cover
+for text, sty in [
+    ('Harbin Institute of Technology (Shenzhen)', title),
+    ('Project Report', title),
+    ('Image Processing (COMP5033)', sub),
+    ('2025–2026 Spring Semester', sub),
+    ('Lecturer: Prof. Weizheng Zhang', sub),
+]:
+    story.append(Paragraph(text, sty))
+story.append(Spacer(1, 0.6*cm))
 
-info_table = Table(
+tbl = Table(
     [['Project No.:', '1', 'Student Name:', '[YOUR NAME]'],
-     ['Student ID:',  '[YOUR STUDENT ID]', 'Date of Submission:', '2026-05-30']],
+     ['Student ID:',  '[YOUR ID]', 'Date of Submission:', '2026-05-30']],
     colWidths=[3*cm, 4*cm, 4*cm, 5*cm]
 )
-info_table.setStyle(TableStyle([
-    ('GRID',      (0,0), (-1,-1), 0.5, colors.black),
-    ('FONTNAME',  (0,0), (-1,-1), 'Helvetica'),
-    ('FONTSIZE',  (0,0), (-1,-1), 10),
-    ('FONTNAME',  (0,0), (0,-1), 'Helvetica-Bold'),
-    ('FONTNAME',  (2,0), (2,-1), 'Helvetica-Bold'),
-    ('BACKGROUND',(0,0), (-1,-1), colors.whitesmoke),
-    ('PADDING',   (0,0), (-1,-1), 5),
+tbl.setStyle(TableStyle([
+    ('GRID', (0,0), (-1,-1), 0.5, colors.black),
+    ('FONTSIZE', (0,0), (-1,-1), 10),
+    ('FONTNAME', (0,0), (0,-1), 'Helvetica-Bold'),
+    ('FONTNAME', (2,0), (2,-1), 'Helvetica-Bold'),
+    ('BACKGROUND', (0,0), (-1,-1), colors.whitesmoke),
+    ('PADDING', (0,0), (-1,-1), 5),
 ]))
-story += [info_table, Spacer(1, 0.5*cm), HRFlowable(width='100%'), Spacer(1, 0.3*cm)]
+story += [tbl, Spacer(1, 0.4*cm), HRFlowable(width='100%'), Spacer(1, 0.3*cm)]
 
-# ── Section 1 ─────────────────────────────────────────────────────────────
-story.append(Paragraph('1  Project Content', h1_style))
+# section 1
+story.append(Paragraph('1  Project Content', h1))
 story.append(Paragraph(
-    'This project addresses image enhancement and restoration for three 224×224 grayscale '
-    'images, each corrupted by a different noise type. The objectives are: (1) identify '
-    'the noise model through visual and statistical analysis, and (2) apply appropriate '
-    'denoising filters implemented entirely from scratch using NumPy. Only cv2 I/O '
-    'functions and NumPy arithmetic are used; no library denoising functions are called.',
-    body_style))
+    'In this project we are given three 224×224 grayscale images that have been corrupted '
+    'by different types of noise. The goal is to first figure out what kind of noise is in '
+    'each image, and then write code to remove it. We are not allowed to use built-in '
+    'denoising functions from OpenCV. Instead we implement the filters manually using Python '
+    'and NumPy.',
+    body))
 
-# ── Section 2 ─────────────────────────────────────────────────────────────
-story.append(Paragraph('2  Method Description', h1_style))
+# section 2
+story.append(Paragraph('2  Method Description', h1))
 
-story.append(Paragraph('2.1  Image 1 – Salt Noise → 5×5 Median Filter', h2_style))
+story.append(Paragraph('2.1  Image 1 – Median Filter', h2))
 story.append(Paragraph(
-    '<b>Noise analysis:</b> Image 1 (a van on cobblestones) contains isolated, anomalously '
-    'bright pixels: ~3,353 pixels (6.7%) have intensity &gt; 250, appearing as discrete white '
-    'specks with no spatial correlation. This is classic <i>salt noise</i> (impulse noise).',
-    body_style))
+    '<b>Noise type:</b> Looking at Image 1 (a van) I can see scattered white dots randomly '
+    'placed across the image. This is called <i>salt noise</i> – a type of impulse noise '
+    'where some pixels are randomly replaced by a very bright value.',
+    body))
 story.append(Paragraph(
-    '<b>Method – 5×5 Median filter:</b> The median is an order-statistic estimator robust to '
-    'outliers; it replaces each pixel with the neighbourhood median, eliminating isolated '
-    'bright impulses without blurring edges. A 5×5 kernel handles clusters of 2–3 adjacent '
-    'noise pixels. <b>Implementation:</b> reflect-pad image by 2, extract 5×5 windows via '
-    '<i>sliding_window_view</i>, then compute <i>np.median</i> across the window axes.',
-    body_style))
+    '<b>Method:</b> I used a <b>5×5 median filter</b>. For each pixel, I look at the 5×5 '
+    'neighbourhood around it and replace the pixel with the median value of that window. '
+    'The median works well here because isolated bright outliers get pushed out by the '
+    'surrounding normal pixels without blurring edges.',
+    body))
 
-story.append(Paragraph('2.2  Image 2 – Gaussian Noise → 7×7 Gaussian Filter (σ=2.0)', h2_style))
+story.append(Paragraph('2.2  Image 2 – Gaussian Filter', h2))
 story.append(Paragraph(
-    '<b>Noise analysis:</b> Image 2 (a dog) shows uniformly distributed fine-grained '
-    'intensity variations across all regions (σ≈41.6 DN), with no spatial pattern or '
-    'directionality—consistent with additive zero-mean <i>Gaussian noise</i> from thermal '
-    'sensor effects.',
-    body_style))
+    '<b>Noise type:</b> Image 2 (a dog) has fine-grained random noise spread uniformly '
+    'all over the image. There are no obvious isolated dots – the noise looks like small '
+    'random fluctuations everywhere. This is <i>Gaussian noise</i>, which is common in '
+    'camera sensors.',
+    body))
 story.append(Paragraph(
-    '<b>Method – 7×7 Gaussian filter (σ=2.0):</b> For zero-mean Gaussian noise, linear '
-    'averaging reduces noise variance by a factor proportional to kernel area. The Gaussian '
-    'weighting minimises the spatial-frequency bandwidth product, limiting edge blurring. '
-    'A larger kernel is chosen given the high noise level. '
-    '<b>Implementation:</b> K(x,y)=exp(−(x²+y²)/(2σ²))/ΣK; convolve via '
-    'sliding_window_view: output(i,j)=Σ K(x,y)·I(i+x,j+y).',
-    body_style))
+    '<b>Method:</b> I used a <b>5×5 Gaussian filter</b> with σ=1.5. This filter takes a '
+    'weighted average of each pixel\'s neighbourhood, giving more weight to nearby pixels '
+    'and less to far ones. Since Gaussian noise is zero-mean and random, averaging '
+    'neighbouring pixels reduces it.',
+    body))
+story.append(Paragraph(
+    'The kernel weights are: K(x,y) = exp(−(x²+y²) / (2σ²)) normalised so all weights '
+    'sum to 1.',
+    body))
 
-story.append(Paragraph('2.3  Image 3 – Mixed Noise → Median (3×3) + Freq-domain LPF', h2_style))
+story.append(Paragraph('2.3  Image 3 – Frequency Domain Low-Pass Filter', h2))
 story.append(Paragraph(
-    '<b>Noise analysis:</b> Image 3 (an "ABUNDANCE" sign) shows both isolated impulse '
-    'pixels (~1,682) and a quasi-periodic dot pattern visible as concentric spectral '
-    'rings in the Fourier domain, indicating <i>mixed</i> salt-and-pepper + periodic noise.',
-    body_style))
+    '<b>Noise type:</b> Image 3 (an ABUNDANCE sign) has a repeating dot pattern that '
+    'suggests <i>periodic noise</i>. Unlike random noise, periodic patterns show up as '
+    'bright spots in the frequency spectrum.',
+    body))
 story.append(Paragraph(
-    '<b>Method – Two-stage approach:</b><br/>'
-    '<b>Stage 1</b> (3×3 Median): removes isolated impulse pixels before '
-    'frequency analysis.<br/>'
-    '<b>Stage 2</b> (Frequency-domain Gaussian LPF): F=FFT2(I); centre the spectrum; '
-    'multiply by Gaussian mask H(u,v)=exp(−D²/(2D₀²)) with D₀=0.25·min(H,W); '
-    'recover via inverse FFT. The Gaussian roll-off avoids ringing artefacts.',
-    body_style))
+    '<b>Method:</b> I used a <b>frequency domain Gaussian low-pass filter</b>. '
+    'The steps are: (1) take the 2D Fourier transform (FFT) of the image; '
+    '(2) shift the spectrum so zero-frequency is at the centre; '
+    '(3) multiply by a Gaussian mask that keeps low frequencies and removes high ones; '
+    '(4) inverse FFT to get back the filtered image. '
+    'High-frequency noise and periodic patterns are suppressed this way.',
+    body))
 
-# ── Section 3 ─────────────────────────────────────────────────────────────
-story.append(Paragraph('3  Experiment Results and Analysis', h1_style))
+# section 3
+story.append(Paragraph('3  Experiment Results and Analysis', h1))
 
-available_width = PAGE_W - 2 * MARGIN
-for fig, cap in [
-    ('fig_image1.png',
-     'Figure 1. Image 1: original | Fourier spectrum | denoised output | denoised spectrum.  SNR improvement: +10.6 dB.'),
-    ('fig_image2.png',
-     'Figure 2. Image 2: original | Fourier spectrum | denoised output | denoised spectrum.  SNR improvement: +20.6 dB.'),
-    ('fig_image3.png',
-     'Figure 3. Image 3: original | Fourier spectrum | denoised output | denoised spectrum.  SNR improvement: +13.0 dB.'),
+for fig, captext in [
+    ('fig_image1.png', 'Figure 1. Image 1: original (left), denoised with 5×5 median filter (right).'),
+    ('fig_image2.png', 'Figure 2. Image 2: original (left), denoised with 5×5 Gaussian filter σ=1.5 (right).'),
+    ('fig_image3.png', 'Figure 3. Image 3: original (left), denoised with frequency-domain LPF (right).'),
 ]:
     if os.path.exists(fig):
-        story.append(RLImage(fig, width=available_width, height=available_width*0.3))
-    story.append(Paragraph(cap, caption_style))
+        story.append(RLImage(fig, width=W, height=W * 0.28))
+    story.append(Paragraph(captext, cap))
 
 story.append(Paragraph(
-    '<b>Image 1:</b> The 5×5 median filter cleanly eliminates salt noise (+10.6 dB SNR), '
-    'preserving sharp vehicle edges and cobblestone texture. Slight softening occurs only '
-    'in dense noise clusters.',
-    body_style))
+    '<b>Image 1:</b> The median filter clearly removes the white dot noise. Edges on the '
+    'van are well preserved because the median is not affected by a few outlier values.',
+    body))
 story.append(Paragraph(
-    '<b>Image 2:</b> The Gaussian filter reduces high-frequency noise energy (+20.6 dB SNR). '
-    'Some blurring of fine fur detail is expected; a larger kernel trades sharpness for '
-    'noise suppression. The denoised spectrum confirms high-frequency attenuation.',
-    body_style))
+    '<b>Image 2:</b> The Gaussian filter reduces the fine-grained noise. The image becomes '
+    'slightly blurry because Gaussian averaging also smooths detail, but the overall '
+    'structure is clear. Using a larger sigma would remove more noise but blur more.',
+    body))
 story.append(Paragraph(
-    '<b>Image 3:</b> The two-stage approach achieves +13.0 dB SNR, revealing clear text '
-    'and decorative elements. The Fourier spectrum comparison confirms removal of periodic '
-    'high-frequency components. Good contrast and legibility of "ABUNDANCE" is preserved.',
-    body_style))
+    '<b>Image 3:</b> The frequency-domain filter removes the repeating dot pattern well. '
+    'Text edges are preserved because the low-pass mask keeps the low-frequency content '
+    'that carries the main structure of the image.',
+    body))
 
-# ── Section 4 ─────────────────────────────────────────────────────────────
-story.append(Paragraph('4  Summary', h1_style))
+# section 4
+story.append(Paragraph('4  Summary', h1))
 story.append(Paragraph(
-    'The primary challenge was implementing efficient image-processing primitives without '
-    'library support. The solution uses <i>numpy.lib.stride_tricks.sliding_window_view</i> '
-    'for fully vectorised window operations, avoiding slow Python loops over 224×224 pixels.',
-    body_style))
+    'The main difficulty was implementing the filters from scratch. Writing the median '
+    'filter loop helped me understand how a sliding window works. The most interesting '
+    'part was the frequency domain filter – it was helpful to see visually how periodic '
+    'noise shows up as spots in the Fourier spectrum and how a mask can remove them.',
+    body))
 story.append(Paragraph(
-    'Key knowledge gained: (1) Different noise types require fundamentally different '
-    'filters: impulse noise → order-statistics (median); Gaussian noise → linear Gaussian '
-    'averaging; periodic noise → frequency-domain suppression. '
-    '(2) Fourier spectrum analysis provides a diagnostic tool to distinguish noise types. '
-    '(3) A two-stage spatial + frequency-domain pipeline handles mixed noise more '
-    'effectively than any single filter. '
-    '(4) Filter parameter selection (kernel size, σ, D₀) involves a sharpness–noise '
-    'trade-off that must be tuned based on the noise characteristics.',
-    body_style))
+    'Key lessons: different types of noise need different filters. Impulse noise needs '
+    'a non-linear filter (median). Gaussian noise works well with a linear averaging '
+    'filter. Periodic noise is best handled in the frequency domain.',
+    body))
 
 doc.build(story)
 print('Saved report_project1.pdf')
