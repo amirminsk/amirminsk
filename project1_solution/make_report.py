@@ -84,11 +84,10 @@ body(
 )
 body(
     'For image 3 it is more difficult because it has two kind of noise together. '
-    'There is salt and pepper dots, and also a repeating pattern. So I do it in two '
+    'There is salt and pepper dots, and also the image is grainy. So I do it in two '
     'step. First I use a 3x3 median filter to remove the dots, because median is good '
-    'for impulse noise. After that I use frequency domain filter: I take the FFT, put '
-    'a gaussian low pass mask in the center to remove the high frequencies, then do '
-    'inverse FFT to get the clean image back.'
+    'for impulse noise. After that I use the gaussian filter again (same like image 2) '
+    'with a small sigma to smooth the remaining grain without losing the text.'
 )
 
 # ---- section 3 ----
@@ -107,13 +106,12 @@ body(
     'but the image become more blurry, so there is a tradeoff.'
 )
 body(
-    'For image 3 the result is much better after I add the median step. At first I '
-    'only use the frequency filter but the pepper dots was still there, because '
-    'frequency low pass can not remove impulse noise. After I add the median filter '
-    'first, the dots are gone and then the frequency filter smooth the rest. Now the '
-    'text "ABUNDANCE" is clear and readable. The disadvantage of doing two step is '
-    'that it take more time, and choosing the cutoff value still need some trial and '
-    'error.'
+    'For image 3 the result is much better after I use two steps. At first I only use '
+    'one filter but it was not enough, the dots were still there. After I do the median '
+    'filter first the dots are gone, and then the gaussian filter smooth the grainy '
+    'part. Now the text "ABUNDANCE" is clear and readable. The disadvantage of doing '
+    'two step is that it take more time to run, and the gaussian also make the image a '
+    'little bit soft.'
 )
 
 # ---- section 4 ----

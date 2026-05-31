@@ -69,8 +69,8 @@ cv2.imwrite('output_2.jpeg', clean2)
 print('image 2 done')
 
 
-# ---- image 3: it has salt and pepper dots AND a repeating pattern ----
-# so first i do median to remove the dots, then frequency filter for the rest
+# ---- image 3: it has salt and pepper dots AND grainy noise ----
+# so i do two steps: median to remove the dots, then gaussian to smooth the rest
 
 pic3 = cv2.imread('Picture_P1/3.jpg', cv2.IMREAD_GRAYSCALE)
 rows = pic3.shape[0]
@@ -90,27 +90,36 @@ for i in range(rows):
         neighbors.sort()
         denoised[i, j] = neighbors[len(neighbors)//2]
 
-# step 2: go to frequency domain to clean the rest
-freq = np.fft.fft2(denoised.astype(float))
-freq_centered = np.fft.fftshift(freq)
-
-# make gaussian low pass mask, center is at (cy, cx)
-cy = rows // 2
-cx = cols // 2
-cutoff = 40
-mask = np.zeros((rows, cols))
-for u in range(rows):
-    for v in range(cols):
-        dist2 = (u - cy)**2 + (v - cx)**2
-        mask[u, v] = math.exp(-dist2 / (2 * cutoff * cutoff))
-
-# apply mask and go back to image
-filtered = np.fft.ifft2(np.fft.ifftshift(freq_centered * mask))
+# step 2: gaussian filter 5x5 to smooth the remaining grain
+# build the kernel by hand (same way as image 2)
+sigma = 1.2
+ksize = 5
+half = ksize // 2
+weights = []
+total_w = 0.0
+for i in range(ksize):
+    row = []
+    for j in range(ksize):
+        x = i - half
+        y = j - half
+        val = math.exp(-(x*x + y*y) / (2*sigma*sigma))
+        row.append(val)
+        total_w += val
+    weights.append(row)
+for i in range(ksize):
+    for j in range(ksize):
+        weights[i][j] /= total_w
 
 clean3 = np.zeros((rows, cols), dtype=np.uint8)
 for i in range(rows):
     for j in range(cols):
-        clean3[i, j] = min(255, max(0, int(abs(filtered[i, j]))))
+        weighted_sum = 0.0
+        for di in range(-half, half+1):
+            for dj in range(-half, half+1):
+                ni = min(max(i+di, 0), rows-1)
+                nj = min(max(j+dj, 0), cols-1)
+                weighted_sum += weights[di+half][dj+half] * denoised[ni, nj]
+        clean3[i, j] = min(255, max(0, int(weighted_sum)))
 
 cv2.imwrite('output_3.jpeg', clean3)
 print('image 3 done')
