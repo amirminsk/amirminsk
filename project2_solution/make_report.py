@@ -74,37 +74,16 @@ body(
 # ---- section 2 ----
 heading('2 Method Description')
 body(
-    'The first thing is that the picture is grayscale, so it have many gray levels '
-    'from 0 to 255. But for morphology I need only two values, black and white. '
-    'So I must choose one threshold number. Every pixel that is bigger than this '
-    'number become white, and the other pixels become black.'
+    'First I binarize the grayscale image. I use Otsu method to find the threshold '
+    'automatic: it try every value from 0 to 255 and pick the one with the biggest '
+    'between class variance. For my image the threshold was 107, so every pixel '
+    'bigger than 107 become white and the rest become black.'
 )
 body(
-    'In the beginning I try to choose the threshold by myself, for example 128. But '
-    'this is not a good way because if the image is more dark or more bright the '
-    'number is not correct anymore. So I used Otsu method, which can find the good '
-    'threshold automatic.'
-)
-body(
-    'The idea of Otsu is like this. For each possible threshold from 0 to 255, it cut '
-    'the pixels to two group, one is background and other is foreground. Then it '
-    'calculate how much these two group are separate from each other, this is call the '
-    'between class variance: variance = w_back * w_fore * (mean_back - mean_fore)^2. '
-    'The best threshold is the one that give the biggest variance. For my image the '
-    'best threshold was 107.'
-)
-body(
-    'After I have the binary image, I use erosion to find the boundary. Erosion is a '
-    'operation that make the white object a little bit smaller by removing the pixels '
-    'on the outside layer. The rule is: I look at every pixel and the 8 pixels around '
-    'it in a 3x3 window. If all the 9 pixels are white, the center pixel stay white. '
-    'But if even one pixel is black, the center become black.'
-)
-body(
-    'To get the boundary I subtract the eroded image from the original binary image: '
-    'boundary = binary - eroded. This is working because erosion only change the '
-    'pixels on the edge. So after subtract, only the edge pixels are left and this '
-    'is exactly the boundary I want.'
+    'Then I use erosion to find the boundary. For each pixel I check the 3x3 window '
+    'around it; the pixel stay white only if all 9 pixels are white, otherwise it '
+    'become black. Finally the boundary is just original minus eroded '
+    '(boundary = binary - eroded), which leaves only the edge pixels.'
 )
 
 # ---- section 3 ----
