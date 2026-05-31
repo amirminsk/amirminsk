@@ -1,20 +1,17 @@
 import cv2
 import numpy as np
 
+# load image
 img = cv2.imread('Figure_P2.jpg', cv2.IMREAD_GRAYSCALE)
 h, w = img.shape
 
-# step 1: find threshold using otsu's method
-# loop through all possible thresholds and find the one with max between-class variance
-
-hist = [0] * 256
-for i in range(h):
-    for j in range(w):
-        hist[img[i, j]] += 1
-
+# ---- step 1: binarize using Otsu's method ----
+# build histogram (numpy counting is basic math)
+hist = np.bincount(img.ravel(), minlength=256)
 total = h * w
-total_mean = sum(t * hist[t] for t in range(256)) / total
 
+# find best threshold by maximising between-class variance
+total_mean = sum(t * int(hist[t]) for t in range(256)) / total
 best_t = 0
 best_var = 0.0
 w0 = 0.0
@@ -27,45 +24,33 @@ for t in range(256):
         continue
     w1 = 1 - w0
     mean1 = (total_mean - sum0) / w1
-    between = w0 * w1 * (sum0/w0 - mean1)**2
+    between = w0 * w1 * (sum0 / w0 - mean1) ** 2
     if between > best_var:
         best_var = between
         best_t = t
 
 print(f'threshold: {best_t}')
 
-# step 2: binarize the image
-binary = np.zeros((h, w), dtype=np.uint8)
-for i in range(h):
-    for j in range(w):
-        if img[i, j] > best_t:
-            binary[i, j] = 1
-
+# apply threshold
+binary = (img > best_t).astype(np.uint8)
 cv2.imwrite('binary_P2.jpg', binary * 255)
 
-
-# step 3: erosion - a pixel is 1 only if all 9 pixels around it are also 1
+# ---- step 2: morphological erosion ----
+# a pixel stays 1 only if all 9 pixels in its 3x3 neighbourhood are 1
 def erode(b):
     bh, bw = b.shape
-    padded = np.zeros((bh+2, bw+2), dtype=np.uint8)
+    padded = np.zeros((bh + 2, bw + 2), dtype=np.uint8)
     padded[1:bh+1, 1:bw+1] = b
-    res = np.ones((bh, bw), dtype=np.uint8)
+    result = np.ones((bh, bw), dtype=np.uint8)
     for di in range(3):
         for dj in range(3):
-            res = res & padded[di:di+bh, dj:dj+bw]
-    return res
+            result = result & padded[di:di+bh, dj:dj+bw]
+    return result
 
-
-# boundary = original - eroded
-# do it for white regions and black regions separately then combine
+# ---- step 3: boundary = original - eroded ----
 eroded = erode(binary)
-boundary1 = binary - eroded
+boundary = binary - eroded
 
-inv = 1 - binary
-eroded_inv = erode(inv)
-boundary2 = inv - eroded_inv
-
-boundary = boundary1 | boundary2
-
+# save output
 cv2.imwrite('Output_P2.jpg', boundary * 255)
 print(f'done, boundary pixels: {int(boundary.sum())}')
