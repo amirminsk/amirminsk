@@ -1,4 +1,3 @@
-"""Generate report_project1.pdf"""
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
 from reportlab.lib.styles import ParagraphStyle
@@ -7,7 +6,7 @@ from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, Image as RLImage,
     Table, TableStyle, HRFlowable,
 )
-from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
 import os
 
 PAGE_W, PAGE_H = A4
@@ -19,17 +18,16 @@ doc = SimpleDocTemplate(
     topMargin=MARGIN, bottomMargin=MARGIN,
 )
 
-title  = ParagraphStyle('t',  fontSize=16, alignment=TA_CENTER, spaceAfter=4,  fontName='Helvetica-Bold')
-sub    = ParagraphStyle('s',  fontSize=12, alignment=TA_CENTER, spaceAfter=4)
-h1     = ParagraphStyle('h1', fontSize=13, fontName='Helvetica-Bold', spaceBefore=14, spaceAfter=5)
-h2     = ParagraphStyle('h2', fontSize=11, fontName='Helvetica-Bold', spaceBefore=10, spaceAfter=4)
-body   = ParagraphStyle('b',  fontSize=10, leading=15, alignment=TA_JUSTIFY, spaceAfter=6)
-cap    = ParagraphStyle('c',  fontSize=9,  alignment=TA_CENTER, textColor=colors.grey, spaceAfter=8)
+title = ParagraphStyle('t',  fontSize=16, alignment=TA_CENTER, spaceAfter=4, fontName='Helvetica-Bold')
+sub   = ParagraphStyle('s',  fontSize=12, alignment=TA_CENTER, spaceAfter=4)
+h1    = ParagraphStyle('h1', fontSize=13, fontName='Helvetica-Bold', spaceBefore=14, spaceAfter=5)
+h2    = ParagraphStyle('h2', fontSize=11, fontName='Helvetica-Bold', spaceBefore=10, spaceAfter=4)
+body  = ParagraphStyle('b',  fontSize=10, leading=15, spaceAfter=6)
+cap   = ParagraphStyle('c',  fontSize=9,  alignment=TA_CENTER, textColor=colors.grey, spaceAfter=8)
 
 W = PAGE_W - 2 * MARGIN
 story = []
 
-# cover
 for text, sty in [
     ('Harbin Institute of Technology (Shenzhen)', title),
     ('Project Report', title),
@@ -55,105 +53,92 @@ tbl.setStyle(TableStyle([
 ]))
 story += [tbl, Spacer(1, 0.4*cm), HRFlowable(width='100%'), Spacer(1, 0.3*cm)]
 
-# section 1
 story.append(Paragraph('1  Project Content', h1))
 story.append(Paragraph(
-    'In this project we are given three 224×224 grayscale images that have been corrupted '
-    'by different types of noise. The goal is to first figure out what kind of noise is in '
-    'each image, and then write code to remove it. We are not allowed to use built-in '
-    'denoising functions from OpenCV. Instead we implement the filters manually using Python '
-    'and NumPy.',
+    'In this project we are given three noisy images and we need to figure out what '
+    'type of noise is in each one and then remove it. We can\'t use the built-in '
+    'processing functions from cv2, so I implemented everything myself using loops '
+    'and basic math.',
     body))
 
-# section 2
 story.append(Paragraph('2  Method Description', h1))
 
-story.append(Paragraph('2.1  Image 1 – Median Filter', h2))
+story.append(Paragraph('Image 1 – Median Filter', h2))
 story.append(Paragraph(
-    '<b>Noise type:</b> Looking at Image 1 (a van) I can see scattered white dots randomly '
-    'placed across the image. This is called <i>salt noise</i> – a type of impulse noise '
-    'where some pixels are randomly replaced by a very bright value.',
+    'Looking at image 1 I can clearly see white dots randomly scattered across the '
+    'image. This is salt noise where some pixels get replaced with a very bright value.',
     body))
 story.append(Paragraph(
-    '<b>Method:</b> I used a <b>5×5 median filter</b>. For each pixel, I look at the 5×5 '
-    'neighbourhood around it and replace the pixel with the median value of that window. '
-    'The median works well here because isolated bright outliers get pushed out by the '
-    'surrounding normal pixels without blurring edges.',
-    body))
-
-story.append(Paragraph('2.2  Image 2 – Gaussian Filter', h2))
-story.append(Paragraph(
-    '<b>Noise type:</b> Image 2 (a dog) has fine-grained random noise spread uniformly '
-    'all over the image. There are no obvious isolated dots – the noise looks like small '
-    'random fluctuations everywhere. This is <i>Gaussian noise</i>, which is common in '
-    'camera sensors.',
-    body))
-story.append(Paragraph(
-    '<b>Method:</b> I used a <b>5×5 Gaussian filter</b> with σ=1.5. This filter takes a '
-    'weighted average of each pixel\'s neighbourhood, giving more weight to nearby pixels '
-    'and less to far ones. Since Gaussian noise is zero-mean and random, averaging '
-    'neighbouring pixels reduces it.',
-    body))
-story.append(Paragraph(
-    'The kernel weights are: K(x,y) = exp(−(x²+y²) / (2σ²)) normalised so all weights '
-    'sum to 1.',
+    'I used a median filter with a 5×5 window. For each pixel I collect all 25 values '
+    'in the surrounding area, sort them, and take the middle one. I first tried 3×3 '
+    'but some noise clusters were still visible, so I increased it to 5×5 and that '
+    'worked better. The median is good here because one or two bright outliers '
+    'don\'t affect the result much.',
     body))
 
-story.append(Paragraph('2.3  Image 3 – Frequency Domain Low-Pass Filter', h2))
+story.append(Paragraph('Image 2 – Gaussian Filter', h2))
 story.append(Paragraph(
-    '<b>Noise type:</b> Image 3 (an ABUNDANCE sign) has a repeating dot pattern that '
-    'suggests <i>periodic noise</i>. Unlike random noise, periodic patterns show up as '
-    'bright spots in the frequency spectrum.',
+    'Image 2 has fine random noise all over it, not isolated dots like image 1. '
+    'The whole image looks grainy. This is Gaussian noise which comes from the camera sensor.',
     body))
 story.append(Paragraph(
-    '<b>Method:</b> I used a <b>frequency domain Gaussian low-pass filter</b>. '
-    'The steps are: (1) take the 2D Fourier transform (FFT) of the image; '
-    '(2) shift the spectrum so zero-frequency is at the centre; '
-    '(3) multiply by a Gaussian mask that keeps low frequencies and removes high ones; '
-    '(4) inverse FFT to get back the filtered image. '
-    'High-frequency noise and periodic patterns are suppressed this way.',
+    'I built a 5×5 Gaussian kernel using the formula: '
+    'w(x,y) = exp(-(x²+y²) / (2σ²)) then normalized it so all weights add up to 1. '
+    'I used σ=1.5. Then I applied it by doing a weighted sum over each pixel\'s '
+    'neighbourhood. The result is a bit blurry but the noise is gone.',
     body))
 
-# section 3
+story.append(Paragraph('Image 3 – Frequency Domain Filter', h2))
+story.append(Paragraph(
+    'Image 3 has a repeating dot pattern which looked like periodic noise to me. '
+    'I learned in class that periodic noise shows up as bright spots in the frequency '
+    'spectrum, so the best way to remove it is to filter in the frequency domain.',
+    body))
+story.append(Paragraph(
+    'I took the 2D FFT of the image, shifted it so the low frequencies are in the '
+    'centre, then applied a Gaussian low-pass mask. The mask reduces the high '
+    'frequencies where the noise lives. Then I did the inverse FFT to get back '
+    'the filtered image.',
+    body))
+
 story.append(Paragraph('3  Experiment Results and Analysis', h1))
 
 for fig, captext in [
-    ('fig_image1.png', 'Figure 1. Image 1: original (left), denoised with 5×5 median filter (right).'),
-    ('fig_image2.png', 'Figure 2. Image 2: original (left), denoised with 5×5 Gaussian filter σ=1.5 (right).'),
-    ('fig_image3.png', 'Figure 3. Image 3: original (left), denoised with frequency-domain LPF (right).'),
+    ('fig_image1.png', 'Figure 1. Image 1 before and after median filter (5×5).'),
+    ('fig_image2.png', 'Figure 2. Image 2 before and after Gaussian filter (5×5, σ=1.5).'),
+    ('fig_image3.png', 'Figure 3. Image 3 before and after frequency domain low-pass filter.'),
 ]:
     if os.path.exists(fig):
-        story.append(RLImage(fig, width=W, height=W * 0.28))
+        story.append(RLImage(fig, width=W, height=W*0.28))
     story.append(Paragraph(captext, cap))
 
 story.append(Paragraph(
-    '<b>Image 1:</b> The median filter clearly removes the white dot noise. Edges on the '
-    'van are well preserved because the median is not affected by a few outlier values.',
+    'Image 1: the white dots are completely removed and the van and background '
+    'look clean. Edges are still sharp which is what I expected from median filtering.',
     body))
 story.append(Paragraph(
-    '<b>Image 2:</b> The Gaussian filter reduces the fine-grained noise. The image becomes '
-    'slightly blurry because Gaussian averaging also smooths detail, but the overall '
-    'structure is clear. Using a larger sigma would remove more noise but blur more.',
+    'Image 2: the noise is reduced but the image is a bit soft. This is the tradeoff '
+    'with Gaussian filtering – it smooths out noise but also blurs edges slightly. '
+    'Using a smaller kernel would keep more detail but also more noise.',
     body))
 story.append(Paragraph(
-    '<b>Image 3:</b> The frequency-domain filter removes the repeating dot pattern well. '
-    'Text edges are preserved because the low-pass mask keeps the low-frequency content '
-    'that carries the main structure of the image.',
+    'Image 3: the repeating dot pattern is mostly gone and the text is readable. '
+    'I experimented with different cutoff values and 40 gave the best balance between '
+    'removing the noise and keeping the image sharp.',
     body))
 
-# section 4
 story.append(Paragraph('4  Summary', h1))
 story.append(Paragraph(
-    'The main difficulty was implementing the filters from scratch. Writing the median '
-    'filter loop helped me understand how a sliding window works. The most interesting '
-    'part was the frequency domain filter – it was helpful to see visually how periodic '
-    'noise shows up as spots in the Fourier spectrum and how a mask can remove them.',
+    'I found the frequency domain filter the most interesting part. It was helpful to '
+    'see how different types of noise look in the Fourier spectrum. The main difficulty '
+    'was writing the median filter loop efficiently enough since 224×224 with a 5×5 '
+    'window is a lot of iterations.',
     body))
 story.append(Paragraph(
-    'Key lessons: different types of noise need different filters. Impulse noise needs '
-    'a non-linear filter (median). Gaussian noise works well with a linear averaging '
-    'filter. Periodic noise is best handled in the frequency domain.',
+    'The key thing I learned is that you need to choose the right filter for the noise '
+    'type – median for salt noise, Gaussian for random noise, and frequency domain for '
+    'periodic patterns.',
     body))
 
 doc.build(story)
-print('Saved report_project1.pdf')
+print('saved report_project1.pdf')
