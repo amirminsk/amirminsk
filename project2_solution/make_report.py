@@ -1,7 +1,6 @@
 from docx import Document
-from docx.shared import Pt, Inches
+from docx.shared import Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-import os
 
 doc = Document()
 
@@ -44,14 +43,6 @@ def body(text):
     p.paragraph_format.space_after = Pt(6)
     p.runs[0].font.size = Pt(11)
 
-def add_img(path, caption, width=6):
-    if os.path.exists(path):
-        doc.add_picture(path, width=Inches(width))
-    p = doc.add_paragraph(caption)
-    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p.runs[0].italic = True
-    p.runs[0].font.size = Pt(10)
-
 heading('1  Project Content')
 body(
     'For this project we were given a binary image and we have to find its boundary '
@@ -64,72 +55,84 @@ body(
 
 heading('2  Method Description')
 
-heading('Step 1 - Making it black and white', size=12)
+heading('Step 1 - Make the image black and white', size=12)
 body(
-    'The original image is grayscale so before doing morphology I had to turn it into '
-    'a proper binary image (only 0 and 1). At first I just picked a threshold like 128 '
-    'by hand but that did not feel right because it depends on the image. So I used '
-    'Otsu method which finds the threshold automatically.'
+    'The first thing is that the picture is gray, so it have many gray levels from 0 to '
+    '255. But for morphology I need only two values, black and white. So I must choose '
+    'one threshold number. Every pixel that is bigger than this number become white, '
+    'and the other pixels become black.'
 )
 body(
-    'The way Otsu works is it tries every threshold from 0 to 255 and for each one it '
-    'splits the pixels into two groups (background and foreground). Then it calculates '
-    'the variance between the two groups using this formula:'
+    'In the beginning I try to choose the threshold by my self, for example 128. But '
+    'this is not a good way because if the image is more dark or more bright the number '
+    'is not correct anymore. So I decided to use Otsu method, which can find the good '
+    'threshold automatic.'
 )
 body(
-    '        variance = back_weight * fore_weight * (back_mean - fore_mean)^2'
+    'The idea of Otsu is like this. For each possible threshold from 0 to 255, it cut '
+    'the pixels to two group. One group is the background and other group is the '
+    'foreground. Then it calculate how much these two group are separate from each '
+    'other, this is call the between class variance:'
 )
 body(
-    'The best threshold is the one that gives the biggest variance, because that means '
-    'the two groups are the most separated. I looped through all 256 values and kept '
-    'the best one. For this image the threshold came out to 107. After that, every '
-    'pixel brighter than 107 becomes white (1) and the rest become black (0).'
+    '        variance = w_back * w_fore * ( mean_back - mean_fore ) ^ 2'
+)
+body(
+    'Here w_back and w_fore is how many percent of pixels are in each group, and the '
+    'mean is the average gray value of the group. When the variance is big, it means '
+    'the two group are far away and the threshold is good. So I just check all the 256 '
+    'thresholds and I keep the one that give the biggest variance. For my image the '
+    'best threshold was 107.'
 )
 
-heading('Step 2 - Erosion and finding the boundary', size=12)
+heading('Step 2 - Erosion and find the boundary', size=12)
 body(
-    'To get the boundary I used erosion. Erosion makes the white shapes a little bit '
-    'smaller by eating away the outside layer of pixels. The rule I used is: a pixel '
-    'stays white only if all the pixels in its 3x3 area are also white, otherwise it '
-    'turns black.'
+    'After I have the black and white image, I use erosion to find the boundary. '
+    'Erosion is a operation that make the white object a little bit smaller. It remove '
+    'the pixels in the outside layer of the white shape.'
 )
 body(
-    'Instead of looping over every pixel one by one (which would be really slow for a '
-    '1024x1024 image), I did it by shifting the whole image in the 9 directions and '
-    'doing an AND between them. I also added a black border around the image first so '
-    'the edge pixels would not cause problems.'
+    'The rule of my erosion is easy. I look at every pixel and also the 8 pixels around '
+    'it, so it is a 3x3 window. If all of the 9 pixels are white, then the center pixel '
+    'stay white. But if even one pixel is black, then the center become black. By this '
+    'rule the border of the white area is removed.'
 )
 body(
-    'Once I had the eroded image, the boundary is just the difference between the '
-    'original binary image and the eroded one:'
+    'If I do this with a normal loop for every pixel it will be very slow because the '
+    'image is 1024x1024, this is more than one million pixels. So instead I shift the '
+    'whole image to the 9 directions and do the AND operation between them, this give '
+    'the same answer but much more fast. Also I put a black border around the image '
+    'first, because if not the pixels on the edge will have problem.'
+)
+body(
+    'Finally, to get the boundary I just take the original binary image and minus the '
+    'eroded image:'
 )
 body(
     '        boundary = binary - eroded'
 )
 body(
-    'This makes sense because the only pixels that changed are the ones on the edge of '
-    'the shapes, which is exactly the boundary I want.'
+    'This is working because erosion only change the pixels on the edge of the shapes. '
+    'So when I subtract, only the edge pixels are left, and this edge is exactly the '
+    'boundary that I am looking for.'
 )
 
 heading('3  Experiment Results and Analysis')
-add_img('fig_p2_comparison.png',
-        'Figure 1. From left to right: the original image, the binary image after '
-        'Otsu thresholding, and the boundary I got at the end.')
-doc.add_paragraph()
 body(
     'The threshold of 107 worked really well. In the binary image you can clearly see '
     'the white cat as foreground and the black cat plus the gray border become '
     'background, which is what I expected.'
 )
 body(
-    'The boundary image shows a thin white outline around the shapes. You can see the '
-    'big circle, the curvy line in the middle where the two cats meet, and also the '
-    'face and whiskers of the white cat. The number of boundary pixels I got was 15692.'
+    'The final boundary image shows a thin white outline around the shapes. You can see '
+    'the big circle on the outside, the curvy line in the middle where the two cats '
+    'meet, and also the face and the whiskers of the white cat. The number of boundary '
+    'pixels I got was 15692.'
 )
 body(
     'One thing I noticed is that the very thin whisker lines are a bit weak in the '
     'result. I think this is because they are thinner than 3 pixels so the 3x3 erosion '
-    'almost removes them completely. If I used a smaller structuring element they would '
+    'almost remove them completely. If I used a smaller structuring element they would '
     'show up better, but 3x3 is the normal choice so I kept it.'
 )
 
