@@ -1,56 +1,73 @@
 import cv2
 import numpy as np
 
-# load image
-img = cv2.imread('Figure_P2.jpg', cv2.IMREAD_GRAYSCALE)
-h, w = img.shape
+# read the image in grayscale
+pic = cv2.imread('Figure_P2.jpg', cv2.IMREAD_GRAYSCALE)
+rows = pic.shape[0]
+cols = pic.shape[1]
 
-# ---- step 1: binarize using Otsu's method ----
-# build histogram (numpy counting is basic math)
-hist = np.bincount(img.ravel(), minlength=256)
-total = h * w
+# ---------- first i need to make it black and white ----------
+# i used otsu method to pick the threshold automatically
+# count how many pixels have each gray value (0 to 255)
+counts = np.bincount(pic.ravel(), minlength=256)
+num_pixels = rows * cols
 
-# find best threshold by maximising between-class variance
-total_mean = sum(t * int(hist[t]) for t in range(256)) / total
-best_t = 0
-best_var = 0.0
-w0 = 0.0
-sum0 = 0.0
+# average gray value of the whole image
+avg = 0
+for g in range(256):
+    avg += g * int(counts[g])
+avg = avg / num_pixels
+
+# try every threshold and keep the one that separates best
+chosen = 0
+maxv = 0
+back_weight = 0.0     # weight of background group
+back_sum = 0.0        # weighted sum for background
 
 for t in range(256):
-    w0 += hist[t] / total
-    sum0 += t * hist[t] / total
-    if w0 == 0 or w0 == 1:
+    back_weight += counts[t] / num_pixels
+    back_sum += t * counts[t] / num_pixels
+    if back_weight == 0 or back_weight == 1:
         continue
-    w1 = 1 - w0
-    mean1 = (total_mean - sum0) / w1
-    between = w0 * w1 * (sum0 / w0 - mean1) ** 2
-    if between > best_var:
-        best_var = between
-        best_t = t
+    fore_weight = 1 - back_weight
+    back_mean = back_sum / back_weight
+    fore_mean = (avg - back_sum) / fore_weight
+    # between class variance
+    v = back_weight * fore_weight * (back_mean - fore_mean) ** 2
+    if v > maxv:
+        maxv = v
+        chosen = t
 
-print(f'threshold: {best_t}')
+print("threshold i got:", chosen)
 
-# apply threshold
-binary = (img > best_t).astype(np.uint8)
-cv2.imwrite('binary_P2.jpg', binary * 255)
+# now make the binary image, white where brighter than threshold
+bw = np.zeros((rows, cols), dtype=np.uint8)
+bw[pic > chosen] = 1
+cv2.imwrite('binary_P2.jpg', bw * 255)
 
-# ---- step 2: morphological erosion ----
-# a pixel stays 1 only if all 9 pixels in its 3x3 neighbourhood are 1
-def erode(b):
-    bh, bw = b.shape
-    padded = np.zeros((bh + 2, bw + 2), dtype=np.uint8)
-    padded[1:bh+1, 1:bw+1] = b
-    result = np.ones((bh, bw), dtype=np.uint8)
-    for di in range(3):
-        for dj in range(3):
-            result = result & padded[di:di+bh, dj:dj+bw]
-    return result
 
-# ---- step 3: boundary = original - eroded ----
-eroded = erode(binary)
-boundary = binary - eroded
+# ---------- now do erosion to find the boundary ----------
+# erosion: keep a pixel white only if all 8 neighbours + itself are white
+# i do this by shifting the image around and ANDing them together
 
-# save output
-cv2.imwrite('Output_P2.jpg', boundary * 255)
-print(f'done, boundary pixels: {int(boundary.sum())}')
+def do_erosion(image):
+    r = image.shape[0]
+    c = image.shape[1]
+    # add a black border so the edges dont break
+    bigger = np.zeros((r + 2, c + 2), dtype=np.uint8)
+    bigger[1:r+1, 1:c+1] = image
+
+    out = np.ones((r, c), dtype=np.uint8)
+    for a in range(3):
+        for b in range(3):
+            out = out & bigger[a:a+r, b:b+c]
+    return out
+
+shrunk = do_erosion(bw)
+
+# the boundary is whatever erosion removed
+edge = bw - shrunk
+
+# save final result
+cv2.imwrite('Output_P2.jpg', edge * 255)
+print("finished. number of edge pixels:", int(edge.sum()))
