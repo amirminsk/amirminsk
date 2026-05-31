@@ -83,10 +83,12 @@ body(
     'add to 1. Then I apply it by doing a weighted sum over each pixel neighborhood.'
 )
 body(
-    'For image 3 the dots look like they repeat in a pattern so I think it is '
-    'periodic noise. I use frequency domain filter. I take the FFT of the image, '
-    'put a gaussian low pass mask in the center to remove high frequencies, '
-    'then do inverse FFT to get the clean image back.'
+    'For image 3 it is more difficult because it has two kind of noise together. '
+    'There is salt and pepper dots, and also a repeating pattern. So I do it in two '
+    'step. First I use a 3x3 median filter to remove the dots, because median is good '
+    'for impulse noise. After that I use frequency domain filter: I take the FFT, put '
+    'a gaussian low pass mask in the center to remove the high frequencies, then do '
+    'inverse FFT to get the clean image back.'
 )
 
 # ---- section 3 ----
@@ -105,11 +107,13 @@ body(
     'but the image become more blurry, so there is a tradeoff.'
 )
 body(
-    'For image 3 the repeating dot pattern is mostly gone and the text is readable. '
-    'The advantage of frequency domain method is that it can target periodic noise '
-    'directly because it show up as specific spots in the spectrum. The disadvantage '
-    'is that choosing the right cutoff value need some trial and error, and if the '
-    'cutoff is too small the image become too blurry.'
+    'For image 3 the result is much better after I add the median step. At first I '
+    'only use the frequency filter but the pepper dots was still there, because '
+    'frequency low pass can not remove impulse noise. After I add the median filter '
+    'first, the dots are gone and then the frequency filter smooth the rest. Now the '
+    'text "ABUNDANCE" is clear and readable. The disadvantage of doing two step is '
+    'that it take more time, and choosing the cutoff value still need some trial and '
+    'error.'
 )
 
 # ---- section 4 ----

@@ -69,14 +69,29 @@ cv2.imwrite('output_2.jpeg', clean2)
 print('image 2 done')
 
 
-# ---- image 3: repeating dot pattern, so i used frequency domain filter ----
+# ---- image 3: it has salt and pepper dots AND a repeating pattern ----
+# so first i do median to remove the dots, then frequency filter for the rest
 
 pic3 = cv2.imread('Picture_P1/3.jpg', cv2.IMREAD_GRAYSCALE)
 rows = pic3.shape[0]
 cols = pic3.shape[1]
 
-# go to frequency domain
-freq = np.fft.fft2(pic3.astype(float))
+# step 1: median filter 3x3 to remove the salt and pepper noise
+denoised = np.zeros((rows, cols), dtype=np.uint8)
+half = 1
+for i in range(rows):
+    for j in range(cols):
+        neighbors = []
+        for di in range(-half, half+1):
+            for dj in range(-half, half+1):
+                ni = min(max(i+di, 0), rows-1)
+                nj = min(max(j+dj, 0), cols-1)
+                neighbors.append(int(pic3[ni, nj]))
+        neighbors.sort()
+        denoised[i, j] = neighbors[len(neighbors)//2]
+
+# step 2: go to frequency domain to clean the rest
+freq = np.fft.fft2(denoised.astype(float))
 freq_centered = np.fft.fftshift(freq)
 
 # make gaussian low pass mask, center is at (cy, cx)
