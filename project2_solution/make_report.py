@@ -5,16 +5,15 @@ import os
 
 doc = Document()
 
-for text, size, bold, center in [
-    ('Harbin Institute of Technology (Shenzhen)', 14, True, True),
-    ('Project Report', 16, True, True),
-    ('Image Processing (COMP5033)', 12, False, True),
-    ('2025–2026 Spring Semester', 12, False, True),
-    ('Teacher: Prof. Weizheng Zhang', 12, False, True),
+for text, size, bold in [
+    ('Harbin Institute of Technology (Shenzhen)', 14, True),
+    ('Project Report', 16, True),
+    ('Image Processing (COMP5033)', 12, False),
+    ('2025–2026 Spring Semester', 12, False),
+    ('Teacher: Prof. Weizheng Zhang', 12, False),
 ]:
     p = doc.add_paragraph()
-    if center:
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run = p.add_run(text)
     run.bold = bold
     run.font.size = Pt(size)
@@ -55,69 +54,98 @@ def add_img(path, caption, width=6):
 
 heading('1  Project Content')
 body(
-    'The goal is to find the boundary of objects in a binary image. The input is '
-    'Figure_P2.jpg which is a 1024×1024 grayscale image. First I need to binarize '
-    'it and then use morphological operations to get the boundary.'
+    'For this project we were given a binary image and we have to find its boundary '
+    'using morphological processing. The image is Figure_P2.jpg and it is 1024x1024 in '
+    'size. It is actually a yin yang picture made of two cats, one white and one black. '
+    'The task says I need to binarize the image first and then find the boundary. '
+    'I am not allowed to use the cv2 functions for the processing so I wrote the '
+    'threshold and the erosion myself, and only used cv2 to read and save the image.'
 )
 
 heading('2  Method Description')
 
-heading('Step 1: Binarization', size=11)
+heading('Step 1 - Making it black and white', size=12)
 body(
-    'I used Otsu\'s method to find the threshold automatically instead of guessing '
-    'a value manually. The idea is to try every possible threshold from 0 to 255 '
-    'and pick the one that best separates the image into two groups.'
+    'The original image is grayscale so before doing morphology I had to turn it into '
+    'a proper binary image (only 0 and 1). At first I just picked a threshold like 128 '
+    'by hand but that did not feel right because it depends on the image. So I used '
+    'Otsu method which finds the threshold automatically.'
 )
 body(
-    'For each threshold t I calculate the between-class variance:\n'
-    '     variance = w0 * w1 * (mean0 - mean1)^2\n'
-    'where w0 and w1 are the fractions of pixels in each group. The threshold '
-    'with the highest variance is the best one. For this image it came out to T=107.'
+    'The way Otsu works is it tries every threshold from 0 to 255 and for each one it '
+    'splits the pixels into two groups (background and foreground). Then it calculates '
+    'the variance between the two groups using this formula:'
+)
+body(
+    '        variance = back_weight * fore_weight * (back_mean - fore_mean)^2'
+)
+body(
+    'The best threshold is the one that gives the biggest variance, because that means '
+    'the two groups are the most separated. I looped through all 256 values and kept '
+    'the best one. For this image the threshold came out to 107. After that, every '
+    'pixel brighter than 107 becomes white (1) and the rest become black (0).'
 )
 
-heading('Step 2: Morphological Erosion', size=11)
+heading('Step 2 - Erosion and finding the boundary', size=12)
 body(
-    'Erosion shrinks the white regions by removing the outermost pixels. '
-    'For each pixel, I check its 3×3 neighbourhood – if all 9 pixels are white '
-    'the pixel stays white, otherwise it becomes black.'
+    'To get the boundary I used erosion. Erosion makes the white shapes a little bit '
+    'smaller by eating away the outside layer of pixels. The rule I used is: a pixel '
+    'stays white only if all the pixels in its 3x3 area are also white, otherwise it '
+    'turns black.'
 )
 body(
-    'To find the boundary I subtract the eroded image from the original:\n'
-    '     boundary = original - eroded\n'
-    'This leaves only the pixels that were on the edge. I did this for both the '
-    'white regions and the black regions (by inverting) and then combined them '
-    'to get all edges.'
+    'Instead of looping over every pixel one by one (which would be really slow for a '
+    '1024x1024 image), I did it by shifting the whole image in the 9 directions and '
+    'doing an AND between them. I also added a black border around the image first so '
+    'the edge pixels would not cause problems.'
+)
+body(
+    'Once I had the eroded image, the boundary is just the difference between the '
+    'original binary image and the eroded one:'
+)
+body(
+    '        boundary = binary - eroded'
+)
+body(
+    'This makes sense because the only pixels that changed are the ones on the edge of '
+    'the shapes, which is exactly the boundary I want.'
 )
 
 heading('3  Experiment Results and Analysis')
-add_img('fig_p2_comparison.png', 'Figure 1. Original image, binary image after thresholding, and boundary output.')
+add_img('fig_p2_comparison.png',
+        'Figure 1. From left to right: the original image, the binary image after '
+        'Otsu thresholding, and the boundary I got at the end.')
 doc.add_paragraph()
-
 body(
-    'The threshold of 107 worked well – the binary image clearly separates the '
-    'white cat from the black cat and the gray background. The gray border around '
-    'the image became background which makes sense.'
+    'The threshold of 107 worked really well. In the binary image you can clearly see '
+    'the white cat as foreground and the black cat plus the gray border become '
+    'background, which is what I expected.'
 )
 body(
-    'The boundary image shows a thin line around all the shapes. You can see the '
-    'outer circle, the curve between the two cats, the whiskers and the face details. '
-    'Total boundary pixels were 27,460.'
+    'The boundary image shows a thin white outline around the shapes. You can see the '
+    'big circle, the curvy line in the middle where the two cats meet, and also the '
+    'face and whiskers of the white cat. The number of boundary pixels I got was 15692.'
 )
 body(
-    'One problem I noticed is that very thin lines like the whiskers partly disappear '
-    'after erosion because the 3×3 window is too big for them.'
+    'One thing I noticed is that the very thin whisker lines are a bit weak in the '
+    'result. I think this is because they are thinner than 3 pixels so the 3x3 erosion '
+    'almost removes them completely. If I used a smaller structuring element they would '
+    'show up better, but 3x3 is the normal choice so I kept it.'
 )
 
 heading('4  Summary')
 body(
-    'Implementing Otsu\'s method from scratch was the hardest part. I had to keep '
-    'track of the running mean and weight for each threshold which was a bit tricky '
-    'to get right.'
+    'The hardest part for me was writing the Otsu threshold by myself. Keeping track of '
+    'the running weight and the running mean for each threshold value was a little '
+    'confusing at first and I had to test it a few times before the number looked '
+    'correct.'
 )
 body(
-    'I learned that erosion is a simple but effective way to find boundaries – you '
-    'just subtract what was eroded and you get the edge. I also learned that Otsu\'s '
-    'method is really useful because you don\'t need to manually choose the threshold.'
+    'From this project I learned how binarization works and why automatic thresholding '
+    'is better than just guessing a value. I also understood erosion much better, '
+    'especially the trick that subtracting the eroded image from the original gives you '
+    'the boundary directly. Overall it was a good exercise to see how simple '
+    'morphological operations can do something useful like edge finding.'
 )
 
 doc.save('report_project2.docx')
