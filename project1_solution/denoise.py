@@ -2,98 +2,100 @@ import cv2
 import math
 import numpy as np
 
-# ---- image 1: salt noise ----
-# i can see white dots scattered around so this is salt noise
-# median filter should work, i tried 3x3 first but 5x5 removed more noise
+# ---- image 1: i can see white dots everywhere, this is salt noise ----
+# i tried 3x3 window first but some noise was still there, 5x5 worked better
 
-img1 = cv2.imread('Picture_P1/1.jpg', cv2.IMREAD_GRAYSCALE)
-h, w = img1.shape
-out1 = np.zeros((h, w), dtype=np.uint8)
+pic1 = cv2.imread('Picture_P1/1.jpg', cv2.IMREAD_GRAYSCALE)
+rows = pic1.shape[0]
+cols = pic1.shape[1]
+clean1 = np.zeros((rows, cols), dtype=np.uint8)
 
-k = 2  # 5x5 window, k=2 means 2 pixels each side
+half = 2  # half of 5x5 kernel
 
-for i in range(h):
-    for j in range(w):
-        vals = []
-        for di in range(-k, k+1):
-            for dj in range(-k, k+1):
-                ni = min(max(i+di, 0), h-1)
-                nj = min(max(j+dj, 0), w-1)
-                vals.append(int(img1[ni, nj]))
-        vals.sort()
-        out1[i, j] = vals[len(vals)//2]  # pick the middle value
+for i in range(rows):
+    for j in range(cols):
+        neighbors = []
+        for di in range(-half, half+1):
+            for dj in range(-half, half+1):
+                ni = min(max(i+di, 0), rows-1)
+                nj = min(max(j+dj, 0), cols-1)
+                neighbors.append(int(pic1[ni, nj]))
+        neighbors.sort()
+        clean1[i, j] = neighbors[len(neighbors)//2]  # take the middle value
 
-cv2.imwrite('output_1.jpeg', out1)
+cv2.imwrite('output_1.jpeg', clean1)
 print('image 1 done')
 
 
-# ---- image 2: gaussian noise ----
-# the noise looks like random grain everywhere, so gaussian filter
+# ---- image 2: looks like random grain, this is gaussian noise ----
 
-img2 = cv2.imread('Picture_P1/2.jpg', cv2.IMREAD_GRAYSCALE)
-h, w = img2.shape
+pic2 = cv2.imread('Picture_P1/2.jpg', cv2.IMREAD_GRAYSCALE)
+rows = pic2.shape[0]
+cols = pic2.shape[1]
 
-# build 5x5 gaussian kernel manually
+# make the gaussian kernel by hand
 sigma = 1.5
-ks = 5
-k = ks // 2
-kernel = []
-s = 0.0
-for i in range(ks):
+ksize = 5
+half = ksize // 2
+weights = []
+total_w = 0.0
+for i in range(ksize):
     row = []
-    for j in range(ks):
-        x = i - k
-        y = j - k
-        v = math.exp(-(x*x + y*y) / (2*sigma*sigma))
-        row.append(v)
-        s += v
-    kernel.append(row)
-# normalize
-for i in range(ks):
-    for j in range(ks):
-        kernel[i][j] /= s
+    for j in range(ksize):
+        x = i - half
+        y = j - half
+        val = math.exp(-(x*x + y*y) / (2*sigma*sigma))
+        row.append(val)
+        total_w += val
+    weights.append(row)
 
-out2 = np.zeros((h, w), dtype=np.uint8)
-for i in range(h):
-    for j in range(w):
-        total = 0.0
-        for di in range(-k, k+1):
-            for dj in range(-k, k+1):
-                ni = min(max(i+di, 0), h-1)
-                nj = min(max(j+dj, 0), w-1)
-                total += kernel[di+k][dj+k] * img2[ni, nj]
-        out2[i, j] = min(255, max(0, int(total)))
+# normalize so all weights add to 1
+for i in range(ksize):
+    for j in range(ksize):
+        weights[i][j] /= total_w
 
-cv2.imwrite('output_2.jpeg', out2)
+clean2 = np.zeros((rows, cols), dtype=np.uint8)
+for i in range(rows):
+    for j in range(cols):
+        weighted_sum = 0.0
+        for di in range(-half, half+1):
+            for dj in range(-half, half+1):
+                ni = min(max(i+di, 0), rows-1)
+                nj = min(max(j+dj, 0), cols-1)
+                weighted_sum += weights[di+half][dj+half] * pic2[ni, nj]
+        clean2[i, j] = min(255, max(0, int(weighted_sum)))
+
+cv2.imwrite('output_2.jpeg', clean2)
 print('image 2 done')
 
 
-# ---- image 3: periodic noise ----
-# the dots look like they repeat in a pattern so i used frequency domain filter
-# convert to frequency domain, remove high frequencies, convert back
+# ---- image 3: repeating dot pattern, so i used frequency domain filter ----
 
-img3 = cv2.imread('Picture_P1/3.jpg', cv2.IMREAD_GRAYSCALE)
-h, w = img3.shape
+pic3 = cv2.imread('Picture_P1/3.jpg', cv2.IMREAD_GRAYSCALE)
+rows = pic3.shape[0]
+cols = pic3.shape[1]
 
-F = np.fft.fft2(img3.astype(float))
-Fshift = np.fft.fftshift(F)
+# go to frequency domain
+freq = np.fft.fft2(pic3.astype(float))
+freq_centered = np.fft.fftshift(freq)
 
-# gaussian low pass mask centered at middle
-cy = h // 2
-cx = w // 2
+# make gaussian low pass mask, center is at (cy, cx)
+cy = rows // 2
+cx = cols // 2
 cutoff = 40
-mask = np.zeros((h, w))
-for u in range(h):
-    for v in range(w):
-        d2 = (u - cy)**2 + (v - cx)**2
-        mask[u, v] = math.exp(-d2 / (2 * cutoff * cutoff))
+mask = np.zeros((rows, cols))
+for u in range(rows):
+    for v in range(cols):
+        dist2 = (u - cy)**2 + (v - cx)**2
+        mask[u, v] = math.exp(-dist2 / (2 * cutoff * cutoff))
 
-result = np.fft.ifft2(np.fft.ifftshift(Fshift * mask))
+# apply mask and go back to image
+filtered = np.fft.ifft2(np.fft.ifftshift(freq_centered * mask))
 
-out3 = np.zeros((h, w), dtype=np.uint8)
-for i in range(h):
-    for j in range(w):
-        out3[i, j] = min(255, max(0, int(abs(result[i, j]))))
+clean3 = np.zeros((rows, cols), dtype=np.uint8)
+for i in range(rows):
+    for j in range(cols):
+        clean3[i, j] = min(255, max(0, int(abs(filtered[i, j]))))
 
-cv2.imwrite('output_3.jpeg', out3)
+cv2.imwrite('output_3.jpeg', clean3)
 print('image 3 done')
