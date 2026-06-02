@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maison — Design Directions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700&family=Courier+Prime:wght@400;700&family=Archivo:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { background: #15140f; }
+
+    /* ════ shared frame primitives ════ */
+    .frame { width: 100%; height: 100%; position: relative; overflow: hidden; }
+    .vnav {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 5;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 2.2rem 3.4rem;
+    }
+    .vnav-links { display: flex; gap: 2.4rem; list-style: none; }
+    .vnav-links a { text-decoration: none; }
+
+    /* ─────────────────────────────────────────
+       V1 — EDITORIAL MONOLITH (dark, oversized serif)
+       ───────────────────────────────────────── */
+    .v1 { background: #070604; color: #f0ede8; }
+    .v1 .vnav-logo {
+      font-family: 'Cormorant Garamond', serif; font-weight: 500;
+      font-size: 1.35rem; letter-spacing: 0.5em; text-transform: uppercase; color: #f0ede8;
+    }
+    .v1 .vnav-links a {
+      font-family: 'Courier Prime', monospace; font-size: 0.7rem;
+      letter-spacing: 0.26em; text-transform: uppercase; color: #8a877f;
+    }
+    .v1 .v1-grid {
+      position: absolute; inset: 0; opacity: 0.05; z-index: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent 0 79px, #c9a84c 79px 80px),
+        repeating-linear-gradient(90deg, transparent 0 79px, #c9a84c 79px 80px);
+    }
+    .v1-body {
+      position: absolute; inset: 0; z-index: 2;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 3.4rem;
+    }
+    .v1-eyebrow {
+      font-family: 'Courier Prime', monospace; font-size: 0.78rem;
+      letter-spacing: 0.5em; text-transform: uppercase; color: #c9a84c; margin-bottom: 2rem;
+    }
+    .v1-h {
+      font-family: 'Cormorant Garamond', serif; font-weight: 600;
+      font-size: 7.4rem; line-height: 0.92; letter-spacing: -0.01em; max-width: 14ch;
+    }
+    .v1-h em { font-style: italic; font-weight: 400; color: #e8c97a; }
+    .v1-sub {
+      font-family: 'Courier Prime', monospace; font-size: 0.95rem; line-height: 1.9;
+      color: #8a877f; max-width: 46ch; margin: 2.4rem 0 3rem;
+    }
+    .v1-cta { display: flex; gap: 1.2rem; align-items: stretch; }
+    .btn-solid-1 {
+      font-family: 'Courier Prime', monospace; font-size: 0.92rem;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      background: #c9a84c; color: #070604; border: none;
+      padding: 1.5rem 3.6rem; cursor: pointer; font-weight: 700;
+    }
+    .btn-ghost-1 {
+      font-family: 'Courier Prime', monospace; font-size: 0.92rem;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      background: none; color: #f0ede8; border: 1px solid #3a3833;
+      padding: 1.5rem 3.6rem; cursor: pointer;
+    }
+
+    /* ─────────────────────────────────────────
+       V2 — INDUSTRIAL BLOCK (brutalist mono, gold)
+       ───────────────────────────────────────── */
+    .v2 { background: #080706; color: #f0ede8; }
+    .v2 .vnav { border-bottom: 1px solid #2a2722; padding: 1.8rem 3rem; }
+    .v2 .vnav-logo {
+      font-family: 'Courier Prime', monospace; font-weight: 700;
+      font-size: 1.05rem; letter-spacing: 0.4em; text-transform: uppercase; color: #c9a84c;
+    }
+    .v2 .vnav-links a {
+      font-family: 'Courier Prime', monospace; font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: #6f6c64;
+    }
+    .v2-body {
+      position: absolute; inset: 0; z-index: 2; display: grid;
+      grid-template-columns: 1fr 1fr; align-items: stretch;
+    }
+    .v2-left {
+      border-right: 1px solid #2a2722; padding: 8.5rem 3rem 3rem;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .v2-tag {
+      display: inline-flex; align-items: center; gap: 0.8rem;
+      font-family: 'Courier Prime', monospace; font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.3em; text-transform: uppercase; color: #c9a84c; margin-bottom: 2.4rem;
+    }
+    .v2-tag::before { content: ''; width: 28px; height: 2px; background: #c9a84c; }
+    .v2-h {
+      font-family: 'Courier Prime', monospace; font-weight: 700;
+      font-size: 4.1rem; line-height: 1.02; letter-spacing: -0.02em; text-transform: uppercase;
+    }
+    .v2-h span { color: #c9a84c; }
+    .v2-sub {
+      font-family: 'Courier Prime', monospace; font-size: 0.9rem; line-height: 1.85;
+      color: #8a877f; max-width: 40ch; margin: 2.2rem 0 3rem;
+    }
+    .btn-block-2 {
+      font-family: 'Courier Prime', monospace; font-size: 0.95rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      background: #c9a84c; color: #070604; border: 3px solid #c9a84c;
+      padding: 1.6rem 3rem; cursor: pointer; align-self: flex-start;
+      display: inline-flex; align-items: center; gap: 1rem;
+    }
+    .btn-block-2 b { font-size: 1.3rem; }
+    .v2-right {
+      position: relative; display: flex; align-items: center; justify-content: center;
+      background:
+        repeating-linear-gradient(0deg, transparent 0 47px, rgba(201,168,76,0.08) 47px 48px),
+        repeating-linear-gradient(90deg, transparent 0 47px, rgba(201,168,76,0.08) 47px 48px);
+    }
+    .v2-stat {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid #2a2722;
+    }
+    .v2-stat div { padding: 1.6rem; border-right: 1px solid #2a2722; }
+    .v2-stat div:last-child { border-right: none; }
+    .v2-stat b {
+      display: block; font-family: 'Courier Prime', monospace; font-weight: 700;
+      font-size: 1.7rem; color: #c9a84c; line-height: 1;
+    }
+    .v2-stat small {
+      font-family: 'Courier Prime', monospace; font-size: 0.6rem;
+      letter-spacing: 0.2em; text-transform: uppercase; color: #6f6c64; margin-top: 0.5rem; display: block;
+    }
+    .v2-emblem {
+      font-family: 'Cormorant Garamond', serif; font-weight: 300;
+      font-size: 13rem; color: #c9a84c; opacity: 0.16; line-height: 1;
+    }
+
+    /* ─────────────────────────────────────────
+       V3 — IVORY GALLERY (high-contrast, light)
+       ───────────────────────────────────────── */
+    .v3 { background: #ece7dd; color: #16140f; }
+    .v3 .vnav { padding: 2.4rem 3.6rem; }
+    .v3 .vnav-logo {
+      font-family: 'Cormorant Garamond', serif; font-weight: 600;
+      font-size: 1.4rem; letter-spacing: 0.48em; text-transform: uppercase; color: #16140f;
+    }
+    .v3 .vnav-links a {
+      font-family: 'Archivo', sans-serif; font-size: 0.66rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase; color: #6a655b;
+    }
+    .v3-body {
+      position: absolute; inset: 0; z-index: 2;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; padding: 0 3rem;
+    }
+    .v3-eyebrow {
+      font-family: 'Archivo', sans-serif; font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.4em; text-transform: uppercase; color: #9a7d2e; margin-bottom: 1.8rem;
+    }
+    .v3-h {
+      font-family: 'Cormorant Garamond', serif; font-weight: 700;
+      font-size: 6.6rem; line-height: 0.94; letter-spacing: -0.015em; max-width: 16ch;
+    }
+    .v3-h em { font-style: italic; font-weight: 500; }
+    .v3-sub {
+      font-family: 'Archivo', sans-serif; font-size: 0.92rem; font-weight: 500; line-height: 1.8;
+      color: #57534a; max-width: 52ch; margin: 2.2rem auto 3rem;
+    }
+    .v3-cta { display: flex; gap: 1rem; }
+    .btn-solid-3 {
+      font-family: 'Archivo', sans-serif; font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      background: #16140f; color: #ece7dd; border: 2px solid #16140f;
+      padding: 1.5rem 3.4rem; cursor: pointer;
+    }
+    .btn-ghost-3 {
+      font-family: 'Archivo', sans-serif; font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      background: none; color: #16140f; border: 2px solid #16140f;
+      padding: 1.5rem 3.4rem; cursor: pointer;
+    }
+    .v3-rule { width: 1px; height: 64px; background: #b8b2a4; margin: 0 0 2rem; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script type="text/babel" src="design-canvas.jsx"></script>
+
+  <script type="text/babel">
+    const { DesignCanvas, DCSection, DCArtboard } = window;
+
+    const Nav = ({ cls }) => (
+      <div className={"vnav " + cls}>
+        <div className="vnav-logo">Maison</div>
+        <ul className="vnav-links">
+          <li><a href="#">Collection</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Appointment</a></li>
+          <li><a href="#">Guarantee</a></li>
+        </ul>
+      </div>
+    );
+
+    const V1 = () => (
+      <div className="frame v1">
+        <div className="v1-grid"></div>
+        <Nav cls="" />
+        <div className="v1-body">
+          <div className="v1-eyebrow">01 — The Collection</div>
+          <h1 className="v1-h">Only the most <em>consequential</em> pieces.</h1>
+          <p className="v1-sub">An exclusive selection from the four houses that define contemporary haute horlogerie. Authenticated, serviced, accompanied by full provenance.</p>
+          <div className="v1-cta">
+            <button className="btn-solid-1">Browse Collection</button>
+            <button className="btn-ghost-1">Book a Visit</button>
+          </div>
+        </div>
+      </div>
+    );
+
+    const V2 = () => (
+      <div className="frame v2">
+        <Nav cls="" />
+        <div className="v2-body">
+          <div className="v2-left">
+            <div className="v2-tag">Private Dealers</div>
+            <h2 className="v2-h">We move <span>masterpieces</span>, not volume.</h2>
+            <p className="v2-sub">Every reference is verified against manufacturer records and serviced by our master watchmaker before it reaches your wrist.</p>
+            <button className="btn-block-2">Browse Collection <b>&rarr;</b></button>
+          </div>
+          <div className="v2-right">
+            <div className="v2-emblem">M</div>
+            <div className="v2-stat">
+              <div><b>100%</b><small>Authenticated</small></div>
+              <div><b>5 yr</b><small>Warranty</small></div>
+              <div><b>3</b><small>Maisons</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
+    const V3 = () => (
+      <div className="frame v3">
+        <Nav cls="" />
+        <div className="v3-body">
+          <div className="v3-eyebrow">Paris · Dubai · Geneva</div>
+          <h1 className="v3-h">Every piece <em>earns</em><br/>its place here.</h1>
+          <p className="v3-sub">Private dealers in consequence-grade timepieces. By appointment only — a private room, a curated selection, and no pressure.</p>
+          <div className="v3-cta">
+            <button className="btn-solid-3">Browse Collection</button>
+            <button className="btn-ghost-3">Request Appointment</button>
+          </div>
+        </div>
+      </div>
+    );
+
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      <DesignCanvas>
+        <DCSection id="dir" title="Bolder Directions" subtitle="Same brand, three levels of boldness — note the larger CTAs in each">
+          <DCArtboard id="v1" label="A · Editorial Monolith" width={1440} height={900}><V1 /></DCArtboard>
+          <DCArtboard id="v2" label="B · Industrial Block" width={1440} height={900}><V2 /></DCArtboard>
+          <DCArtboard id="v3" label="C · Ivory Gallery" width={1440} height={900}><V3 /></DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+    );
+  </script>
+</body>
+</html>
