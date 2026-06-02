@@ -30,267 +30,90 @@
     }
 
     /* ════════════════════════════════════════
-       PERSISTENT NAV — BOLD
+       PERSISTENT NAV
        ════════════════════════════════════════ */
     #nav {
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 500;
-      padding: 0 3.5rem;
-      height: 80px;
+      padding: 1.6rem 3rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(7, 6, 4, 0.96);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(201, 168, 76, 0.25);
-      transition: border-color 0.4s, background 0.4s;
+      pointer-events: none;
+      transition: background 0.5s;
     }
 
-    #nav::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(to right, transparent, var(--gold), transparent);
-      opacity: 0.5;
+    #nav.scrolled {
+      background: linear-gradient(to bottom, rgba(7,6,4,0.9) 0%, transparent 100%);
     }
 
-    /* Logo */
     .nav-logo {
-      display: flex;
-      flex-direction: column;
-      cursor: pointer;
-      text-decoration: none;
-      line-height: 1;
-      gap: 2px;
-    }
-
-    .nav-logo-main {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.85rem;
-      font-weight: 600;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--white);
-      line-height: 1;
-    }
-
-    .nav-logo-sub {
-      font-family: 'Courier Prime', monospace;
-      font-size: 0.45rem;
+      font-size: 1.05rem;
+      font-weight: 300;
       letter-spacing: 0.55em;
       text-transform: uppercase;
-      color: var(--gold);
-      opacity: 0.8;
+      color: var(--white);
+      pointer-events: auto;
+      cursor: pointer;
+      transition: color 0.4s;
     }
 
-    /* Center links */
-    .nav-center {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
+    .nav-right {
       display: flex;
       align-items: center;
-      gap: 0;
+      gap: 2.4rem;
+      pointer-events: auto;
     }
 
     .nav-links {
       display: flex;
-      gap: 0;
+      gap: 2.2rem;
       list-style: none;
     }
 
-    .nav-links li { position: relative; }
-
     .nav-links a {
-      display: block;
-      padding: 0.5rem 1.4rem;
-      color: rgba(240, 237, 232, 0.55);
+      color: var(--gray);
       text-decoration: none;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.05rem;
-      font-weight: 400;
-      letter-spacing: 0.08em;
+      font-size: 0.6rem;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
       transition: color 0.3s;
-      position: relative;
     }
 
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: -2px; left: 50%; right: 50%;
-      height: 1px;
-      background: var(--gold);
-      transition: left 0.3s ease, right 0.3s ease;
-    }
-
-    .nav-links a:hover { color: var(--white); }
-    .nav-links a:hover::after { left: 1.4rem; right: 1.4rem; }
-    .nav-links a.active { color: var(--white); }
-    .nav-links a.active::after { left: 1.4rem; right: 1.4rem; }
-
-    /* Dot separator between links */
-    .nav-links li:not(:last-child)::after {
-      content: '·';
-      position: absolute;
-      right: -1px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: rgba(201, 168, 76, 0.25);
-      font-size: 1rem;
-      pointer-events: none;
-    }
-
-    /* Right side */
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 1.2rem;
-    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a.active { color: var(--gold); }
 
     /* Sound toggle */
     #sound-btn {
       background: none;
-      border: none;
-      color: rgba(240, 237, 232, 0.3);
+      border: 1px solid #2a2a27;
+      color: var(--gray);
       font-family: 'Courier Prime', monospace;
-      font-size: 0.5rem;
+      font-size: 0.55rem;
       letter-spacing: 0.25em;
       text-transform: uppercase;
-      padding: 0.4rem 0;
+      padding: 0.45rem 0.9rem;
       cursor: pointer;
-      transition: color 0.3s;
-    }
-    #sound-btn:hover { color: var(--gold); }
-    #sound-btn.on    { color: var(--gold); }
-
-    /* CTA button */
-    .nav-cta {
-      padding: 0.6rem 1.6rem;
-      background: var(--gold);
-      color: var(--black);
-      font-family: 'Courier Prime', monospace;
-      font-size: 0.5rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.3s, color 0.3s;
-      white-space: nowrap;
-    }
-    .nav-cta:hover {
-      background: var(--gold2);
+      transition: border-color 0.3s, color 0.3s;
     }
 
-    /* Hamburger — mobile */
-    .nav-hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 4px;
-      background: none;
-      border: none;
-      z-index: 700;
-    }
-    .nav-hamburger span {
-      display: block;
-      width: 28px;
-      height: 1px;
-      background: var(--white);
-      transition: transform 0.4s ease, opacity 0.3s ease, width 0.3s ease;
-      transform-origin: center;
-    }
-    .nav-hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-    .nav-hamburger.open span:nth-child(2) { opacity: 0; width: 0; }
-    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+    #sound-btn:hover { border-color: var(--gold); color: var(--gold); }
+    #sound-btn.on { border-color: var(--gold); color: var(--gold); }
 
-    /* Full-screen overlay menu */
-    #nav-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 600;
-      background: var(--black);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.5s ease;
-    }
-    #nav-overlay.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .overlay-links {
-      list-style: none;
-      text-align: center;
-    }
-
-    .overlay-links li {
-      overflow: hidden;
-      margin-bottom: 0.2rem;
-    }
-
-    .overlay-links a {
-      display: block;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(3rem, 10vw, 6rem);
-      font-weight: 300;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: rgba(240, 237, 232, 0.12);
-      text-decoration: none;
-      line-height: 1.15;
-      transition: color 0.3s ease, letter-spacing 0.4s ease;
-      transform: translateY(100%);
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s, letter-spacing 0.4s;
-    }
-
-    #nav-overlay.open .overlay-links a {
-      transform: translateY(0);
-    }
-
-    .overlay-links li:nth-child(1) a { transition-delay: 0.05s; }
-    .overlay-links li:nth-child(2) a { transition-delay: 0.1s; }
-    .overlay-links li:nth-child(3) a { transition-delay: 0.15s; }
-    .overlay-links li:nth-child(4) a { transition-delay: 0.2s; }
-
-    .overlay-links a:hover {
-      color: var(--white);
-      letter-spacing: 0.12em;
-    }
-
-    .overlay-rule {
-      width: 40px;
-      height: 1px;
-      background: var(--gold);
-      margin: 2rem auto;
-      opacity: 0.4;
-    }
-
-    .overlay-footer {
-      position: absolute;
-      bottom: 3rem;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.5rem;
-      letter-spacing: 0.5em;
-      text-transform: uppercase;
-      color: var(--gray);
-      white-space: nowrap;
-    }
+    /* Over the white logo intro, flip nav text to dark so it stays legible. */
+    #nav.on-light .nav-logo { color: #070604; }
+    #nav.on-light .nav-links a { color: #6b6862; }
+    #nav.on-light .nav-links a:hover,
+    #nav.on-light .nav-links a.active { color: #9a7d2e; }
+    #nav.on-light #sound-btn { border-color: #c9c5bd; color: #6b6862; }
+    #nav.on-light #sound-btn:hover { border-color: #9a7d2e; color: #9a7d2e; }
 
     /* Skip button */
     #skip-btn {
       position: fixed;
-      top: 90px;
+      top: 1.6rem;
       right: 3rem;
       z-index: 600;
       background: none;
@@ -336,37 +159,29 @@
       position: absolute;
       inset: 0;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 10;
       pointer-events: none;
+      background: var(--white);
     }
 
-    #logo-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(3rem, 10vw, 8rem);
-      font-weight: 300;
-      letter-spacing: 0.45em;
-      text-transform: uppercase;
-      color: var(--white);
-      text-align: center;
-      line-height: 1;
+    #logo-lockup {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* Nudge the lockup to sit exactly where the video emblem is centred
+         (offsets from cross-correlating the flat mark onto the engraved grooves). */
+      transform: translate(var(--emblem-x, 0.95vmin), var(--emblem-y, 0.5vmin));
     }
 
-    #logo-rule {
-      width: 60px;
-      height: 1px;
-      background: var(--gold);
-      margin: 1.2rem auto 0.9rem;
-      opacity: 0.6;
-    }
-
-    #logo-sub {
-      font-size: clamp(0.45rem, 1vw, 0.65rem);
-      letter-spacing: 0.7em;
-      text-transform: uppercase;
-      color: var(--gold);
+    #logo-emblem {
+      /* Sized to match the engraved emblem in the video's first frame so the
+         crossfade reads as the SAME mark turning to steel. Value found by
+         cross-correlating the flat lines onto the engraved grooves. */
+      height: var(--emblem-h, 88.4vmin);
+      width: auto;
+      display: block;
     }
 
     /* Video layer */
@@ -380,6 +195,17 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      /* Used only as a decode source for the frame cache — kept off-screen. */
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #scrub-canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     /* Vignette over video */
@@ -773,61 +599,32 @@
       .footer-brand { grid-column: 1 / -1; }
     }
 
-    @media (max-width: 900px) {
-      .nav-center { display: none; }
-      .nav-hamburger { display: flex; }
-      .nav-cta { display: none; }
-    }
-
     @media (max-width: 680px) {
       .stop-section { justify-content: center; padding: 4vh 6vw; }
       .stop-art { display: none; }
       #stop-about, #stop-why { flex-direction: column; }
       .stop-panel { width: 100%; padding: 2rem; }
-      #nav { padding: 0 1.5rem; }
-      #skip-btn { right: 1.5rem; top: 90px; }
+      #nav { padding: 1.2rem 1.5rem; }
+      .nav-links { display: none; }
+      #skip-btn { right: 1.5rem; top: 1.2rem; }
       .footer-top { grid-template-columns: 1fr; }
     }
   </style>
 </head>
-<body>
+<body style="background-color: rgb(0, 0, 0)">
 
   <div id="progress-bar"></div>
 
-  <!-- ── FULL-SCREEN OVERLAY (mobile) ── -->
-  <div id="nav-overlay">
-    <ul class="overlay-links">
-      <li><a href="#stop-collection" data-target="stop-collection" onclick="closeOverlay()">Collection</a></li>
-      <li><a href="#stop-about"      data-target="stop-about"      onclick="closeOverlay()">About</a></li>
-      <li><a href="#stop-appointment" data-target="stop-appointment" onclick="closeOverlay()">Appointment</a></li>
-      <li><a href="#stop-why"        data-target="stop-why"        onclick="closeOverlay()">Our Guarantee</a></li>
-    </ul>
-    <div class="overlay-rule"></div>
-    <div class="overlay-footer">Paris &nbsp;·&nbsp; Dubai &nbsp;·&nbsp; Geneva</div>
-  </div>
-
   <!-- ── NAV ── -->
   <nav id="nav">
-    <a class="nav-logo" onclick="scrollToTop()" href="#">
-      <span class="nav-logo-main">Maison</span>
-      <span class="nav-logo-sub">Haute Horlogerie</span>
-    </a>
-
-    <div class="nav-center">
+    <div class="nav-logo" onclick="scrollToTop()">Maison</div>
+    <div class="nav-right">
       <ul class="nav-links">
         <li><a href="#stop-collection" data-target="stop-collection">Collection</a></li>
         <li><a href="#stop-about"      data-target="stop-about">About</a></li>
         <li><a href="#stop-appointment" data-target="stop-appointment">Appointment</a></li>
         <li><a href="#stop-why"        data-target="stop-why">Our Guarantee</a></li>
       </ul>
-    </div>
-
-    <div class="nav-right">
-      <button id="sound-btn" onclick="toggleSound()">&#9654; Sound</button>
-      <a href="#stop-appointment" class="nav-cta" data-target="stop-appointment">Book Appointment</a>
-      <button class="nav-hamburger" id="hamburger" onclick="toggleOverlay()" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
     </div>
   </nav>
 
@@ -841,13 +638,14 @@
     <div id="intro-stage">
 
       <div id="logo-layer">
-        <div id="logo-text">Maison</div>
-        <div id="logo-rule"></div>
-        <div id="logo-sub">Haute Horlogerie</div>
+        <div id="logo-lockup">
+          <img id="logo-emblem" src="assets/images/logo-emblem-cut.png" alt="Maison emblem" />
+        </div>
       </div>
 
       <div id="video-layer">
-        <video id="scrub-video" muted playsinline preload="auto" src="assets/video/intro.mp4"></video>
+        <video id="scrub-video" muted playsinline preload="auto" poster="assets/images/intro-poster.jpg" src="assets/video/intro.mp4"></video>
+        <canvas id="scrub-canvas"></canvas>
       </div>
 
       <div id="scroll-hint">
@@ -1178,6 +976,18 @@
     <!-- <source src="ambient.mp3" type="audio/mpeg" /> -->
   </audio>
 
+  <!-- Lenis — smooth (inertial) scrolling. Native scroll, refined by a
+       smoothing formula, so the whole page glides with momentum and the
+       scroll-driven video scrub inherits that smoothness. -->
+  <style>
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+    .lenis.lenis-stopped { overflow: hidden; }
+    .lenis.lenis-smooth iframe { pointer-events: none; }
+  </style>
+  <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+
   <script>
     /* ─────────────────────────────────────────
        INTRO SCROLL SCRUB
@@ -1191,12 +1001,187 @@
     const nav          = document.getElementById('nav');
     const skipBtn      = document.getElementById('skip-btn');
 
-    let videoReady    = false;
-    let targetTime    = 0;
-    let currentTime   = 0;
+    const canvas       = document.getElementById('scrub-canvas');
+    const cctx         = canvas.getContext('2d', { alpha: false });
+
+    let videoReady   = false;   // metadata loaded
+    let targetP      = 0;       // latest scroll progress 0..1
+    let displayP     = 0;       // eased progress actually shown
+    let scrubVel     = 0;       // current velocity (frames-progress per tick)
+    let prevTargetP  = 0;       // targetP last tick (to detect active scrolling)
+    let scrollDir    = 1;       // last scroll direction (+down / -up)
+    let idleTicks    = 99;      // ticks since scroll input (release detection)
+    let coastAnchor  = 0;       // displayP captured at release (caps coast length)
+    let navVisible   = false;
     let introComplete = false;
 
+    // Inertia tuning. While scrolling, the frame follows you (FOLLOW). When you
+    // stop, leftover velocity coasts the frame further in the same direction and
+    // FRICTION bleeds it to rest — momentum with NO spring pull-back. MAX_COAST
+    // caps how far past your scroll point it may drift, so it stays in sync.
+    const SCRUB_FOLLOW    = 0.42; // how tightly it tracks active scrolling
+    const SCRUB_FRICTION  = 0.89; // higher = longer coast after release
+    const SCRUB_MAX_COAST = 0.072; // max coast distance (~10 frames of 141)
+
+    /* ── Frame cache ──────────────────────────
+       Seeking a compressed video on every scroll step is slow (each seek
+       decodes from a distant keyframe → ~200ms+). Instead we decode the clip
+       ONCE into a set of in-memory bitmaps, then scrub by blitting the nearest
+       cached frame to a canvas — effectively instant, smooth at any speed. */
+    let frames       = [];      // ImageBitmap[]
+    let framesReady  = false;
+    let lastDrawn    = -1;
+
     video.addEventListener('loadedmetadata', () => { videoReady = true; });
+    if (video.readyState >= 1 && isFinite(video.duration)) videoReady = true;
+
+    async function buildFrameCache() {
+      // Wait for metadata if needed.
+      if (!isFinite(video.duration)) {
+        await new Promise((r) => video.addEventListener('loadedmetadata', r, { once: true }));
+      }
+
+      // Capture resolution & framerate — chosen to maximise *crispness* within
+      // a memory budget. Now that the scrub cross-dissolves between frames, a
+      // lower frame count still looks smooth, so we spend the memory budget on
+      // resolution first and keep as many frames as still fit.
+      const mem    = navigator.deviceMemory || 8;            // GB (Chrome caps at 8)
+      const maxMB  = mem >= 8 ? 820 : mem >= 4 ? 460 : 240;  // bitmap memory budget
+      const estN   = Math.max(1, Math.round(video.duration * 24)); // ~native frame count
+      const aspect = (video.videoHeight || 9) / (video.videoWidth || 16);
+      const MIN_FRAMES = 120; // floor for smoothness (blending fills the gaps)
+
+      let captureW = Math.min(960, video.videoWidth || 960);
+      let frameTarget = estN;
+      for (const w of [1920, 1600, 1440, 1280, 1120, 960]) {
+        const cw  = Math.min(w, video.videoWidth || w);
+        const ch  = Math.round(cw * aspect);
+        const bpf = (cw * ch * 4) / 1e6;             // MB per frame
+        const affordable = Math.floor(maxMB / bpf);  // frames that fit budget
+        if (affordable >= MIN_FRAMES || w === 960) {
+          captureW    = cw;
+          frameTarget = Math.min(estN, affordable);
+          break;
+        }
+      }
+      const captureH = Math.round(captureW * aspect);
+      // Keep frames evenly via a fractional accumulator so we land *exactly* on
+      // frameTarget (integer striding would only allow all-or-half).
+      const keepRatio = Math.min(1, frameTarget / estN);
+      canvas.width  = captureW;
+      canvas.height = captureH;
+
+      // Shared offscreen canvas for seek-based capture.
+      const off  = document.createElement('canvas');
+      off.width  = captureW;
+      off.height = captureH;
+      const octx = off.getContext('2d', { alpha: false });
+
+      // ── Fast capture: PLAY the clip once and grab each decoded frame via
+      // requestVideoFrameCallback (native framerate, quick). Needs muted
+      // autoplay; returns [] if that isn't available so we can fall back.
+      async function playbackCapture() {
+        if (typeof video.requestVideoFrameCallback !== 'function') return [];
+        return await new Promise(async (resolve) => {
+          const pending = [];
+          let stopped = false;
+          let keepAcc = 0;
+          const stop = () => {
+            if (stopped) return;
+            stopped = true;
+            try { video.pause(); } catch (e) {}
+            Promise.all(pending).then((a) => resolve(a.filter(Boolean)));
+          };
+          const onFrame = () => {
+            keepAcc += keepRatio;
+            if (keepAcc >= 1) {
+              keepAcc -= 1;
+              pending.push(
+                createImageBitmap(video, {
+                  resizeWidth: captureW, resizeHeight: captureH, resizeQuality: 'high',
+                }).catch(() => null)
+              );
+              if (pending.length === 1) {
+                pending[0].then((bmp) => { if (bmp && lastDrawn < 0) cctx.drawImage(bmp, 0, 0, captureW, captureH); });
+              }
+            }
+            if (!video.ended && !stopped) video.requestVideoFrameCallback(onFrame);
+            else stop();
+          };
+          video.muted = true;
+          try { video.currentTime = 0; } catch (e) {}
+          video.playbackRate = 1;
+          video.addEventListener('ended', stop, { once: true });
+          let ok = true;
+          try { await video.play(); } catch (e) { ok = false; }
+          if (!ok) { resolve([]); return; }       // autoplay blocked → fall back
+          video.requestVideoFrameCallback(onFrame);
+          setTimeout(stop, (video.duration + 5) * 1000); // safety
+        });
+      }
+
+      // ── Reliable fallback: seek to N timestamps and capture each. Slower, but
+      // needs no autoplay and always works.
+      async function seekCapture() {
+        const N = Math.max(24, Math.min(frameTarget, 200));
+        try { video.pause(); } catch (e) {}
+        const built = [];
+        for (let i = 0; i < N; i++) {
+          const t = (i / (N - 1)) * video.duration * 0.999;
+          await new Promise((res) => {
+            const d = () => { video.removeEventListener('seeked', d); res(); };
+            video.addEventListener('seeked', d);
+            try { video.currentTime = t; } catch (e) {}
+            setTimeout(d, 1500);
+          });
+          octx.drawImage(video, 0, 0, captureW, captureH);
+          try { built[i] = await createImageBitmap(off); } catch (e) {}
+          if (i === 0 && built[0]) cctx.drawImage(built[0], 0, 0, captureW, captureH);
+        }
+        return built.filter(Boolean);
+      }
+
+      // Try the fast path; fall back to seeking if it produced too few frames
+      // (autoplay blocked, decode hiccup, etc.) so we never end up blank.
+      let built = await playbackCapture();
+      if (built.length < Math.max(24, frameTarget * 0.5)) {
+        built = await seekCapture();
+      }
+      frames = built;
+      framesReady = frames.length > 0;
+      if (frames.length) {
+        drawForProgress(targetP);
+      } else {
+        // Last resort: reveal the <video> itself so something shows.
+        video.style.opacity = '1';
+      }
+    }
+
+    function drawForProgress(p) {
+      if (!framesReady || !frames.length) return;
+      // Map progress to a *fractional* frame position and cross-dissolve between
+      // the two neighbouring frames by the fractional amount. The source is only
+      // 24fps, but blending makes the scrub read as continuous motion rather than
+      // discrete frame steps — smoother than the native framerate alone.
+      const f    = p * (frames.length - 1);
+      const i0   = Math.floor(f);
+      const frac = f - i0;
+      const i1   = Math.min(i0 + 1, frames.length - 1);
+
+      // Quantise to avoid redundant repaints while keeping blend granularity.
+      const key = i0 * 1000 + Math.round(frac * 60);
+      if (key === lastDrawn) return;
+      lastDrawn = key;
+
+      const cw = canvas.width, ch = canvas.height;
+      cctx.globalAlpha = 1;
+      cctx.drawImage(frames[i0], 0, 0, cw, ch);
+      if (frac > 0.012 && i1 !== i0) {
+        cctx.globalAlpha = frac;
+        cctx.drawImage(frames[i1], 0, 0, cw, ch);
+        cctx.globalAlpha = 1;
+      }
+    }
 
     function getIntroProgress() {
       const rect       = introSection.getBoundingClientRect();
@@ -1208,15 +1193,20 @@
     function onScroll() {
       const p = getIntroProgress();
 
-      // Crossfade logo → video (first 8% of scroll)
-      const cf = Math.min(p / 0.08, 1);
+      // Crossfade logo → video over the first stretch of scroll. The video is
+      // HELD on frame 0 throughout the fade (see targetP below) so the flat
+      // emblem dissolves into a stationary steel emblem — same size, same place.
+      const CF_END = 0.10;
+      const cf = Math.min(p / CF_END, 1);
       logoLayer.style.opacity  = 1 - cf;
       videoLayer.style.opacity = cf;
 
-      // Scrub video
-      if (videoReady && isFinite(video.duration)) {
-        targetTime = p * video.duration;
-      }
+      // While the white logo screen is still showing, flip nav text to dark.
+      nav.classList.toggle('on-light', (1 - cf) > 0.4);
+
+      // Scrub: pinned to frame 0 during the crossfade, then play the clip across
+      // the remaining scroll so motion only begins once the logo has handed off.
+      targetP = p <= CF_END ? 0 : (p - CF_END) / (1 - CF_END);
 
       // Progress bar
       progressBar.style.opacity = p > 0.01 ? '1' : '0';
@@ -1230,21 +1220,35 @@
         skipBtn.classList.add('show');
       }
 
-      // Skip button hides once intro done
+      // Nav visibility — appears once intro fully scrubbed
       if (p >= 0.97) {
-        introComplete = true;
-        skipBtn.classList.remove('show');
+        if (!navVisible) {
+          navVisible = true;
+          introComplete = true;
+          nav.classList.add('visible');
+          skipBtn.classList.remove('show');
+        }
+      } else if (p < 0.85 && navVisible) {
+        navVisible = false;
+        introComplete = false;
+        nav.classList.remove('visible');
+      }
+
+      // Mark nav as scrolled once user is past intro
+      const pastIntro = window.scrollY > introSection.offsetHeight;
+      nav.classList.toggle('scrolled', pastIntro);
+      if (pastIntro && !navVisible) {
+        navVisible = true;
+        nav.classList.add('visible');
       }
     }
 
     function tick() {
-      if (videoReady && isFinite(video.duration)) {
-        currentTime += (targetTime - currentTime) * 0.1;
-        if (Math.abs(targetTime - currentTime) < 0.005) currentTime = targetTime;
-        if (Math.abs(video.currentTime - currentTime) > 0.008) {
-          video.currentTime = currentTime;
-        }
-      }
+      // Lenis smooths the scroll position itself, so the video simply tracks the
+      // (already eased) scroll 1:1 — momentum and smoothness come from the global
+      // smooth-scroll engine, consistent with the rest of the page.
+      onScroll();
+      drawForProgress(targetP);
       requestAnimationFrame(tick);
     }
 
@@ -1253,33 +1257,12 @@
        ───────────────────────────────────────── */
     function skipIntro() {
       const target = introSection.offsetTop + introSection.offsetHeight;
-      window.scrollTo({ top: target, behavior: 'smooth' });
+      window.smoothScrollTo(target);
       skipBtn.classList.remove('show');
     }
 
     function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    /* ─────────────────────────────────────────
-       OVERLAY MENU
-       ───────────────────────────────────────── */
-    const overlay    = document.getElementById('nav-overlay');
-    const hamburger  = document.getElementById('hamburger');
-    let overlayOpen  = false;
-
-    function toggleOverlay() {
-      overlayOpen = !overlayOpen;
-      overlay.classList.toggle('open', overlayOpen);
-      hamburger.classList.toggle('open', overlayOpen);
-      document.body.style.overflow = overlayOpen ? 'hidden' : '';
-    }
-
-    function closeOverlay() {
-      overlayOpen = false;
-      overlay.classList.remove('open');
-      hamburger.classList.remove('open');
-      document.body.style.overflow = '';
+      window.smoothScrollTo(0);
     }
 
     /* ─────────────────────────────────────────
@@ -1290,7 +1273,7 @@
         e.preventDefault();
         const id  = link.dataset.target;
         const el  = document.getElementById(id);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (el) window.smoothScrollTo(el);
       });
     });
 
@@ -1360,10 +1343,31 @@
     /* ─────────────────────────────────────────
        BOOT
        ───────────────────────────────────────── */
+    // Smooth scrolling — the whole page eases with momentum (like the reference).
+    let lenis = null;
+    if (window.Lenis) {
+      lenis = new Lenis({
+        lerp: 0.085,          // smoothing — lower = longer, glassier glide
+        wheelMultiplier: 1,
+        smoothWheel: true,
+        syncTouch: true,      // smooth on touch devices too
+      });
+      const lenisRaf = (time) => { lenis.raf(time); requestAnimationFrame(lenisRaf); };
+      requestAnimationFrame(lenisRaf);
+      lenis.on('scroll', onScroll);
+    }
+    // Unified smooth-scroll helper for skip / nav / top.
+    window.smoothScrollTo = (target) => {
+      if (lenis) lenis.scrollTo(target, { offset: 0 });
+      else if (typeof target === 'number') window.scrollTo({ top: target, behavior: 'smooth' });
+      else if (target && target.scrollIntoView) target.scrollIntoView({ behavior: 'smooth' });
+    };
+
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
     requestAnimationFrame(tick);
     onScroll();
+    buildFrameCache();
   </script>
 </body>
 </html>
