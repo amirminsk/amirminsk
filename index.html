@@ -3,7 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MAISON — Haute Horlogerie</title>
+  <title>MAISON — Pre-Owned Luxury Watches | Dubai, Paris, Geneva</title>
+  <meta name="description" content="MAISON is a private dealer in consequence-grade pre-owned timepieces. Rolex, Audemars Piguet, Patek Philippe, Richard Mille. By appointment. Dubai · Paris · Geneva." />
+  <meta property="og:title" content="MAISON — Pre-Owned Luxury Watches" />
+  <meta property="og:description" content="Private dealer in authenticated pre-owned luxury watches. Rolex, AP, Patek, Richard Mille. By appointment only. Dubai · Paris · Geneva." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://amirminsk.github.io/amirminsk/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="MAISON — Pre-Owned Luxury Watches" />
+  <meta name="twitter:description" content="Private dealer in authenticated pre-owned luxury watches. Dubai · Paris · Geneva." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "MAISON",
+    "description": "Private dealer in authenticated pre-owned luxury watches.",
+    "url": "https://amirminsk.github.io/amirminsk/",
+    "address": { "@type": "PostalAddress", "addressLocality": "Dubai", "addressCountry": "AE" },
+    "sameAs": []
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Courier+Prime:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
@@ -448,34 +467,7 @@
       margin-top: 0.25rem;
     }
 
-    /* Appointment form */
-    .appt-fields {
-      display: flex;
-      flex-direction: column;
-      gap: 0.7rem;
-      margin-bottom: 2rem;
-    }
-
-    .appt-fields input,
-    .appt-fields select {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid #1c1a17;
-      color: var(--white);
-      font-family: 'Courier Prime', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.1em;
-      padding: 0.75rem 1rem;
-      outline: none;
-      transition: border-color 0.3s;
-      appearance: none;
-    }
-
-    .appt-fields input::placeholder { color: #3a3835; }
-
-    .appt-fields input:focus,
-    .appt-fields select:focus { border-color: var(--gold); }
-
-    .appt-fields select option { background: var(--deep); }
+    /* Appointment form — see bottom of file for extended styles */
 
     /* Why buy from us — stat row */
     .why-stats {
@@ -609,6 +601,234 @@
       #skip-btn { right: 1.5rem; top: 1.2rem; }
       .footer-top { grid-template-columns: 1fr; }
     }
+
+    /* ════════════════════════════════════════
+       FLOATING WHATSAPP BUTTON
+       ════════════════════════════════════════ */
+    .wa-float {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 900;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: var(--deep);
+      border: 1px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      text-decoration: none;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .wa-float:hover { background: var(--gold); color: var(--black); transform: scale(1.08); }
+    .wa-float::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.35);
+      animation: wa-pulse 2.4s ease-out infinite;
+    }
+    @keyframes wa-pulse {
+      0%   { transform: scale(0.95); opacity: 0.5; }
+      70%  { transform: scale(1.18); opacity: 0; }
+      100% { transform: scale(1.18); opacity: 0; }
+    }
+    .wa-float svg { width: 26px; height: 26px; fill: currentColor; }
+
+    /* ════════════════════════════════════════
+       APPOINTMENT FORM (working)
+       ════════════════════════════════════════ */
+    .appt-fields { display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 2rem; }
+    .appt-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+    .appt-fields input,
+    .appt-fields select,
+    .appt-fields textarea {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid #1c1a17;
+      color: var(--white);
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+      appearance: none;
+      width: 100%;
+    }
+    .appt-fields textarea { resize: vertical; min-height: 70px; }
+    .appt-fields input::placeholder,
+    .appt-fields textarea::placeholder { color: #3a3835; }
+    .appt-fields input:focus,
+    .appt-fields select:focus,
+    .appt-fields textarea:focus { border-color: var(--gold); }
+    .appt-fields select option { background: var(--deep); }
+    .appt-error { color: #c0392b; font-size: 0.62rem; letter-spacing: 0.1em; display: none; margin-top: -0.4rem; }
+    .appt-error.show { display: block; }
+    .appt-success {
+      display: none;
+      padding: 1.5rem;
+      border: 1px solid var(--gold);
+      text-align: center;
+      color: var(--gold);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      line-height: 2;
+    }
+    .appt-success.show { display: block; }
+
+    /* ════════════════════════════════════════
+       TRUST / TESTIMONIALS
+       ════════════════════════════════════════ */
+    #stop-trust {
+      background: var(--deep);
+      padding: 7rem 8vw;
+      display: block;
+      min-height: auto;
+    }
+    .trust-label {
+      display: block;
+      font-size: 0.52rem;
+      letter-spacing: 0.5em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .trust-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 300;
+      text-align: center;
+      margin-bottom: 4rem;
+      color: var(--white);
+    }
+    .testimonials {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-bottom: 5rem;
+    }
+    @media (max-width: 900px) { .testimonials { grid-template-columns: 1fr; } }
+    .testimonial {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid #1c1a17;
+      border-top: 2px solid var(--gold);
+      padding: 2.4rem 2rem;
+    }
+    .testimonial blockquote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--white);
+      margin-bottom: 1.4rem;
+    }
+    .testimonial cite {
+      font-style: normal;
+      font-size: 0.55rem;
+      letter-spacing: 0.35em;
+      color: var(--gray);
+      text-transform: uppercase;
+    }
+    .atelier-block {
+      border: 1px solid #1c1a17;
+      border-left: 3px solid var(--gold);
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      margin-bottom: 5rem;
+      flex-wrap: wrap;
+    }
+    .atelier-block h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+    .atelier-block p {
+      color: var(--gray);
+      font-size: 0.78rem;
+      line-height: 1.9;
+      max-width: 480px;
+    }
+    .press-strip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4rem;
+      flex-wrap: wrap;
+      padding: 2rem 0;
+      border-top: 1px solid #1c1a17;
+      border-bottom: 1px solid #1c1a17;
+    }
+    .press-item {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      color: #3a3835;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .press-item:hover { color: var(--gray); }
+
+    /* ════════════════════════════════════════
+       CTA BAND
+       ════════════════════════════════════════ */
+    .cta-band {
+      background: var(--black);
+      border-top: 1px solid #1c1a17;
+      border-bottom: 1px solid #1c1a17;
+      padding: 4rem 8vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .cta-band h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+      font-weight: 300;
+      color: var(--white);
+    }
+    .cta-band-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .cta-btn-gold {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 2rem;
+      background: var(--gold);
+      color: var(--black);
+      text-decoration: none;
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      transition: background 0.3s;
+      font-family: 'Courier Prime', monospace;
+    }
+    .cta-btn-gold:hover { background: var(--gold2); }
+    .cta-btn-outline {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      transition: all 0.3s;
+      font-family: 'Courier Prime', monospace;
+    }
+    .cta-btn-outline:hover { background: var(--gold); color: var(--black); }
   </style>
 </head>
 <body style="background-color: rgb(0, 0, 0)">
@@ -617,7 +837,7 @@
 
   <!-- ── NAV ── -->
   <nav id="nav">
-    <div class="nav-logo" onclick="scrollToTop()">Maison</div>
+    <div class="nav-logo" onclick="scrollToTop()">MAISON</div>
     <div class="nav-right">
       <ul class="nav-links">
         <li><a href="collection.html">Collection</a></li>
@@ -829,19 +1049,34 @@
       <span class="stop-index">03 — Private Visit</span>
       <h2 class="stop-title">By appointment<br/>only.</h2>
       <div class="stop-rule"></div>
-      <p class="stop-body">Reserve an hour with one of our curators. Arrive to a private room, a curated selection, and no pressure. We sell time — yours is not to be wasted.</p>
-      <div class="appt-fields">
-        <input type="text"  placeholder="Full Name" />
-        <input type="email" placeholder="Email Address" />
-        <select>
-          <option value="" disabled selected>Preferred Location</option>
-          <option>Paris — 8th Arrondissement</option>
-          <option>Dubai — DIFC</option>
-          <option>Geneva — Rue du Rhône</option>
-        </select>
-        <input type="text"  placeholder="Preferred Date" onfocus="this.type='date'" onblur="this.type='text'" />
-      </div>
-      <button class="stop-action">Request Appointment</button>
+      <p class="stop-body">Reserve an hour with one of our curators. A private room, a curated selection, no pressure. We sell time — yours is not to be wasted.</p>
+      <form id="appt-form" novalidate>
+        <div class="appt-fields">
+          <input type="text" id="appt-name" placeholder="Full Name" autocomplete="name" />
+          <span class="appt-error" id="err-name">Please enter your name.</span>
+          <div class="appt-row">
+            <input type="email" id="appt-email" placeholder="Email Address" autocomplete="email" />
+            <input type="tel"   id="appt-phone" placeholder="WhatsApp Number" autocomplete="tel" />
+          </div>
+          <span class="appt-error" id="err-contact">Please provide email or phone.</span>
+          <select id="appt-location">
+            <option value="" disabled selected>Preferred Location</option>
+            <option>Paris — 8th Arrondissement</option>
+            <option>Dubai — DIFC</option>
+            <option>Geneva — Rue du Rhône</option>
+          </select>
+          <div class="appt-row">
+            <input type="date" id="appt-date" />
+            <input type="time" id="appt-time" />
+          </div>
+          <input type="text" id="appt-watch" placeholder="Watch of Interest (optional)" />
+          <textarea id="appt-notes" placeholder="Any special requests…"></textarea>
+        </div>
+        <div class="appt-success" id="appt-success">
+          Request sent — our team will<br/>confirm within 24 hours.
+        </div>
+        <button type="submit" class="stop-action" id="appt-submit">Request Appointment</button>
+      </form>
     </div>
   </section>
 
@@ -919,12 +1154,62 @@
   </section>
 
   <!-- ════════════════════════════════════════
+       TRUST / TESTIMONIALS
+       ════════════════════════════════════════ -->
+  <section id="stop-trust">
+    <span class="trust-label">What our clients say</span>
+    <h2 class="trust-heading">Trusted by collectors<br/>across three continents.</h2>
+    <div class="testimonials">
+      <div class="testimonial">
+        <blockquote>"MAISON sourced a Patek 5711 in steel — I had spent three years searching. Their network is extraordinary and their discretion is unmatched."</blockquote>
+        <cite>— K.A., Private Collector · Dubai</cite>
+      </div>
+      <div class="testimonial">
+        <blockquote>"The appointment at their Geneva atelier was unlike any retail experience. One hour, one curator, five spectacular references. I left with a Royal Oak I'll never sell."</blockquote>
+        <cite>— M.L., Entrepreneur · Geneva</cite>
+      </div>
+      <div class="testimonial">
+        <blockquote>"Their authentication report gave my bank more confidence than the manufacturer's service card. Provenance done properly."</blockquote>
+        <cite>— R.T., Investment Director · Paris</cite>
+      </div>
+    </div>
+
+    <div class="atelier-block">
+      <div>
+        <h3>Our Atelier</h3>
+        <p>Every timepiece passes through our in-house atelier before being offered. Full service records, pressure testing, and movement inspection by a certified master watchmaker — not a contracted third party.</p>
+      </div>
+      <a href="#stop-appointment" class="cta-btn-outline">Book an Inspection</a>
+    </div>
+
+    <div class="press-strip">
+      <span class="press-item">The Geneva Tribune</span>
+      <span class="press-item">WatchTime</span>
+      <span class="press-item">Revolution</span>
+      <span class="press-item">Hodinkee</span>
+      <span class="press-item">Forbes Middle East</span>
+    </div>
+  </section>
+
+  <!-- CTA Band -->
+  <div class="cta-band">
+    <h3>Ready to find your<br/>next masterpiece?</h3>
+    <div class="cta-band-actions">
+      <a href="https://wa.me/PHONENUMBER?text=Hello%20MAISON%2C%20I%27d%20like%20to%20enquire%20about%20your%20collection." class="cta-btn-gold" aria-label="Chat on WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.85L.057 23.571a.75.75 0 0 0 .937.937l5.72-1.465A11.94 11.94 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-1.943 0-3.773-.523-5.35-1.435l-.383-.228-3.97 1.017 1.017-3.97-.228-.383A9.75 9.75 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/></svg>
+        WhatsApp Us
+      </a>
+      <a href="collection.html" class="cta-btn-outline">View Collection</a>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
        FOOTER
        ════════════════════════════════════════ -->
   <footer>
     <div class="footer-top">
       <div class="footer-brand">
-        <h2>Maison</h2>
+        <h2>MAISON</h2>
         <p>Private dealers in consequence-grade timepieces. By appointment only. Paris · Dubai · Geneva.</p>
       </div>
       <div class="footer-col">
@@ -967,6 +1252,15 @@
       <span>Authorised Independent Retailer</span>
     </div>
   </footer>
+
+  <!-- Floating WhatsApp Button -->
+  <a href="https://wa.me/PHONENUMBER?text=Hello%20MAISON%2C%20I%27d%20like%20to%20enquire%20about%20your%20collection."
+     class="wa-float"
+     target="_blank"
+     rel="noopener noreferrer"
+     aria-label="Chat with MAISON on WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.85L.057 23.571a.75.75 0 0 0 .937.937l5.72-1.465A11.94 11.94 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-1.943 0-3.773-.523-5.35-1.435l-.383-.228-3.97 1.017 1.017-3.97-.228-.383A9.75 9.75 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/></svg>
+  </a>
 
   <!-- ════════════════════════════════════════
        AUDIO — mechanical ambient
@@ -1398,6 +1692,55 @@
     requestAnimationFrame(tick);
     onScroll();
     buildFrameCache();
+
+    /* ─────────────────────────────────────────
+       APPOINTMENT FORM — WhatsApp + mailto
+       ───────────────────────────────────────── */
+    const WA_NUMBER = 'PHONENUMBER';
+    const MAISON_EMAIL = 'contact@maison-watches.com';
+
+    document.getElementById('appt-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name    = document.getElementById('appt-name').value.trim();
+      const email   = document.getElementById('appt-email').value.trim();
+      const phone   = document.getElementById('appt-phone').value.trim();
+      const loc     = document.getElementById('appt-location').value;
+      const date    = document.getElementById('appt-date').value;
+      const time    = document.getElementById('appt-time').value;
+      const watch   = document.getElementById('appt-watch').value.trim();
+      const notes   = document.getElementById('appt-notes').value.trim();
+
+      let valid = true;
+      document.getElementById('err-name').classList.remove('show');
+      document.getElementById('err-contact').classList.remove('show');
+
+      if (!name) { document.getElementById('err-name').classList.add('show'); valid = false; }
+      if (!email && !phone) { document.getElementById('err-contact').classList.add('show'); valid = false; }
+      if (!valid) return;
+
+      const parts = [
+        `Name: ${name}`,
+        loc    ? `Location: ${loc}` : '',
+        date   ? `Date: ${date}` : '',
+        time   ? `Time: ${time}` : '',
+        watch  ? `Watch interest: ${watch}` : '',
+        notes  ? `Notes: ${notes}` : '',
+        email  ? `Email: ${email}` : '',
+        phone  ? `Phone: ${phone}` : '',
+      ].filter(Boolean).join('\n');
+
+      const msgText = `Hello MAISON — I'd like to book a private appointment.\n\n${parts}`;
+
+      if (phone) {
+        window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msgText)}`, '_blank');
+      } else {
+        const subject = encodeURIComponent('Private Appointment Request — MAISON');
+        window.location.href = `mailto:${MAISON_EMAIL}?subject=${subject}&body=${encodeURIComponent(msgText)}`;
+      }
+
+      document.getElementById('appt-form').style.display = 'none';
+      document.getElementById('appt-success').classList.add('show');
+    });
   </script>
 </body>
 </html>

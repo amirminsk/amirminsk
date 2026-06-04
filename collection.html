@@ -3,38 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Collection — HM Watches</title>
+  <title>Collection — MAISON | Pre-Owned Rolex, Patek Philippe, Audemars Piguet, Richard Mille — Dubai, Paris, Geneva</title>
+  <meta name="description" content="Curated pre-owned Rolex, Audemars Piguet, Patek Philippe and Richard Mille timepieces. Authenticated, serviced, fully documented. By private appointment. Dubai · Paris · Geneva." />
+  <meta property="og:title" content="Collection — MAISON Watches" />
+  <meta property="og:description" content="Authenticated luxury timepieces. Enquire privately. Dubai · Paris · Geneva." />
+  <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg:       #f4f0e8;
-      --surface:  #faf8f3;
-      --ink:      #111010;
-      --ink2:     #4a4845;
-      --ink3:     #8a8885;
-      --rule:     #dedad2;
-      --hover-bg: #ede9e0;
-      --f-head:   'Bebas Neue', sans-serif;
-      --f-sub:    'Barlow Semi Condensed', sans-serif;
-      --f-mono:   'Space Mono', monospace;
+      --gold:    #c9a84c;
+      --gold2:   #e8c97a;
+      --black:   #070604;
+      --deep:    #0e0d0b;
+      --surface: #141210;
+      --white:   #f0ede8;
+      --gray:    #7a7874;
+      --rule:    #1c1a17;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      background: var(--bg);
-      color: var(--ink);
-      font-family: var(--f-sub);
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Courier Prime', monospace;
       font-size: 14px;
-      font-weight: 600;
-      line-height: 1.5;
-      overflow-x: hidden;
+      line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
     /* ── NAV ── */
@@ -42,9 +42,10 @@
       position: sticky;
       top: 0;
       z-index: 200;
-      background: var(--surface);
-      border-bottom: 2px solid var(--ink);
-      padding: 0 2.5rem;
+      background: rgba(7,6,4,0.97);
+      border-bottom: 1px solid var(--rule);
+      backdrop-filter: blur(12px);
+      padding: 0 3rem;
       height: 68px;
       display: grid;
       grid-template-columns: 1fr auto 1fr;
@@ -52,15 +53,18 @@
     }
 
     .nav-logo {
-      font-family: var(--f-head);
-      font-size: 1.9rem;
-      letter-spacing: 0.14em;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 300;
+      letter-spacing: 0.5em;
       text-transform: uppercase;
-      color: var(--ink);
+      color: var(--white);
       text-decoration: none;
-      line-height: 1;
       justify-self: start;
+      transition: color 0.3s;
     }
+
+    .nav-logo:hover { color: var(--gold); }
 
     .nav-links {
       display: flex;
@@ -70,14 +74,12 @@
     }
 
     .nav-links a {
-      font-family: var(--f-sub);
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--ink2);
+      color: var(--gray);
       text-decoration: none;
-      transition: color 0.2s;
+      font-size: 0.6rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      transition: color 0.3s;
       position: relative;
       padding-bottom: 4px;
     }
@@ -86,155 +88,141 @@
       content: '';
       position: absolute;
       bottom: 0; left: 0;
-      width: 0; height: 2px;
-      background: var(--ink);
+      width: 0; height: 1px;
+      background: var(--gold);
       transition: width 0.25s cubic-bezier(0.16,1,0.3,1);
     }
 
-    .nav-links a:hover { color: var(--ink); }
-    .nav-links a:hover::after { width: 100%; }
-    .nav-links a.active { color: var(--ink); }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a:hover::after,
     .nav-links a.active::after { width: 100%; }
+    .nav-links a.active { color: var(--gold); }
 
     /* ── PAGE HEADER ── */
     .collection-header {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 2.5rem 2.5rem 1.5rem;
+      padding: 3rem 3rem 2rem;
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
       gap: 1rem;
+      border-bottom: 1px solid var(--rule);
+      animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     .collection-header h1 {
-      font-family: var(--f-head);
-      font-size: 4.5rem;
-      letter-spacing: 0.06em;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 300;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: var(--ink);
+      color: var(--white);
       line-height: 1;
     }
 
     .collection-header p {
-      font-family: var(--f-sub);
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink3);
-      letter-spacing: 0.1em;
+      font-size: 0.56rem;
+      letter-spacing: 0.35em;
       text-transform: uppercase;
-      padding-bottom: 0.5rem;
+      color: var(--gray);
+      padding-bottom: 0.4rem;
     }
 
     /* ── FILTER BAR ── */
     .filter-bar {
-      background: var(--surface);
-      border-top: 2px solid var(--ink);
+      background: var(--deep);
       border-bottom: 1px solid var(--rule);
-      padding: 0 2.5rem;
+      padding: 0 3rem;
       display: flex;
       align-items: center;
-      gap: 0;
       overflow-x: auto;
       -ms-overflow-style: none;
       scrollbar-width: none;
+      animation: fadeUp 0.6s 0.08s cubic-bezier(0.16,1,0.3,1) both;
     }
 
     .filter-bar::-webkit-scrollbar { display: none; }
 
     .filter-pill {
-      font-family: var(--f-sub);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: var(--ink2);
+      color: var(--gray);
       background: none;
       border: none;
-      border-bottom: 3px solid transparent;
-      padding: 1rem 1.4rem;
+      border-bottom: 1px solid transparent;
+      padding: 1.1rem 1.4rem;
       cursor: pointer;
       white-space: nowrap;
-      transition: color 0.15s, border-color 0.15s;
+      transition: color 0.2s, border-color 0.2s;
     }
 
-    .filter-pill:hover { color: var(--ink); }
-
-    .filter-pill.active {
-      color: var(--ink);
-      border-bottom-color: var(--ink);
-    }
+    .filter-pill:hover { color: var(--white); }
+    .filter-pill.active { color: var(--gold); border-bottom-color: var(--gold); }
 
     .filter-bar-sep {
       width: 1px;
-      height: 1.4rem;
+      height: 1rem;
       background: var(--rule);
       margin: 0 0.5rem;
       flex-shrink: 0;
     }
 
     .avail-pill {
-      font-family: var(--f-sub);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: var(--ink2);
+      color: var(--gray);
       background: none;
       border: none;
-      border-bottom: 3px solid transparent;
-      padding: 1rem 1.4rem;
+      border-bottom: 1px solid transparent;
+      padding: 1.1rem 1.4rem;
       cursor: pointer;
       white-space: nowrap;
-      transition: color 0.15s, border-color 0.15s;
+      transition: color 0.2s, border-color 0.2s;
     }
 
-    .avail-pill:hover { color: var(--ink); }
-    .avail-pill.active { color: var(--ink); border-bottom-color: var(--ink); }
+    .avail-pill:hover { color: var(--white); }
+    .avail-pill.active { color: var(--gold); border-bottom-color: var(--gold); }
 
     .sort-wrap {
       margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
       padding-left: 1rem;
     }
 
     .sort-select {
       background: none;
       border: none;
-      font-family: var(--f-sub);
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--ink2);
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray);
       cursor: pointer;
       appearance: none;
-      padding: 0.3rem 1.4rem 0.3rem 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238a8885' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      padding: 0.3rem 1.2rem 0.3rem 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7874' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 0 center;
     }
 
     .sort-select:focus { outline: none; }
-    .sort-select option { background: #fff; font-weight: 600; }
+    .sort-select option { background: #0e0d0b; }
 
     /* ── GRID ── */
     .grid-wrap {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 0;
     }
 
-    /* ── PAGE ENTRANCE ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(22px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .collection-header { animation: fadeUp 0.55s cubic-bezier(0.16,1,0.3,1) both; }
-    .filter-bar        { animation: fadeUp 0.55s 0.08s cubic-bezier(0.16,1,0.3,1) both; }
-
-    /* ── GRID ── */
     .watch-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -244,143 +232,110 @@
 
     /* ── CARD ── */
     .watch-card {
-      background: var(--surface);
+      background: var(--deep);
       display: flex;
       flex-direction: column;
-      cursor: pointer;
       position: relative;
-      transition: background 0.25s, transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s cubic-bezier(0.16,1,0.3,1);
-      /* stagger set by JS via --i */
+      transition: background 0.3s, transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s;
       opacity: 0;
-      transform: translateY(28px);
+      transform: translateY(24px);
     }
 
     .watch-card.visible {
       animation: fadeUp 0.55s cubic-bezier(0.16,1,0.3,1) forwards;
-      animation-delay: calc(var(--i, 0) * 60ms);
+      animation-delay: calc(var(--i,0) * 60ms);
     }
 
     .watch-card:hover {
-      background: var(--hover-bg);
+      background: var(--surface);
       transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(17,16,16,0.10);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(201,168,76,0.12);
       z-index: 2;
     }
 
-    /* Image */
     .card-img {
       aspect-ratio: 1 / 1;
       overflow: hidden;
-      background: #f8f7f4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: #0c0b09;
       position: relative;
     }
 
     .card-img img {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       object-fit: cover;
-      object-position: center;
       transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
       display: block;
     }
 
     .watch-card:hover .card-img img { transform: scale(1.08); }
 
-    /* No image fallback */
-    .card-img-placeholder {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .card-img-placeholder svg { opacity: 0.15; }
-
-    .card-img-placeholder span {
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--ink3);
-    }
-
-    /* Photo count */
-    .photo-pill {
+    /* Scarcity tag */
+    .scarcity-tag {
       position: absolute;
-      bottom: 0.7rem;
-      right: 0.7rem;
-      background: rgba(255,255,255,0.9);
-      border: 1px solid var(--rule);
-      padding: 0.2rem 0.5rem;
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      color: var(--ink2);
-      border-radius: 2px;
+      top: 0.8rem; left: 0.8rem;
+      background: rgba(201,168,76,0.1);
+      border: 1px solid rgba(201,168,76,0.3);
+      color: var(--gold);
+      font-size: 0.46rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.6rem;
+      font-family: 'Courier Prime', monospace;
     }
 
-    /* Body */
     .card-body {
-      padding: 1rem 1.1rem 1.2rem;
+      padding: 1.2rem 1.3rem 1.4rem;
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
+      gap: 0.15rem;
       flex: 1;
+      border-top: 1px solid var(--rule);
     }
 
     .card-brand {
-      font-family: var(--f-sub);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
+      font-size: 0.48rem;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: var(--ink3);
+      color: var(--gold);
+      margin-bottom: 0.2rem;
     }
 
     .card-model {
-      font-family: var(--f-head);
-      font-size: 1.7rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--ink);
-      line-height: 1.05;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 300;
+      color: var(--white);
+      line-height: 1.15;
     }
 
     .card-ref {
-      font-family: var(--f-sub);
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--ink3);
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.58rem;
+      color: var(--gray);
       letter-spacing: 0.06em;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
     }
 
     .card-meta {
       display: flex;
-      align-items: center;
       gap: 0.4rem;
       flex-wrap: wrap;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.6rem;
     }
 
     .meta-tag {
-      font-family: var(--f-sub);
-      font-size: 11px;
-      font-weight: 700;
-      background: var(--bg);
+      font-size: 0.48rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gray);
       border: 1px solid var(--rule);
-      color: var(--ink2);
-      padding: 0.2rem 0.55rem;
-      letter-spacing: 0.06em;
+      padding: 0.2rem 0.5rem;
+      font-family: 'Courier Prime', monospace;
     }
 
     .card-footer {
       margin-top: auto;
-      padding-top: 0.85rem;
+      padding-top: 0.9rem;
       border-top: 1px solid var(--rule);
       display: flex;
       align-items: center;
@@ -389,59 +344,25 @@
     }
 
     .card-price {
-      font-family: var(--f-sub);
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--ink);
-      letter-spacing: 0.02em;
-    }
-
-    .card-price.ask {
-      font-family: var(--f-sub);
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink2);
-    }
-
-    /* Status */
-    .status-dot {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-family: var(--f-sub);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
+      font-size: 0.52rem;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--ink3);
+      color: var(--gray);
+      font-family: 'Courier Prime', monospace;
     }
 
-    .status-dot::before {
-      content: '';
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #aaa;
-      flex-shrink: 0;
-    }
-
-    .status-dot.available::before { background: #3d9970; }
-    .status-dot.sold::before { background: var(--ink3); }
-
-    .btn-inquire {
-      font-family: var(--f-sub);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
+    .btn-enquire {
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--ink);
-      background: var(--bg);
-      border: 1px solid var(--rule);
-      padding: 0.4rem 0.8rem;
-      border-radius: 3px;
+      color: var(--gold);
+      background: none;
+      border: 1px solid rgba(201,168,76,0.3);
+      padding: 0.45rem 0.9rem;
       cursor: pointer;
       text-decoration: none;
-      transition: background 0.2s, border-color 0.2s, color 0.2s, gap 0.2s, padding-right 0.2s;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
       white-space: nowrap;
       display: inline-flex;
       align-items: center;
@@ -449,207 +370,143 @@
       overflow: hidden;
     }
 
-    .btn-inquire .arrow {
+    .btn-enquire .arrow {
       display: inline-block;
       width: 0;
       overflow: hidden;
       transition: width 0.2s cubic-bezier(0.16,1,0.3,1), opacity 0.2s;
       opacity: 0;
-      font-size: 13px;
-      line-height: 1;
     }
 
-    .btn-inquire:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
-    .btn-inquire:hover .arrow { width: 14px; opacity: 1; }
-
-    .btn-inquire.sold {
-      color: var(--ink3);
-      pointer-events: none;
-      background: none;
+    .btn-enquire:hover {
+      background: rgba(201,168,76,0.08);
+      border-color: var(--gold);
+      color: var(--gold2);
     }
 
-    /* Sold overlay */
-    .watch-card[data-status="sold"] .card-img::after {
-      content: 'SOLD';
-      position: absolute;
-      inset: 0;
-      background: rgba(245,244,241,0.65);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.3em;
-      color: var(--ink2);
-    }
+    .btn-enquire:hover .arrow { width: 14px; opacity: 1; }
+    .btn-enquire:focus-visible { outline: 1px solid var(--gold); outline-offset: 2px; }
 
-    /* Empty state */
+    /* ── EMPTY STATE ── */
     .empty-state {
       grid-column: 1 / -1;
       padding: 6rem 2rem;
       text-align: center;
-      background: var(--surface);
+      background: var(--deep);
     }
 
     .empty-state p {
-      font-size: 14px;
-      color: var(--ink3);
-    }
-
-    /* ── LIGHTBOX ── */
-    #lightbox {
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      background: rgba(250,249,246,0.97);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-    }
-
-    #lightbox.open {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .lb-layout {
-      display: flex;
-      gap: 4rem;
-      align-items: center;
-      max-width: 900px;
-      width: 90vw;
-      padding: 2rem;
-    }
-
-    .lb-img-area {
-      flex: 1;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .lb-img-area img {
-      max-width: 100%;
-      max-height: 70vh;
-      object-fit: contain;
-      display: block;
-    }
-
-    .lb-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: var(--surface);
-      border: 1px solid var(--rule);
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      border-radius: 50%;
-      font-size: 14px;
-      color: var(--ink2);
-      transition: border-color 0.2s, color 0.2s;
-    }
-
-    .lb-arrow:hover { border-color: var(--ink); color: var(--ink); }
-    .lb-prev { left: -50px; }
-    .lb-next { right: -50px; }
-
-    .lb-info {
-      width: 200px;
-      flex-shrink: 0;
-    }
-
-    .lb-brand {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.2em;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: var(--ink3);
-      margin-bottom: 0.4rem;
+      color: var(--gray);
     }
 
-    .lb-model {
-      font-family: 'DM Serif Display', serif;
-      font-size: 1.4rem;
-      font-weight: 400;
-      color: var(--ink);
-      line-height: 1.2;
-      margin-bottom: 0.3rem;
-    }
-
-    .lb-ref {
-      font-size: 12px;
-      color: var(--ink3);
-      margin-bottom: 1.5rem;
-    }
-
-    .lb-counter {
-      font-size: 11px;
-      color: var(--ink3);
-      letter-spacing: 0.1em;
-    }
-
-    .lb-close {
-      position: fixed;
-      top: 1.5rem;
-      right: 1.5rem;
-      background: var(--surface);
-      border: 1px solid var(--rule);
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
+    /* ── CTA BAND ── */
+    .cta-band {
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 2.5rem 3rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      font-size: 14px;
-      color: var(--ink2);
-      transition: border-color 0.2s, color 0.2s;
+      gap: 1.5rem;
+      background: var(--deep);
+      flex-wrap: wrap;
     }
 
-    .lb-close:hover { border-color: var(--ink); color: var(--ink); }
+    .cta-band p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: var(--gray);
+      font-style: italic;
+    }
+
+    .cta-link {
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.54rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      border: 1px solid rgba(201,168,76,0.35);
+      padding: 0.7rem 1.6rem;
+      transition: background 0.25s, color 0.25s, border-color 0.25s;
+      white-space: nowrap;
+    }
+
+    .cta-link:hover { background: var(--gold); color: var(--black); border-color: var(--gold); }
+    .cta-link:focus-visible { outline: 1px solid var(--gold); outline-offset: 3px; }
+
+    /* ── FLOATING WA BUTTON ── */
+    .wa-float {
+      position: fixed;
+      bottom: 2rem; right: 2rem;
+      z-index: 900;
+      width: 58px; height: 58px;
+      border-radius: 50%;
+      background: var(--deep);
+      border: 1px solid var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s;
+      min-width: 44px; min-height: 44px;
+    }
+
+    .wa-float::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.35);
+      animation: wa-pulse 2.4s ease-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes wa-pulse {
+      0%   { transform: scale(0.95); opacity: 0.5; }
+      70%  { transform: scale(1.18); opacity: 0; }
+      100% { transform: scale(1.18); opacity: 0; }
+    }
+
+    .wa-float:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(201,168,76,0.2); }
+    .wa-float:focus-visible { outline: 1px solid var(--gold); outline-offset: 4px; }
+    .wa-float svg { width: 24px; height: 24px; fill: var(--gold); }
 
     /* ── FOOTER ── */
     footer {
+      background: var(--deep);
       border-top: 1px solid var(--rule);
-      padding: 2rem 2.5rem;
+      padding: 2rem 3rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: var(--surface);
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
     footer p {
-      font-size: 12px;
-      color: var(--ink3);
+      font-size: 0.52rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #2e2b26;
     }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 1100px) {
-      .watch-grid { grid-template-columns: repeat(3, 1fr); }
-    }
-
-    @media (max-width: 860px) {
+    @media (max-width: 1100px) { .watch-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 860px)  {
       .watch-grid { grid-template-columns: repeat(2, 1fr); }
-      .collection-header h1 { font-size: 3rem; }
-      .lb-layout { flex-direction: column; gap: 2rem; }
-      .lb-info { width: 100%; }
-      .lb-prev { left: -40px; }
-      .lb-next { right: -40px; }
+      .collection-header { padding: 2rem 1.5rem 1.5rem; }
+      .filter-bar { padding: 0 1.5rem; }
+      .cta-band { padding: 2rem 1.5rem; flex-direction: column; text-align: center; }
     }
-
-    @media (max-width: 500px) {
-      #nav { padding: 0 1.2rem; }
-      .collection-header { padding: 1.5rem 1.2rem 1rem; }
-      .filter-bar { padding: 0 1.2rem; }
+    @media (max-width: 500px)  {
+      #nav { padding: 0 1.5rem; }
       .nav-links { display: none; }
+      .watch-grid { grid-template-columns: repeat(2, 1fr); }
+      footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; }
     }
   </style>
 </head>
@@ -657,7 +514,7 @@
 
   <!-- NAV -->
   <nav id="nav">
-    <a class="nav-logo" href="index.html">HM Watches</a>
+    <a class="nav-logo" href="index.html">Maison</a>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
       <li><a href="collection.html" class="active">Collection</a></li>
@@ -669,7 +526,7 @@
   <!-- PAGE HEADER -->
   <div class="collection-header">
     <h1>Collection</h1>
-    <p id="result-count">— pieces · Dubai, UAE</p>
+    <p id="result-count">— pieces · Paris · Dubai · Geneva</p>
   </div>
 
   <!-- FILTER BAR -->
@@ -684,8 +541,6 @@
     <div class="sort-wrap">
       <select class="sort-select" id="sort-select">
         <option value="default">Sort: Default</option>
-        <option value="price-asc">Price: Low → High</option>
-        <option value="price-desc">Price: High → Low</option>
         <option value="year-desc">Year: Newest</option>
       </select>
     </div>
@@ -696,199 +551,147 @@
     <div class="watch-grid" id="grid"></div>
   </div>
 
-  <footer>
-    <p>© 2024 HM Watches — Dubai, UAE</p>
-    <p>All pieces verified &amp; certified. Inquiries by appointment.</p>
-  </footer>
-
-  <!-- LIGHTBOX -->
-  <div id="lightbox" role="dialog" aria-modal="true">
-    <button class="lb-close" id="lb-close" aria-label="Close">✕</button>
-    <div class="lb-layout">
-      <div class="lb-img-area">
-        <button class="lb-arrow lb-prev" id="lb-prev" aria-label="Previous">‹</button>
-        <img id="lb-img" src="" alt="" />
-        <button class="lb-arrow lb-next" id="lb-next" aria-label="Next">›</button>
-      </div>
-      <div class="lb-info">
-        <div class="lb-brand" id="lb-brand"></div>
-        <div class="lb-model" id="lb-model"></div>
-        <div class="lb-ref"   id="lb-ref"></div>
-        <div class="lb-counter" id="lb-counter"></div>
-      </div>
-    </div>
+  <!-- CTA BAND -->
+  <div class="cta-band">
+    <p>Every piece authenticated, serviced, and fully documented.</p>
+    <a class="cta-link"
+       href="https://wa.me/PHONENUMBER?text=Hello%20MAISON%2C%20I%27d%20like%20to%20enquire%20about%20a%20timepiece."
+       target="_blank" rel="noopener">Enquire on WhatsApp</a>
+    <a class="cta-link" href="index.html#stop-appointment">Book a Private Viewing</a>
   </div>
 
-  <script src="assets/js/watches.js"></script>
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 MAISON — All rights reserved</p>
+    <p>Paris · Dubai · Geneva</p>
+    <p>Authorised Independent Retailer</p>
+  </footer>
+
+  <!-- FLOATING WA BUTTON -->
+  <a class="wa-float"
+     href="https://wa.me/PHONENUMBER?text=Hello%20MAISON%2C%20I%27d%20like%20to%20enquire%20about%20a%20timepiece."
+     target="_blank" rel="noopener"
+     aria-label="Enquire on WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
   <script>
+    /* Replace PHONENUMBER with your number in international format, no + or spaces */
+    const WA = 'PHONENUMBER';
 
-    /* ── STATE ── */
-    let activeBrand  = "all";
-    let availOnly    = false;
-    let activeSort   = "default";
-    let lbWatch      = null;
-    let lbIndex      = 0;
+    const WATCHES = [
+      /* ── ROLEX ── */
+      { id:1,  brand:'Rolex',           model:'Daytona',            ref:'116500LN',            year:2022, condition:'Mint',      status:'available', case:'Oystersteel / Cerachrom',  tag:'Just acquired',
+        photo:'https://images.pexels.com/photos/364822/rolex-watch-time-luxury-364822.jpeg?auto=compress&cs=tinysrgb&w=800' },
+      { id:2,  brand:'Rolex',           model:'GMT-Master II',      ref:'126710BLRO',           year:2023, condition:'Unworn',    status:'available', case:'Oystersteel',              tag:'1 available',
+        photo:'https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?auto=compress&cs=tinysrgb&w=800' },
+      { id:3,  brand:'Rolex',           model:'Submariner Date',    ref:'126610LN',             year:2021, condition:'Excellent', status:'available', case:'Oystersteel / Cerachrom',  tag:null,
+        photo:'https://images.pexels.com/photos/380782/pexels-photo-380782.jpeg?auto=compress&cs=tinysrgb&w=800' },
+      /* ── AUDEMARS PIGUET ── */
+      { id:4,  brand:'Audemars Piguet', model:'Royal Oak',          ref:'15500ST.OO.1220ST.01', year:2023, condition:'Unworn',    status:'available', case:'Stainless Steel',          tag:'Just acquired',
+        photo:'https://images.pexels.com/photos/3419331/pexels-photo-3419331.jpeg?auto=compress&cs=tinysrgb&w=800' },
+      { id:5,  brand:'Audemars Piguet', model:'Royal Oak Offshore', ref:'26400RO.OO.A002CA.01', year:2019, condition:'Very Good', status:'available', case:'18k Rose Gold',            tag:null,
+        photo:'https://images.pexels.com/photos/16739804/pexels-photo-16739804.jpeg?auto=compress&cs=tinysrgb&w=800' },
+      { id:6,  brand:'Audemars Piguet', model:'Royal Oak Concept',  ref:'26227TI.OO.D002CA.01', year:2021, condition:'Mint',      status:'available', case:'Titanium',                 tag:'Reserved',
+        photo:'https://images.pexels.com/photos/9267843/pexels-photo-9267843.jpeg?auto=compress&cs=tinysrgb&w=800' },
+      /* ── PATEK PHILIPPE ── */
+      { id:7,  brand:'Patek Philippe',  model:'Nautilus',           ref:'5711/1A-014',          year:2021, condition:'Mint',      status:'available', case:'Stainless Steel',          tag:'1 available',
+        photo:'https://images.pexels.com/photos/60147/pexels-photo-60147.jpeg?auto=compress&cs=tinysrgb&w=800' },
+      { id:8,  brand:'Patek Philippe',  model:'Aquanaut',           ref:'5167A-001',             year:2022, condition:'Excellent', status:'available', case:'Stainless Steel',          tag:null,
+        photo:'https://images.pexels.com/photos/3809175/pexels-photo-3809175.jpeg?auto=compress&cs=tinysrgb&w=800' },
+      { id:9,  brand:'Patek Philippe',  model:'Perpetual Calendar', ref:'5327G-001',             year:2020, condition:'Very Good', status:'available', case:'18k White Gold',           tag:null,
+        photo:'https://images.pexels.com/photos/5058216/pexels-photo-5058216.jpeg?auto=compress&cs=tinysrgb&w=800' },
+      /* ── RICHARD MILLE ── */
+      { id:10, brand:'Richard Mille',   model:'RM 011-03',          ref:'RM 011-03',             year:2021, condition:'Excellent', status:'available', case:'Titanium / TTAL',          tag:null,
+        photo:'https://images.pexels.com/photos/5058216/pexels-photo-5058216.jpeg?auto=compress&cs=tinysrgb&w=800' },
+      { id:11, brand:'Richard Mille',   model:'RM 67-02',           ref:'RM 67-02',              year:2022, condition:'Mint',      status:'available', case:'Carbon TPT',               tag:'Just acquired',
+        photo:'https://images.pexels.com/photos/9267843/pexels-photo-9267843.jpeg?auto=compress&cs=tinysrgb&w=800' },
+      { id:12, brand:'Richard Mille',   model:'RM 035-02',          ref:'RM 035-02',             year:2020, condition:'Very Good', status:'available', case:'NTPT Carbon',              tag:null,
+        photo:'https://images.pexels.com/photos/16739804/pexels-photo-16739804.jpeg?auto=compress&cs=tinysrgb&w=800' },
+    ];
 
-    /* ── UTILS ── */
-    function fmtPrice(w) {
-      if (!w.price) return null;
-      return w.currency + " " + w.price.toLocaleString("en-US");
-    }
+    let activeBrand = 'all';
+    let availOnly   = false;
+    let activeSort  = 'default';
 
     function filtered() {
       let list = [...WATCHES];
-      if (activeBrand !== "all") list = list.filter(w => w.brand === activeBrand);
-      if (availOnly)             list = list.filter(w => w.status === "available");
-      if (activeSort === "price-asc")  list.sort((a,b) => (a.price||0) - (b.price||0));
-      if (activeSort === "price-desc") list.sort((a,b) => (b.price||0) - (a.price||0));
-      if (activeSort === "year-desc")  list.sort((a,b) => (b.year||0)  - (a.year||0));
+      if (activeBrand !== 'all') list = list.filter(w => w.brand === activeBrand);
+      if (availOnly)             list = list.filter(w => w.status === 'available');
+      if (activeSort === 'year-desc') list.sort((a,b) => b.year - a.year);
       return list;
     }
 
-    /* ── COUNTS ── (no-op, counts removed from pills) */
-    function updateCounts() {}
+    function waLink(w) {
+      const msg = encodeURIComponent(
+        `Hello MAISON, I’m interested in the ${w.brand} ${w.model} ref. ${w.ref} — is it available?`
+      );
+      return `https://wa.me/${WA}?text=${msg}`;
+    }
 
-    /* ── RENDER ── */
     function renderGrid() {
-      const grid = document.getElementById("grid");
+      const grid = document.getElementById('grid');
       const list = filtered();
-
-      document.getElementById("result-count").textContent =
-        list.length + " piece" + (list.length !== 1 ? "s" : "") + " · Dubai, UAE";
+      document.getElementById('result-count').textContent =
+        list.length + ' piece' + (list.length !== 1 ? 's' : '') + ' · Paris · Dubai · Geneva';
 
       if (!list.length) {
-        grid.innerHTML = `<div class="empty-state"><p>No pieces match this filter.</p></div>`;
+        grid.innerHTML = '<div class="empty-state"><p>No pieces match this filter.</p></div>';
         return;
       }
 
-      grid.innerHTML = list.map((w, i) => {
-        const sold  = w.status === "sold";
-        const photo = w.photos && w.photos[0];
-        const price = fmtPrice(w);
-
-        return `
-        <article class="watch-card" data-status="${w.status}" data-id="${w.id}" style="--i:${i};"
-          <a class="card-img-link" href="product.html?id=${w.id}" style="display:block;text-decoration:none;">
+      grid.innerHTML = list.map((w, i) => `
+        <article class="watch-card" style="--i:${i}" data-brand="${w.brand}" data-status="${w.status}">
+          <a href="${waLink(w)}" target="_blank" rel="noopener" style="display:block;text-decoration:none" aria-label="Enquire about ${w.brand} ${w.model}">
             <div class="card-img">
-              ${photo
-                ? `<img src="${photo}" alt="${w.brand} ${w.model}" loading="lazy"
-                     onerror="this.parentElement.innerHTML='<div class=card-img-placeholder><svg width=40 height=40 viewBox=\'0 0 40 40\' fill=\'none\'><circle cx=\'20\' cy=\'20\' r=\'18\' stroke=\'%23aaa\' stroke-width=\'1.5\'/><circle cx=\'20\' cy=\'20\' r=\'6\' stroke=\'%23aaa\' stroke-width=\'1.5\'/></svg><span>No image</span></div>'" />`
-                : `<div class="card-img-placeholder">
-                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                       <circle cx="20" cy="20" r="18" stroke="#aaa" stroke-width="1.5"/>
-                       <circle cx="20" cy="20" r="6" stroke="#aaa" stroke-width="1.5"/>
-                     </svg>
-                     <span>Photo pending</span>
-                   </div>`
-              }
-              ${w.photos && w.photos.length > 1
-                ? `<div class="photo-pill">${w.photos.length} photos</div>`
-                : ""}
+              <img src="${w.photo}" alt="${w.brand} ${w.model} ref. ${w.ref}" loading="lazy" />
+              ${w.tag ? `<div class="scarcity-tag">${w.tag}</div>` : ''}
             </div>
           </a>
-
           <div class="card-body">
             <div class="card-brand">${w.brand}</div>
             <div class="card-model">${w.model}</div>
             <div class="card-ref">Ref. ${w.ref}</div>
             <div class="card-meta">
-              ${w.year ? `<span class="meta-tag">${w.year}</span>` : ""}
-              ${w.case_material ? `<span class="meta-tag">${w.case_material}</span>` : ""}
+              <span class="meta-tag">${w.year}</span>
+              <span class="meta-tag">${w.condition}</span>
+              <span class="meta-tag">${w.case}</span>
             </div>
             <div class="card-footer">
-              <div>
-                ${price
-                  ? `<div class="card-price">${price}</div>`
-                  : `<div class="card-price ask">Price on application</div>`}
-                <div class="status-dot ${w.status}">${sold ? "Sold" : "Available"}</div>
-              </div>
-              ${sold
-                ? `<button class="btn-inquire sold">Sold</button>`
-                : `<a class="btn-inquire" href="product.html?id=${w.id}">View<span class="arrow">→</span></a>`
-              }
+              <div class="card-price">Price on Request</div>
+              <a class="btn-enquire" href="${waLink(w)}" target="_blank" rel="noopener"
+                 aria-label="Enquire about ${w.brand} ${w.model} on WhatsApp">
+                Enquire<span class="arrow"> →</span>
+              </a>
             </div>
           </div>
-        </article>`;
-      }).join("");
+        </article>`).join('');
 
-      updateCounts();
-
-      /* Stagger entrance */
       requestAnimationFrame(() => {
-        document.querySelectorAll(".watch-card").forEach(card => card.classList.add("visible"));
+        document.querySelectorAll('.watch-card').forEach(c => c.classList.add('visible'));
       });
     }
 
-    /* ── LIGHTBOX ── */
-    function openLightbox(id, idx) {
-      lbWatch = WATCHES.find(w => w.id === id);
-      if (!lbWatch || !lbWatch.photos || !lbWatch.photos.length) return;
-      lbIndex = idx;
-      paintLb();
-      document.getElementById("lightbox").classList.add("open");
-      document.body.style.overflow = "hidden";
-    }
-
-    function closeLightbox() {
-      document.getElementById("lightbox").classList.remove("open");
-      document.body.style.overflow = "";
-    }
-
-    function paintLb() {
-      document.getElementById("lb-img").src    = lbWatch.photos[lbIndex];
-      document.getElementById("lb-img").alt    = `${lbWatch.brand} ${lbWatch.model}`;
-      document.getElementById("lb-brand").textContent = lbWatch.brand;
-      document.getElementById("lb-model").textContent = lbWatch.model;
-      document.getElementById("lb-ref").textContent   = "Ref. " + lbWatch.ref;
-      const n = lbWatch.photos.length;
-      document.getElementById("lb-counter").textContent = n > 1 ? `${lbIndex + 1} / ${n}` : "";
-      document.getElementById("lb-prev").style.visibility = n > 1 ? "visible" : "hidden";
-      document.getElementById("lb-next").style.visibility = n > 1 ? "visible" : "hidden";
-    }
-
-    document.getElementById("lb-close").addEventListener("click", closeLightbox);
-    document.getElementById("lb-prev").addEventListener("click", () => {
-      lbIndex = (lbIndex - 1 + lbWatch.photos.length) % lbWatch.photos.length;
-      paintLb();
-    });
-    document.getElementById("lb-next").addEventListener("click", () => {
-      lbIndex = (lbIndex + 1) % lbWatch.photos.length;
-      paintLb();
-    });
-    document.getElementById("lightbox").addEventListener("click", e => {
-      if (e.target === document.getElementById("lightbox")) closeLightbox();
-    });
-    document.addEventListener("keydown", e => {
-      if (!document.getElementById("lightbox").classList.contains("open")) return;
-      if (e.key === "Escape")     closeLightbox();
-      if (e.key === "ArrowLeft")  { lbIndex = (lbIndex - 1 + lbWatch.photos.length) % lbWatch.photos.length; paintLb(); }
-      if (e.key === "ArrowRight") { lbIndex = (lbIndex + 1) % lbWatch.photos.length; paintLb(); }
-    });
-
-    /* ── BRAND FILTERS ── */
-    document.querySelectorAll(".filter-pill").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".filter-pill").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
         activeBrand = btn.dataset.filter;
         renderGrid();
       });
     });
 
-    /* ── AVAILABILITY ── */
-    document.getElementById("avail-pill").addEventListener("click", function() {
+    document.getElementById('avail-pill').addEventListener('click', function() {
       availOnly = !availOnly;
-      this.classList.toggle("active", availOnly);
+      this.classList.toggle('active', availOnly);
       renderGrid();
     });
 
-    /* ── SORT ── */
-    document.getElementById("sort-select").addEventListener("change", e => {
+    document.getElementById('sort-select').addEventListener('change', e => {
       activeSort = e.target.value;
       renderGrid();
     });
 
-    /* ── INIT ── */
     renderGrid();
   </script>
 </body>

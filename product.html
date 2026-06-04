@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Watch — HM Watches</title>
+  <title>Watch — MAISON</title>
+  <meta name="description" content="Authenticated pre-owned luxury timepieces. MAISON — private dealer. Dubai · Paris · Geneva." />
+  <meta property="og:title" content="MAISON — Pre-Owned Luxury Watches" />
+  <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
@@ -753,6 +756,39 @@
 
     footer p { font-family: var(--f-sub); font-size: 13px; font-weight: 600; color: var(--ink3); letter-spacing: 0.06em; }
 
+    /* ── FLOATING WHATSAPP ── */
+    .wa-float {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 900;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: #0c0b09;
+      border: 1px solid #c9a84c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #c9a84c;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .wa-float:hover { background: #c9a84c; color: #070604; transform: scale(1.08); }
+    .wa-float::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.35);
+      animation: wa-pulse 2.4s ease-out infinite;
+    }
+    @keyframes wa-pulse {
+      0%   { transform: scale(0.95); opacity: 0.5; }
+      70%  { transform: scale(1.18); opacity: 0; }
+      100% { transform: scale(1.18); opacity: 0; }
+    }
+
     /* ── SOLD STATE ── */
     body.is-sold .cta-stack .btn-primary {
       background: var(--ink3);
@@ -784,7 +820,7 @@
 
   <!-- NAV -->
   <nav id="nav">
-    <a class="nav-logo" href="index.html">HM Watches</a>
+    <a class="nav-logo" href="index.html">MAISON</a>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
       <li><a href="collection.html">Collection</a></li>
@@ -865,8 +901,18 @@
     <div class="related-grid" id="related-grid"></div>
   </div>
 
+  <!-- Floating WhatsApp Button -->
+  <a href="https://wa.me/PHONENUMBER?text=Hello%20MAISON%2C%20I%27d%20like%20to%20enquire%20about%20a%20timepiece."
+     class="wa-float"
+     id="wa-float-btn"
+     target="_blank"
+     rel="noopener noreferrer"
+     aria-label="Chat with MAISON on WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor" style="width:26px;height:26px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.85L.057 23.571a.75.75 0 0 0 .937.937l5.72-1.465A11.94 11.94 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-1.943 0-3.773-.523-5.35-1.435l-.383-.228-3.97 1.017 1.017-3.97-.228-.383A9.75 9.75 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/></svg>
+  </a>
+
   <footer>
-    <p>© 2024 HM Watches — Dubai, UAE</p>
+    <p>© 2025 MAISON — Paris · Dubai · Geneva</p>
     <p>All pieces verified &amp; certified. Inquiries by appointment.</p>
   </footer>
 
@@ -906,7 +952,7 @@
       const sold = w.status === "sold";
 
       /* Page title */
-      document.title = `${w.brand} ${w.model} — HM Watches`;
+      document.title = `${w.brand} ${w.model} — MAISON`;
 
       /* Breadcrumb */
       document.getElementById("bc-brand").textContent = w.brand;
@@ -934,6 +980,8 @@
 
       /* CTAs */
       const waMsg = encodeURIComponent(`Hi, I'm interested in the ${w.brand} ${w.model} Ref. ${w.ref}`);
+      const floatBtn = document.getElementById('wa-float-btn');
+      if (floatBtn) floatBtn.href = `https://wa.me/${WA_NUMBER}?text=${waMsg}`;
       document.getElementById("cta-stack").innerHTML = sold
         ? `<button class="btn-primary" disabled style="opacity:.5;cursor:default">Sold</button>`
         : `<a class="btn-primary" href="https://wa.me/${WA_NUMBER}?text=${waMsg}" target="_blank" rel="noopener">
