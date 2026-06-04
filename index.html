@@ -243,9 +243,31 @@
   .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(120%);background:var(--gold);color:var(--black);padding:1rem 1.8rem;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;z-index:300;transition:transform .5s cubic-bezier(.16,1,.3,1)}
   .toast.show{transform:translateX(-50%) translateY(0)}
 
+  /* ---- collection filters + watch card extras ---- */
+  .coll-head{display:flex;align-items:flex-end;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;margin-bottom:1.8rem}
+  #result-count{font-family:'Jost',sans-serif;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);padding-bottom:.3rem}
+  .filter-bar{background:var(--charcoal);border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;align-items:center;overflow-x:auto;gap:0;scrollbar-width:none;margin:0 -2.5rem 2.2rem;padding:0 2.5rem}
+  .filter-bar::-webkit-scrollbar{display:none}
+  .fpill{font-family:'Jost',sans-serif;font-size:.65rem;font-weight:500;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;padding:.85rem 1.1rem;cursor:pointer;white-space:nowrap;transition:color .2s,border-color .2s}
+  .fpill:hover{color:var(--cream)}
+  .fpill.active{color:var(--gold);border-bottom-color:var(--gold)}
+  .fsep{width:1px;height:1rem;background:var(--line);flex-shrink:0;margin:0 .4rem}
+  .fsort{margin-left:auto;background:none;border:none;font-family:'Jost',sans-serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);cursor:pointer;appearance:none;padding:.3rem 1.4rem .3rem 0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238a8579' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 0 center}
+  .fsort:focus{outline:none}
+  .fsort option{background:var(--charcoal)}
+  .card-model{font-family:'Bebas Neue',sans-serif;font-size:1.75rem;letter-spacing:.06em;color:var(--cream);line-height:1.05}
+  .card-spec{font-family:'JetBrains Mono',monospace;font-size:.66rem;color:var(--muted);letter-spacing:.04em;margin-bottom:.3rem}
+  .card-meta{display:flex;gap:.35rem;flex-wrap:wrap;margin:.4rem 0}
+  .meta-tag{font-family:'Jost',sans-serif;font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);padding:.18rem .5rem}
+  .card-footer{margin-top:auto;padding-top:.85rem;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+  .card-price{font-family:'Jost',sans-serif;font-size:.56rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+  .scarcity-tag{position:absolute;top:.8rem;left:.8rem;background:rgba(197,165,114,.1);border:1px solid rgba(197,165,114,.35);color:var(--gold);font-family:'Jost',sans-serif;font-size:.5rem;font-weight:500;letter-spacing:.28em;text-transform:uppercase;padding:.22rem .6rem;z-index:2}
+  #coll-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem}
+  .coll-empty{grid-column:1/-1;padding:5rem 2rem;text-align:center;font-family:'Jost',sans-serif;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);background:var(--charcoal);border:1px solid var(--line)}
+
   /* ---- responsive ---- */
   @media(max-width:1024px){
-    .brands,.products{grid-template-columns:repeat(2,1fr)}
+    .brands,.products,#coll-grid{grid-template-columns:repeat(2,1fr)}
     .reasons,.trust{grid-template-columns:1fr}
     .sell-wrap,.services,.foot-grid{grid-template-columns:1fr}
     .foot-grid{gap:2rem}
@@ -256,12 +278,13 @@
     .nav-links{display:none}
     .menu-toggle{display:flex}
     section{padding:4.5rem 1.4rem}
-    .brands,.products{grid-template-columns:1fr}
+    .brands,.products,#coll-grid{grid-template-columns:1fr}
     .brand-tile{height:22rem}
     .valform{grid-template-columns:1fr}
     .stats{gap:2.5rem}
     .hero-inner{padding:0 1.4rem}
     .mega{display:none}
+    .filter-bar{margin:0 -1.4rem 2rem;padding:0 1.4rem}
   }
 </style>
 </head>
@@ -322,7 +345,7 @@
     <h1>The Luxury Watch <em>Expert</em></h1>
     <p>Rolex, Audemars Piguet, Patek Philippe & Richard Mille — over 1,000 authenticated timepieces, curated for collectors and first-time buyers alike.</p>
     <div class="hero-cta">
-      <a href="#products" class="btn"><span>Shop the Collection</span></a>
+      <a href="#collection" class="btn"><span>Shop the Collection</span></a>
       <a href="#sell" class="btn btn-ghost"><span>Sell Your Watch</span></a>
     </div>
   </div>
@@ -344,14 +367,29 @@
   </div>
 </section>
 
-<!-- PRODUCTS -->
-<section id="products">
-  <div class="sec-head reveal">
-    <span class="sec-eyebrow">Just In</span>
-    <h2 class="sec-title">New Arrivals</h2>
-    <p class="sec-sub">Fresh to the showroom. Contact us for the most accurate, up-to-date pricing on every reference.</p>
+<!-- COLLECTION -->
+<section id="collection">
+  <div class="sec-head reveal coll-head">
+    <div>
+      <span class="sec-eyebrow">Curated Inventory</span>
+      <h2 class="sec-title">The Collection</h2>
+    </div>
+    <span id="result-count"></span>
   </div>
-  <div class="products" id="productGrid"></div>
+  <div class="filter-bar">
+    <button class="fpill active" data-filter="all">All</button>
+    <button class="fpill" data-filter="Rolex">Rolex</button>
+    <button class="fpill" data-filter="Audemars Piguet">AP</button>
+    <button class="fpill" data-filter="Patek Philippe">Patek</button>
+    <button class="fpill" data-filter="Richard Mille">RM</button>
+    <div class="fsep"></div>
+    <button class="fpill" id="avail-pill">Available Only</button>
+    <select class="fsort" id="sort-select">
+      <option value="default">Sort: Default</option>
+      <option value="year-desc">Year: Newest</option>
+    </select>
+  </div>
+  <div id="coll-grid"></div>
 </section>
 
 <!-- SELL -->
@@ -484,35 +522,36 @@
   function go(i){slides[cur].classList.remove('active');dots[cur].classList.remove('active');cur=i;slides[cur].classList.add('active');dots[cur].classList.add('active')}
   setInterval(()=>go((cur+1)%slides.length),5500);
 
-  // products
-  const items=[
-    {b:'Patek Philippe',r:'4946G-001',badge:'New'},
-    {b:'Rolex',r:'126506-0002',badge:'New'},
-    {b:'Rolex',r:'126519LN-0002',badge:''},
-    {b:'Rolex',r:'278273-0018',badge:'Bestseller'},
-    {b:'Rolex',r:'126710BLNR-0002',badge:''},
-    {b:'Audemars Piguet',r:'15500ST-0001',badge:'Bestseller'},
-    {b:'Rolex',r:'126500LN-0002',badge:''},
-    {b:'Richard Mille',r:'RM 11-03',badge:'Rare'}
+  // collection
+  const WA='PHONENUMBER';
+  const WATCHES=[
+    {id:1,brand:'Rolex',model:'Daytona',ref:'116500LN',year:2022,condition:'Mint',status:'available',case:'Oystersteel / Cerachrom',tag:'Just acquired',photo:'https://images.pexels.com/photos/364822/rolex-watch-time-luxury-364822.jpeg?auto=compress&cs=tinysrgb&w=800'},
+    {id:2,brand:'Rolex',model:'GMT-Master II',ref:'126710BLRO',year:2023,condition:'Unworn',status:'available',case:'Oystersteel',tag:'1 available',photo:'https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?auto=compress&cs=tinysrgb&w=800'},
+    {id:3,brand:'Rolex',model:'Submariner Date',ref:'126610LN',year:2021,condition:'Excellent',status:'available',case:'Oystersteel / Cerachrom',tag:null,photo:'https://images.pexels.com/photos/1697214/pexels-photo-1697214.jpeg?auto=compress&cs=tinysrgb&w=800'},
+    {id:4,brand:'Audemars Piguet',model:'Royal Oak',ref:'15500ST.OO.1220ST.01',year:2023,condition:'Unworn',status:'available',case:'Stainless Steel',tag:'Just acquired',photo:'https://images.pexels.com/photos/2783873/pexels-photo-2783873.jpeg?auto=compress&cs=tinysrgb&w=800'},
+    {id:5,brand:'Audemars Piguet',model:'Royal Oak Offshore',ref:'26400RO.OO.A002CA.01',year:2019,condition:'Very Good',status:'available',case:'18k Rose Gold',tag:null,photo:'https://images.pexels.com/photos/3622622/pexels-photo-3622622.jpeg?auto=compress&cs=tinysrgb&w=800'},
+    {id:6,brand:'Audemars Piguet',model:'Royal Oak Concept',ref:'26227TI.OO.D002CA.01',year:2021,condition:'Mint',status:'available',case:'Titanium',tag:'Reserved',photo:'https://images.pexels.com/photos/1034063/pexels-photo-1034063.jpeg?auto=compress&cs=tinysrgb&w=800'},
+    {id:7,brand:'Patek Philippe',model:'Nautilus',ref:'5711/1A-014',year:2021,condition:'Mint',status:'available',case:'Stainless Steel',tag:'1 available',photo:'https://images.pexels.com/photos/236915/pexels-photo-236915.jpeg?auto=compress&cs=tinysrgb&w=800'},
+    {id:8,brand:'Patek Philippe',model:'Aquanaut',ref:'5167A-001',year:2022,condition:'Excellent',status:'available',case:'Stainless Steel',tag:null,photo:'https://images.pexels.com/photos/2113994/pexels-photo-2113994.jpeg?auto=compress&cs=tinysrgb&w=800'},
+    {id:9,brand:'Patek Philippe',model:'Perpetual Calendar',ref:'5327G-001',year:2020,condition:'Very Good',status:'available',case:'18k White Gold',tag:null,photo:'https://images.pexels.com/photos/1345066/pexels-photo-1345066.jpeg?auto=compress&cs=tinysrgb&w=800'},
+    {id:10,brand:'Richard Mille',model:'RM 011-03',ref:'RM 011-03',year:2021,condition:'Excellent',status:'available',case:'Titanium / TTAL',tag:null,photo:'https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?auto=compress&cs=tinysrgb&w=800'},
+    {id:11,brand:'Richard Mille',model:'RM 67-02',ref:'RM 67-02',year:2022,condition:'Mint',status:'available',case:'Carbon TPT',tag:'Just acquired',photo:'https://images.pexels.com/photos/364822/rolex-watch-time-luxury-364822.jpeg?auto=compress&cs=tinysrgb&w=800'},
+    {id:12,brand:'Richard Mille',model:'RM 035-02',ref:'RM 035-02',year:2020,condition:'Very Good',status:'available',case:'NTPT Carbon',tag:null,photo:'https://images.pexels.com/photos/2783873/pexels-photo-2783873.jpeg?auto=compress&cs=tinysrgb&w=800'},
   ];
-  const imgs=[
-    'photo-1523275335684-37898b6baf30','photo-1612817159949-195b6eb9e31a','photo-1614164185128-e4ec99c436d7',
-    'photo-1547996160-81dfa63595aa','photo-1620625515032-6ed0c1790c75','photo-1639037687537-1f3c0fe6e6b8',
-    'photo-1606133693819-13b2ba0c4d2f','photo-1434056886845-dac89ffe9b56'
-  ];
-  const grid=document.getElementById('productGrid');
-  items.forEach((it,i)=>{
-    const badge=it.badge?`<span class="badge${it.badge==='Bestseller'||it.badge==='Rare'?' dark':''}">${it.badge}</span>`:'';
-    grid.insertAdjacentHTML('beforeend',`
-      <div class="card reveal">
-        <div class="card-img">${badge}<img loading="lazy" src="https://images.unsplash.com/${imgs[i]}?w=600&q=80" alt="${it.b} ${it.r}"></div>
-        <div class="card-body">
-          <span class="card-brand">${it.b}</span>
-          <span class="card-ref mono">${it.r}</span>
-          <button class="card-enquire" onclick="addEnquiry()">Ask Price</button>
-        </div>
-      </div>`);
-  });
+  let activeBrand='all',availOnly=false,activeSort='default';
+  function filtered(){let list=[...WATCHES];if(activeBrand!=='all')list=list.filter(w=>w.brand===activeBrand);if(availOnly)list=list.filter(w=>w.status==='available');if(activeSort==='year-desc')list.sort((a,b)=>b.year-a.year);return list;}
+  function waLink(w){const msg=encodeURIComponent(`Hello MAISON, I'm interested in the ${w.brand} ${w.model} ref. ${w.ref} — is it available?`);return `https://wa.me/${WA}?text=${msg}`;}
+  function renderGrid(){
+    const g=document.getElementById('coll-grid');const list=filtered();
+    document.getElementById('result-count').textContent=list.length+' piece'+(list.length!==1?'s':'')+' · Paris · Dubai · Geneva';
+    if(!list.length){g.innerHTML='<div class="coll-empty"><p style="font-family:\'Jost\',sans-serif;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;font-size:.75rem">No pieces match your filter</p></div>';return;}
+    g.innerHTML=list.map(w=>`<div class="card reveal">${w.tag?`<span class="scarcity-tag">${w.tag}</span>`:''}<div class="card-img"><img loading="lazy" src="${w.photo}" alt="${w.brand} ${w.model}"></div><div class="card-body"><span class="card-brand">${w.brand}</span><div class="card-model">${w.model}</div><div class="card-spec">${w.ref} · ${w.year}</div><div class="card-meta"><span class="meta-tag">${w.condition}</span><span class="meta-tag">${w.case}</span></div><div class="card-footer"><span class="card-price">Price on request</span><a class="btn" href="${waLink(w)}" target="_blank" rel="noopener"><span>Enquire</span></a></div></div></div>`).join('');
+    document.querySelectorAll('#coll-grid .reveal').forEach(el=>io.observe(el));
+  }
+  document.querySelectorAll('.fpill[data-filter]').forEach(btn=>{btn.addEventListener('click',()=>{activeBrand=btn.dataset.filter;document.querySelectorAll('.fpill[data-filter]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderGrid();});});
+  document.getElementById('avail-pill').addEventListener('click',function(){availOnly=!availOnly;this.classList.toggle('active',availOnly);renderGrid();});
+  document.getElementById('sort-select').addEventListener('change',function(){activeSort=this.value;renderGrid();});
+  renderGrid();
 
   // reveal on scroll
   const io=new IntersectionObserver(es=>{
