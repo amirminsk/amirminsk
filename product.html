@@ -28,8 +28,9 @@
     body {
       background: var(--bg);
       color: var(--ink);
-      font-family: var(--f-mono);
-      font-size: 13px;
+      font-family: var(--f-sub);
+      font-size: 14px;
+      font-weight: 600;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
     }
@@ -40,9 +41,9 @@
       top: 0;
       z-index: 200;
       background: var(--surface);
-      border-bottom: 1px solid var(--rule);
+      border-bottom: 2px solid var(--ink);
       padding: 0 2.5rem;
-      height: 60px;
+      height: 64px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -50,8 +51,8 @@
 
     .nav-logo {
       font-family: var(--f-head);
-      font-size: 1.5rem;
-      letter-spacing: 0.12em;
+      font-size: 1.7rem;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--ink);
       text-decoration: none;
@@ -60,14 +61,15 @@
 
     .nav-links {
       display: flex;
-      gap: 2rem;
+      gap: 2.2rem;
       list-style: none;
     }
 
     .nav-links a {
-      font-family: var(--f-mono);
-      font-size: 11px;
-      letter-spacing: 0.1em;
+      font-family: var(--f-sub);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--ink2);
       text-decoration: none;
@@ -78,13 +80,17 @@
 
     /* ── BREADCRUMB ── */
     .breadcrumb {
-      padding: 1.2rem 2.5rem;
+      padding: 1rem 2.5rem;
       background: var(--surface);
       border-bottom: 1px solid var(--rule);
       display: flex;
       align-items: center;
       gap: 0.6rem;
+      font-family: var(--f-sub);
       font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       color: var(--ink3);
     }
 
@@ -345,8 +351,8 @@
     }
 
     .pi-brand {
-      font-family: var(--f-mono);
-      font-size: 11px;
+      font-family: var(--f-sub);
+      font-size: 13px;
       font-weight: 700;
       letter-spacing: 0.25em;
       text-transform: uppercase;
@@ -356,19 +362,20 @@
 
     .pi-model {
       font-family: var(--f-head);
-      font-size: 3.2rem;
-      letter-spacing: 0.05em;
+      font-size: 4rem;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
       color: var(--ink);
-      line-height: 1;
-      margin-bottom: 0.4rem;
+      line-height: 0.95;
+      margin-bottom: 0.6rem;
     }
 
     .pi-ref {
-      font-family: var(--f-mono);
-      font-size: 11px;
+      font-family: var(--f-sub);
+      font-size: 14px;
+      font-weight: 600;
       color: var(--ink3);
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
       margin-bottom: 2rem;
     }
 
@@ -385,16 +392,16 @@
 
     .pi-price {
       font-family: var(--f-sub);
-      font-size: 1.9rem;
+      font-size: 2.2rem;
       font-weight: 700;
       letter-spacing: 0.02em;
       color: var(--ink);
     }
 
     .pi-price.ask {
-      font-family: var(--f-mono);
-      font-size: 1rem;
-      font-weight: 400;
+      font-family: var(--f-sub);
+      font-size: 1.1rem;
+      font-weight: 600;
       color: var(--ink2);
     }
 
@@ -478,8 +485,8 @@
     }
 
     .specs-title {
-      font-family: var(--f-mono);
-      font-size: 10px;
+      font-family: var(--f-sub);
+      font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.25em;
       text-transform: uppercase;
@@ -499,17 +506,19 @@
     .specs-table tr:first-child { border-top: 1px solid var(--rule); }
 
     .specs-table td {
-      padding: 0.8rem 0;
-      font-family: var(--f-mono);
-      font-size: 11px;
+      padding: 0.85rem 0;
+      font-family: var(--f-sub);
+      font-size: 14px;
+      font-weight: 600;
       vertical-align: top;
     }
 
     .specs-table td:first-child {
       color: var(--ink3);
       width: 45%;
-      font-size: 10px;
-      letter-spacing: 0.08em;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
     }
 
@@ -543,9 +552,11 @@
     }
 
     .desc-section p {
-      font-size: 13px;
+      font-family: var(--f-sub);
+      font-size: 15px;
+      font-weight: 500;
       color: var(--ink2);
-      line-height: 1.8;
+      line-height: 1.75;
     }
 
     /* Contact strip */
@@ -591,14 +602,16 @@
 
     .related-header h2 {
       font-family: var(--f-head);
-      font-size: 2rem;
+      font-size: 2.5rem;
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }
 
     .related-header a {
-      font-size: 12px;
-      letter-spacing: 0.08em;
+      font-family: var(--f-sub);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--ink2);
       text-decoration: none;
@@ -644,10 +657,10 @@
     }
 
     .rel-brand {
-      font-family: var(--f-mono);
-      font-size: 9px;
+      font-family: var(--f-sub);
+      font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--ink3);
       margin-bottom: 0.25rem;
@@ -655,7 +668,7 @@
 
     .rel-model {
       font-family: var(--f-head);
-      font-size: 1.3rem;
+      font-size: 1.5rem;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       color: var(--ink);
@@ -663,10 +676,10 @@
 
     .rel-price {
       font-family: var(--f-sub);
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 14px;
+      font-weight: 700;
       color: var(--ink2);
-      margin-top: 0.2rem;
+      margin-top: 0.25rem;
     }
 
     /* ── FOOTER ── */
