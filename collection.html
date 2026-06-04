@@ -78,10 +78,23 @@
       color: var(--ink2);
       text-decoration: none;
       transition: color 0.2s;
+      position: relative;
+      padding-bottom: 4px;
     }
 
-    .nav-links a:hover,
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 2px;
+      background: var(--ink);
+      transition: width 0.25s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links a:hover::after { width: 100%; }
     .nav-links a.active { color: var(--ink); }
+    .nav-links a.active::after { width: 100%; }
 
     /* ── PAGE HEADER ── */
     .collection-header {
@@ -212,6 +225,15 @@
       padding: 0;
     }
 
+    /* ── PAGE ENTRANCE ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .collection-header { animation: fadeUp 0.55s cubic-bezier(0.16,1,0.3,1) both; }
+    .filter-bar        { animation: fadeUp 0.55s 0.08s cubic-bezier(0.16,1,0.3,1) both; }
+
     /* ── GRID ── */
     .watch-grid {
       display: grid;
@@ -226,11 +248,24 @@
       display: flex;
       flex-direction: column;
       cursor: pointer;
-      transition: background 0.2s;
       position: relative;
+      transition: background 0.25s, transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s cubic-bezier(0.16,1,0.3,1);
+      /* stagger set by JS via --i */
+      opacity: 0;
+      transform: translateY(28px);
     }
 
-    .watch-card:hover { background: var(--hover-bg); }
+    .watch-card.visible {
+      animation: fadeUp 0.55s cubic-bezier(0.16,1,0.3,1) forwards;
+      animation-delay: calc(var(--i, 0) * 60ms);
+    }
+
+    .watch-card:hover {
+      background: var(--hover-bg);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(17,16,16,0.10);
+      z-index: 2;
+    }
 
     /* Image */
     .card-img {
@@ -248,11 +283,11 @@
       height: 100%;
       object-fit: cover;
       object-position: center;
-      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
+      transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
       display: block;
     }
 
-    .watch-card:hover .card-img img { transform: scale(1.03); }
+    .watch-card:hover .card-img img { transform: scale(1.08); }
 
     /* No image fallback */
     .card-img-placeholder {
@@ -406,11 +441,26 @@
       border-radius: 3px;
       cursor: pointer;
       text-decoration: none;
-      transition: background 0.15s, border-color 0.15s;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, gap 0.2s, padding-right 0.2s;
       white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    .btn-inquire .arrow {
+      display: inline-block;
+      width: 0;
+      overflow: hidden;
+      transition: width 0.2s cubic-bezier(0.16,1,0.3,1), opacity 0.2s;
+      opacity: 0;
+      font-size: 13px;
+      line-height: 1;
     }
 
     .btn-inquire:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .btn-inquire:hover .arrow { width: 14px; opacity: 1; }
 
     .btn-inquire.sold {
       color: var(--ink3);
@@ -711,13 +761,13 @@
         return;
       }
 
-      grid.innerHTML = list.map(w => {
+      grid.innerHTML = list.map((w, i) => {
         const sold  = w.status === "sold";
         const photo = w.photos && w.photos[0];
         const price = fmtPrice(w);
 
         return `
-        <article class="watch-card" data-status="${w.status}" data-id="${w.id}">
+        <article class="watch-card" data-status="${w.status}" data-id="${w.id}" style="--i:${i};"
           <a class="card-img-link" href="product.html?id=${w.id}" style="display:block;text-decoration:none;">
             <div class="card-img">
               ${photo
@@ -754,8 +804,7 @@
               </div>
               ${sold
                 ? `<button class="btn-inquire sold">Sold</button>`
-                : `<a class="btn-inquire"
-                     href="product.html?id=${w.id}">View</a>`
+                : `<a class="btn-inquire" href="product.html?id=${w.id}">View<span class="arrow">→</span></a>`
               }
             </div>
           </div>
@@ -763,6 +812,11 @@
       }).join("");
 
       updateCounts();
+
+      /* Stagger entrance */
+      requestAnimationFrame(() => {
+        document.querySelectorAll(".watch-card").forEach(card => card.classList.add("visible"));
+      });
     }
 
     /* ── LIGHTBOX ── */
