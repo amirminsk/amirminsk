@@ -1094,14 +1094,17 @@
       return buffered / vid.duration;
     }
 
+    /* Dismiss as soon as the browser says it can start playing (~5-10% buffered) */
+    const vid = document.getElementById('scrub-video');
+    vid.addEventListener('canplay', () => { clearInterval(loadInterval); dismissLoader(); }, { once: true });
+
     const loadInterval = setInterval(() => {
       const p = checkBuffer();
       setLoadProgress(p);
-      if (p >= 0.98) { clearInterval(loadInterval); dismissLoader(); }
     }, 120);
 
-    /* Safety net: never block the user for more than 6s */
-    setTimeout(() => { clearInterval(loadInterval); dismissLoader(); }, 6000);
+    /* Safety net: never block the user for more than 3s regardless */
+    setTimeout(() => { clearInterval(loadInterval); dismissLoader(); }, 3000);
 
     /* ─────────────────────────────────────────
        INTRO SCROLL SCRUB
