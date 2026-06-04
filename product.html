@@ -244,9 +244,8 @@
     #zoom-panel img {
       position: absolute;
       top: 0; left: 0;
-      /* size and position set by JS */
+      object-fit: cover;
       pointer-events: none;
-      transform-origin: top left;
     }
 
     /* ── FULLSCREEN LIGHTBOX ── */
@@ -986,28 +985,32 @@
 
         imgWrap.addEventListener("mousemove", e => {
           if (!isDesktop()) return;
-          const rect  = imgWrap.getBoundingClientRect();
-          const xRel  = (e.clientX - rect.left)  / rect.width;   /* 0–1 */
-          const yRel  = (e.clientY - rect.top)    / rect.height;  /* 0–1 */
-          const xPx   = e.clientX - rect.left;
-          const yPx   = e.clientY - rect.top;
+          const rect = imgWrap.getBoundingClientRect();
+          const xPx  = e.clientX - rect.left;  /* pixels from left of container */
+          const yPx  = e.clientY - rect.top;
 
-          /* Lens position */
+          /* Lens follows cursor */
           lens.style.left = xPx + "px";
           lens.style.top  = yPx + "px";
 
-          /* Zoom panel: move the zoomed image so the hovered region is centred */
-          const panelSize  = 480;
-          const imgW       = panelSize * ZOOM_LEVEL;
-          const imgH       = panelSize * ZOOM_LEVEL;
-          const offsetX    = -(xRel * imgW - panelSize / 2);
-          const offsetY    = -(yRel * imgH - panelSize / 2);
-          /* clamp so image never scrolls outside panel */
-          const clampX     = Math.min(0, Math.max(panelSize - imgW, offsetX));
-          const clampY     = Math.min(0, Math.max(panelSize - imgH, offsetY));
+          /* The zoomed image must be the same size as the container × ZOOM_LEVEL.
+             Both the main image and the zoom panel img use object-fit:cover on a
+             square container, so pixel (xPx, yPx) in the main image maps to
+             pixel (xPx × ZOOM_LEVEL, yPx × ZOOM_LEVEL) in the zoomed image.
+             We then offset so that mapped point is centred in the panel.          */
+          const containerSize  = rect.width;                  /* always square    */
+          const zoomedSize     = containerSize * ZOOM_LEVEL;  /* px               */
+          const panelSize      = zoomPanel.offsetWidth;
 
-          zoomPanelImg.style.width  = imgW + "px";
-          zoomPanelImg.style.height = imgH + "px";
+          const left = panelSize / 2 - xPx * ZOOM_LEVEL;
+          const top  = panelSize / 2 - yPx * ZOOM_LEVEL;
+
+          /* Clamp so the zoomed image never exposes empty space inside the panel */
+          const clampX = Math.min(0, Math.max(panelSize - zoomedSize, left));
+          const clampY = Math.min(0, Math.max(panelSize - zoomedSize, top));
+
+          zoomPanelImg.style.width  = zoomedSize + "px";
+          zoomPanelImg.style.height = zoomedSize + "px";
           zoomPanelImg.style.left   = clampX + "px";
           zoomPanelImg.style.top    = clampY + "px";
         });
