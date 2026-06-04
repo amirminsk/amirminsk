@@ -1083,7 +1083,7 @@
       }, 420);
     }
 
-    /* Track video buffer fill */
+    /* Track video buffer fill — wait for full download */
     function checkBuffer() {
       const vid = document.getElementById('scrub-video');
       if (!vid || !isFinite(vid.duration) || vid.duration === 0) return 0;
@@ -1094,17 +1094,18 @@
       return buffered / vid.duration;
     }
 
-    /* Dismiss as soon as the browser says it can start playing (~5-10% buffered) */
-    const vid = document.getElementById('scrub-video');
-    vid.addEventListener('canplay', () => { clearInterval(loadInterval); dismissLoader(); }, { once: true });
-
     const loadInterval = setInterval(() => {
       const p = checkBuffer();
       setLoadProgress(p);
-    }, 120);
+      if (p >= 0.99) { clearInterval(loadInterval); dismissLoader(); }
+    }, 150);
 
-    /* Safety net: never block the user for more than 3s regardless */
-    setTimeout(() => { clearInterval(loadInterval); dismissLoader(); }, 3000);
+    /* Also catch the fully-downloaded event */
+    document.getElementById('scrub-video').addEventListener('canplaythrough', () => {
+      clearInterval(loadInterval);
+      setLoadProgress(1);
+      dismissLoader();
+    }, { once: true });
 
     /* ─────────────────────────────────────────
        INTRO SCROLL SCRUB
