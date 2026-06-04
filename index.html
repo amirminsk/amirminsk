@@ -1094,18 +1094,34 @@
       return buffered / vid.duration;
     }
 
+    /* Track video buffer fill, then build frame cache before entry */
+    function checkBuffer() {
+      const vid = document.getElementById('scrub-video');
+      if (!vid || !isFinite(vid.duration) || vid.duration === 0) return 0;
+      let buffered = 0;
+      for (let i = 0; i < vid.buffered.length; i++) {
+        buffered = Math.max(buffered, vid.buffered.end(i));
+      }
+      return buffered / vid.duration;
+    }
+
+    async function onVideoReady() {
+      clearInterval(loadInterval);
+      setLoadProgress(1);
+      loadingPct.textContent = 'Preparing…';
+      /* Build the frame cache NOW while the loading screen is still showing.
+         By the time the user enters, every frame is decoded and ready — no freeze. */
+      await buildFrameCache();
+      dismissLoader();
+    }
+
     const loadInterval = setInterval(() => {
       const p = checkBuffer();
       setLoadProgress(p);
-      if (p >= 0.99) { clearInterval(loadInterval); dismissLoader(); }
+      if (p >= 0.99) onVideoReady();
     }, 150);
 
-    /* Also catch the fully-downloaded event */
-    document.getElementById('scrub-video').addEventListener('canplaythrough', () => {
-      clearInterval(loadInterval);
-      setLoadProgress(1);
-      dismissLoader();
-    }, { once: true });
+    document.getElementById('scrub-video').addEventListener('canplaythrough', onVideoReady, { once: true });
 
     /* ─────────────────────────────────────────
        INTRO SCROLL SCRUB
@@ -1500,7 +1516,6 @@
     window.addEventListener('resize', onScroll);
     requestAnimationFrame(tick);
     onScroll();
-    buildFrameCache();
   </script>
 </body>
 </html>
