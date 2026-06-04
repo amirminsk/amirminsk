@@ -142,7 +142,7 @@
        ════════════════════════════════════════ */
     #intro-section {
       position: relative;
-      height: 600vh;
+      height: 700vh;
     }
 
     #intro-stage {
@@ -1127,7 +1127,10 @@
         try { video.pause(); } catch (e) {}
         const built = [];
         for (let i = 0; i < N; i++) {
-          const t = (i / (N - 1)) * video.duration * 0.999;
+          /* Last frame seeks exactly to the end so no frames are clipped */
+          const t = i < N - 1
+            ? (i / (N - 1)) * video.duration * 0.9995
+            : Math.max(0, video.duration - 0.04);
           await new Promise((res) => {
             const d = () => { video.removeEventListener('seeked', d); res(); };
             video.addEventListener('seeked', d);
@@ -1204,9 +1207,21 @@
       // While the white logo screen is still showing, flip nav text to dark.
       nav.classList.toggle('on-light', (1 - cf) > 0.4);
 
-      // Scrub: pinned to frame 0 during the crossfade, then play the clip across
-      // the remaining scroll so motion only begins once the logo has handed off.
-      targetP = p <= CF_END ? 0 : (p - CF_END) / (1 - CF_END);
+      // Scrub: pinned to frame 0 during the crossfade, then play the clip.
+      // The last 25% of video content is stretched over 40% of scroll distance
+      // so the "escape/hole" finale has time to breathe instead of rushing past.
+      if (p <= CF_END) {
+        targetP = 0;
+      } else {
+        const s = (p - CF_END) / (1 - CF_END); // 0..1 after crossfade
+        const PIVOT_S = 0.60; // scroll fraction where slow zone starts
+        const PIVOT_V = 0.75; // video fraction at that point
+        if (s < PIVOT_S) {
+          targetP = (s / PIVOT_S) * PIVOT_V;
+        } else {
+          targetP = PIVOT_V + ((s - PIVOT_S) / (1 - PIVOT_S)) * (1 - PIVOT_V);
+        }
+      }
 
       // Progress bar
       progressBar.style.opacity = p > 0.01 ? '1' : '0';
