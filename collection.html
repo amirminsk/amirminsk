@@ -6,401 +6,509 @@
   <title>Collection — HM Watches</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --gold:  #c9a84c;
-      --gold2: #e8c97a;
-      --black: #070604;
-      --deep:  #0c0b09;
-      --white: #f0ede8;
-      --gray:  #7a7874;
-      --card:  #0f0e0c;
-      --border: rgba(201,168,76,0.15);
+      --bg:       #f5f4f1;
+      --surface:  #ffffff;
+      --ink:      #181714;
+      --ink2:     #5a5855;
+      --ink3:     #9a9895;
+      --rule:     #e2e0db;
+      --accent:   #1a1916;
+      --hover-bg: #f0efe9;
+      --red:      #c0392b;
+      --sold-bg:  #f0efe9;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      background: var(--black);
-      color: var(--white);
-      font-family: 'Courier Prime', monospace;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
       overflow-x: hidden;
-      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ── NAV ── */
     #nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 500;
-      padding: 1.6rem 3rem;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: var(--surface);
+      border-bottom: 1px solid var(--rule);
+      padding: 0 2.5rem;
+      height: 60px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      pointer-events: none;
-      background: linear-gradient(to bottom, rgba(7,6,4,0.95) 0%, transparent 100%);
     }
 
     .nav-logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.05rem;
-      font-weight: 300;
-      letter-spacing: 0.55em;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--white);
-      pointer-events: auto;
-      cursor: pointer;
+      color: var(--ink);
       text-decoration: none;
-      transition: color 0.3s;
     }
-    .nav-logo:hover { color: var(--gold); }
 
     .nav-links {
       display: flex;
-      gap: 2.2rem;
+      gap: 2rem;
       list-style: none;
-      pointer-events: auto;
     }
 
     .nav-links a {
-      color: var(--gray);
-      text-decoration: none;
-      font-size: 0.6rem;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      transition: color 0.3s;
-    }
-    .nav-links a:hover { color: var(--gold); }
-    .nav-links a.active { color: var(--gold); }
-
-    /* ── PAGE HEADER ── */
-    .page-header {
-      padding: 14rem 3rem 5rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .page-header-inner {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 2rem;
-    }
-
-    .page-header h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(3rem, 6vw, 5.5rem);
-      font-weight: 300;
+      font-size: 12px;
+      font-weight: 400;
       letter-spacing: 0.08em;
-      color: var(--white);
-      line-height: 1;
-    }
-
-    .page-header h1 em {
-      font-style: italic;
-      color: var(--gold);
-    }
-
-    .header-meta {
-      text-align: right;
-    }
-
-    .header-meta p {
-      font-size: 0.6rem;
-      letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: var(--gray);
-      line-height: 2;
+      color: var(--ink2);
+      text-decoration: none;
+      transition: color 0.2s;
     }
 
-    /* ── FILTER BAR ── */
-    .filter-bar {
-      padding: 2rem 3rem;
-      border-bottom: 1px solid var(--border);
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--ink); }
+
+    .nav-links a.active { font-weight: 500; }
+
+    /* ── LAYOUT ── */
+    .page-wrap {
+      display: flex;
+      min-height: calc(100vh - 60px);
     }
 
-    .filter-bar-inner {
-      max-width: 1400px;
-      margin: 0 auto;
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--rule);
+      padding: 2rem 0;
+      position: sticky;
+      top: 60px;
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+    }
+
+    .sidebar-section {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .sidebar-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink3);
+      margin-bottom: 1rem;
+    }
+
+    .filter-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .filter-list button {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .filter-label {
-      font-size: 0.55rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--gray);
-      margin-right: 0.5rem;
-    }
-
-    .filter-btn {
+      justify-content: space-between;
+      width: 100%;
       background: none;
-      border: 1px solid #1e1d1a;
-      color: var(--gray);
-      font-family: 'Courier Prime', monospace;
-      font-size: 0.55rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      padding: 0.5rem 1.1rem;
+      border: none;
+      padding: 0.55rem 0.75rem;
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--ink2);
       cursor: pointer;
-      transition: border-color 0.3s, color 0.3s;
+      text-align: left;
+      transition: background 0.15s, color 0.15s;
     }
 
-    .filter-btn:hover,
-    .filter-btn.active {
-      border-color: var(--gold);
-      color: var(--gold);
+    .filter-list button:hover { background: var(--hover-bg); color: var(--ink); }
+
+    .filter-list button.active {
+      background: var(--ink);
+      color: #fff;
+      font-weight: 500;
     }
 
-    .filter-sep {
-      width: 1px;
-      height: 1.2rem;
-      background: #1e1d1a;
-      margin: 0 0.5rem;
+    .filter-list button .count {
+      font-size: 11px;
+      opacity: 0.5;
+    }
+
+    .filter-list button.active .count { opacity: 0.6; }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.4rem 0;
+    }
+
+    .toggle-label {
+      font-size: 13px;
+      color: var(--ink2);
+    }
+
+    /* Toggle switch */
+    .toggle {
+      position: relative;
+      width: 34px;
+      height: 20px;
+    }
+
+    .toggle input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--rule);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle-track::before {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .toggle input:checked + .toggle-track { background: var(--ink); }
+    .toggle input:checked + .toggle-track::before { transform: translateX(14px); }
+
+    /* ── MAIN ── */
+    .main {
+      flex: 1;
+      min-width: 0;
+      padding: 2rem 2.5rem;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .toolbar-left h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.9rem;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+
+    .toolbar-left h1 em {
+      font-style: italic;
+    }
+
+    .toolbar-left p {
+      font-size: 12px;
+      color: var(--ink3);
+      letter-spacing: 0.05em;
+    }
+
+    .sort-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .sort-wrap label {
+      font-size: 12px;
+      color: var(--ink3);
     }
 
     .sort-select {
-      margin-left: auto;
-      background: none;
-      border: 1px solid #1e1d1a;
-      color: var(--gray);
-      font-family: 'Courier Prime', monospace;
-      font-size: 0.55rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      padding: 0.5rem 1.1rem;
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 0.45rem 2rem 0.45rem 0.75rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: var(--ink);
       cursor: pointer;
       appearance: none;
-      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239a9895' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.6rem center;
     }
 
-    .sort-select:focus { outline: none; border-color: var(--gold); }
-    .sort-select option { background: #0f0e0c; color: var(--white); }
+    .sort-select:focus { outline: none; border-color: var(--ink); }
+    .sort-select option { background: #fff; }
 
     /* ── GRID ── */
-    .collection-grid {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 4rem 3rem 8rem;
+    .watch-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 2px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--rule);
     }
 
-    /* ── WATCH CARD ── */
+    /* ── CARD ── */
     .watch-card {
-      background: var(--card);
-      position: relative;
-      overflow: hidden;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
       cursor: pointer;
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: background 0.2s;
+      position: relative;
     }
 
-    .watch-card:hover { transform: translateY(-4px); }
-    .watch-card[data-status="sold"] { opacity: 0.6; }
+    .watch-card:hover { background: var(--hover-bg); }
 
-    /* sold overlay */
-    .watch-card[data-status="sold"]::after {
-      content: 'SOLD';
-      position: absolute;
-      top: 1.2rem;
-      right: 1.2rem;
-      background: rgba(7,6,4,0.85);
-      border: 1px solid #3a3835;
-      color: var(--gray);
-      font-size: 0.5rem;
-      letter-spacing: 0.35em;
-      padding: 0.35rem 0.7rem;
-      z-index: 10;
-    }
-
-    /* available badge */
-    .watch-card[data-status="available"] .status-badge {
-      position: absolute;
-      top: 1.2rem;
-      right: 1.2rem;
-      background: rgba(201,168,76,0.1);
-      border: 1px solid rgba(201,168,76,0.35);
-      color: var(--gold);
-      font-size: 0.5rem;
-      letter-spacing: 0.35em;
-      padding: 0.35rem 0.7rem;
-      z-index: 10;
-    }
-
-    /* photo */
-    .card-photo {
+    /* Image */
+    .card-img {
       aspect-ratio: 1 / 1;
       overflow: hidden;
-      background: #0a0908;
+      background: #f8f7f4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: relative;
     }
 
-    .card-photo img {
+    .card-img img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center;
-      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s;
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
+      display: block;
     }
 
-    .watch-card:hover .card-photo img { transform: scale(1.04); }
+    .watch-card:hover .card-img img { transform: scale(1.03); }
 
-    /* photo count indicator */
-    .photo-count {
-      position: absolute;
-      bottom: 1rem;
-      left: 1rem;
-      font-size: 0.5rem;
-      letter-spacing: 0.25em;
-      color: rgba(240,237,232,0.5);
-      background: rgba(7,6,4,0.6);
-      padding: 0.25rem 0.6rem;
-    }
-
-    /* card body */
-    .card-body {
-      padding: 1.6rem 1.8rem 1.8rem;
-      border-top: 1px solid var(--border);
-    }
-
-    .card-brand {
-      font-size: 0.5rem;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 0.5rem;
-    }
-
-    .card-model {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.55rem;
-      font-weight: 300;
-      letter-spacing: 0.04em;
-      color: var(--white);
-      line-height: 1.15;
-      margin-bottom: 0.3rem;
-    }
-
-    .card-ref {
-      font-size: 0.52rem;
-      letter-spacing: 0.22em;
-      color: var(--gray);
-      margin-bottom: 1.2rem;
-    }
-
-    .card-details {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.6rem 1rem;
-      margin-bottom: 1.6rem;
-    }
-
-    .card-detail {
-      display: flex;
-      flex-direction: column;
-      gap: 0.15rem;
-    }
-
-    .detail-label {
-      font-size: 0.45rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--gray);
-    }
-
-    .detail-value {
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      color: var(--white);
-    }
-
-    .card-price {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.4rem;
-      font-weight: 400;
-      color: var(--gold2);
-      margin-bottom: 1.4rem;
-      letter-spacing: 0.04em;
-    }
-
-    .card-price span {
-      font-family: 'Courier Prime', monospace;
-      font-size: 0.55rem;
-      letter-spacing: 0.2em;
-      color: var(--gray);
-      margin-left: 0.4rem;
-    }
-
-    .card-actions {
-      display: flex;
-      gap: 0.8rem;
-    }
-
-    .btn-inquire {
-      flex: 1;
-      background: none;
-      border: 1px solid var(--gold);
-      color: var(--gold);
-      font-family: 'Courier Prime', monospace;
-      font-size: 0.55rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      padding: 0.8rem 1.2rem;
-      cursor: pointer;
-      transition: background 0.3s, color 0.3s;
-      text-decoration: none;
+    /* No image fallback */
+    .card-img-placeholder {
+      width: 100%;
+      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-direction: column;
       gap: 0.5rem;
     }
 
-    .btn-inquire:hover {
-      background: var(--gold);
-      color: var(--black);
+    .card-img-placeholder svg { opacity: 0.15; }
+
+    .card-img-placeholder span {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink3);
     }
+
+    /* Photo count */
+    .photo-pill {
+      position: absolute;
+      bottom: 0.7rem;
+      right: 0.7rem;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid var(--rule);
+      padding: 0.2rem 0.5rem;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--ink2);
+      border-radius: 2px;
+    }
+
+    /* Body */
+    .card-body {
+      padding: 1rem 1.1rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      flex: 1;
+    }
+
+    .card-brand {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink3);
+    }
+
+    .card-model {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+    }
+
+    .card-ref {
+      font-size: 11px;
+      color: var(--ink3);
+      letter-spacing: 0.04em;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.5rem;
+    }
+
+    .meta-tag {
+      font-size: 10px;
+      background: var(--bg);
+      border: 1px solid var(--rule);
+      color: var(--ink2);
+      padding: 0.2rem 0.5rem;
+      border-radius: 2px;
+      letter-spacing: 0.05em;
+    }
+
+    .card-footer {
+      margin-top: auto;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .card-price {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .card-price.ask {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--ink2);
+      font-style: italic;
+    }
+
+    /* Status */
+    .status-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink3);
+    }
+
+    .status-dot::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #aaa;
+      flex-shrink: 0;
+    }
+
+    .status-dot.available::before { background: #3d9970; }
+    .status-dot.sold::before { background: var(--ink3); }
+
+    .btn-inquire {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: var(--bg);
+      border: 1px solid var(--rule);
+      padding: 0.4rem 0.8rem;
+      border-radius: 3px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-inquire:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
 
     .btn-inquire.sold {
-      border-color: #2a2a27;
-      color: var(--gray);
+      color: var(--ink3);
       pointer-events: none;
-    }
-
-    .btn-view {
       background: none;
-      border: 1px solid #1e1d1a;
-      color: var(--gray);
-      font-family: 'Courier Prime', monospace;
-      font-size: 0.55rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      padding: 0.8rem 1rem;
-      cursor: pointer;
-      transition: border-color 0.3s, color 0.3s;
     }
 
-    .btn-view:hover { border-color: var(--gold); color: var(--gold); }
+    /* Sold overlay */
+    .watch-card[data-status="sold"] .card-img::after {
+      content: 'SOLD';
+      position: absolute;
+      inset: 0;
+      background: rgba(245,244,241,0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      color: var(--ink2);
+    }
+
+    /* Empty state */
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 6rem 2rem;
+      text-align: center;
+      background: var(--surface);
+    }
+
+    .empty-state p {
+      font-size: 14px;
+      color: var(--ink3);
+    }
 
     /* ── LIGHTBOX ── */
     #lightbox {
       position: fixed;
       inset: 0;
       z-index: 1000;
-      background: rgba(7,6,4,0.97);
+      background: rgba(250,249,246,0.97);
       display: flex;
       align-items: center;
       justify-content: center;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.4s;
+      transition: opacity 0.3s;
     }
 
     #lightbox.open {
@@ -408,143 +516,166 @@
       pointer-events: all;
     }
 
-    .lb-inner {
-      position: relative;
-      max-width: 90vw;
-      max-height: 90vh;
+    .lb-layout {
       display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
+      gap: 4rem;
+      align-items: center;
+      max-width: 900px;
+      width: 90vw;
+      padding: 2rem;
     }
 
-    .lb-img-wrap {
+    .lb-img-area {
+      flex: 1;
       position: relative;
-      max-height: 75vh;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .lb-img-wrap img {
-      max-width: 85vw;
-      max-height: 75vh;
+    .lb-img-area img {
+      max-width: 100%;
+      max-height: 70vh;
       object-fit: contain;
+      display: block;
     }
 
-    .lb-nav {
+    .lb-arrow {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: none;
-      border: 1px solid #2a2a27;
-      color: var(--gray);
-      font-size: 1rem;
-      width: 2.8rem;
-      height: 2.8rem;
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      width: 36px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: border-color 0.3s, color 0.3s;
+      border-radius: 50%;
+      font-size: 14px;
+      color: var(--ink2);
+      transition: border-color 0.2s, color 0.2s;
     }
 
-    .lb-nav:hover { border-color: var(--gold); color: var(--gold); }
-    .lb-prev { left: -4rem; }
-    .lb-next { right: -4rem; }
+    .lb-arrow:hover { border-color: var(--ink); color: var(--ink); }
+    .lb-prev { left: -50px; }
+    .lb-next { right: -50px; }
 
-    .lb-meta {
-      text-align: center;
+    .lb-info {
+      width: 200px;
+      flex-shrink: 0;
     }
 
     .lb-brand {
-      font-size: 0.5rem;
-      letter-spacing: 0.4em;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--gold);
+      color: var(--ink3);
+      margin-bottom: 0.4rem;
+    }
+
+    .lb-model {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.2;
       margin-bottom: 0.3rem;
     }
 
-    .lb-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.4rem;
-      font-weight: 300;
-      color: var(--white);
-      letter-spacing: 0.05em;
+    .lb-ref {
+      font-size: 12px;
+      color: var(--ink3);
+      margin-bottom: 1.5rem;
     }
 
     .lb-counter {
-      font-size: 0.5rem;
-      letter-spacing: 0.25em;
-      color: var(--gray);
-      margin-top: 0.4rem;
+      font-size: 11px;
+      color: var(--ink3);
+      letter-spacing: 0.1em;
     }
 
     .lb-close {
-      position: absolute;
+      position: fixed;
       top: 1.5rem;
       right: 1.5rem;
-      background: none;
-      border: 1px solid #2a2a27;
-      color: var(--gray);
-      font-size: 0.8rem;
-      width: 2.4rem;
-      height: 2.4rem;
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: border-color 0.3s, color 0.3s;
+      font-size: 14px;
+      color: var(--ink2);
+      transition: border-color 0.2s, color 0.2s;
     }
 
-    .lb-close:hover { border-color: var(--gold); color: var(--gold); }
-
-    /* ── EMPTY STATE ── */
-    .empty-state {
-      grid-column: 1 / -1;
-      padding: 8rem 0;
-      text-align: center;
-    }
-
-    .empty-state p {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.5rem;
-      font-weight: 300;
-      font-style: italic;
-      color: var(--gray);
-    }
+    .lb-close:hover { border-color: var(--ink); color: var(--ink); }
 
     /* ── FOOTER ── */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 3rem;
-      max-width: 1400px;
-      margin: 0 auto;
+      border-top: 1px solid var(--rule);
+      padding: 2rem 2.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      background: var(--surface);
+      margin-left: 220px; /* align with main content */
     }
 
     footer p {
-      font-size: 0.5rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--gray);
+      font-size: 12px;
+      color: var(--ink3);
+    }
+
+    /* ── MOBILE FILTER TOGGLE ── */
+    .mobile-filter-btn {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      background: none;
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 0.45rem 0.9rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: var(--ink);
+      cursor: pointer;
     }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
-      #nav { padding: 1.2rem 1.5rem; }
-      .page-header { padding: 10rem 1.5rem 3rem; }
-      .page-header-inner { flex-direction: column; align-items: flex-start; gap: 1rem; }
-      .header-meta { text-align: left; }
-      .filter-bar { padding: 1.5rem; }
-      .collection-grid { padding: 3rem 1.5rem 6rem; grid-template-columns: 1fr 1fr; gap: 2px; }
-      .lb-prev { left: -2.5rem; }
-      .lb-next { right: -2.5rem; }
+    @media (max-width: 1100px) {
+      .watch-grid { grid-template-columns: repeat(3, 1fr); }
     }
 
-    @media (max-width: 480px) {
-      .collection-grid { grid-template-columns: 1fr; }
+    @media (max-width: 860px) {
+      .sidebar {
+        position: fixed;
+        left: -240px;
+        top: 60px;
+        height: calc(100vh - 60px);
+        z-index: 100;
+        transition: left 0.3s cubic-bezier(0.16,1,0.3,1);
+        box-shadow: 4px 0 20px rgba(0,0,0,0.08);
+      }
+      .sidebar.open { left: 0; }
+      footer { margin-left: 0; }
+      .mobile-filter-btn { display: flex; }
+      .watch-grid { grid-template-columns: repeat(2, 1fr); }
+      .lb-layout { flex-direction: column; gap: 2rem; }
+      .lb-info { width: 100%; }
+      .lb-prev { left: -40px; }
+      .lb-next { right: -40px; }
+    }
+
+    @media (max-width: 500px) {
+      #nav { padding: 0 1.2rem; }
+      .main { padding: 1.5rem 1.2rem; }
       .nav-links { display: none; }
     }
   </style>
@@ -562,61 +693,76 @@
     </ul>
   </nav>
 
-  <!-- PAGE HEADER -->
-  <header class="page-header">
-    <div class="page-header-inner">
-      <h1>The <em>Collection</em></h1>
-      <div class="header-meta">
-        <p>Dubai, UAE</p>
-        <p>Pre-owned · Certified</p>
-        <p id="count-label">— pieces</p>
-      </div>
-    </div>
-  </header>
+  <div class="page-wrap">
 
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
-    <div class="filter-bar-inner">
-      <span class="filter-label">Brand</span>
-      <button class="filter-btn active" data-filter="all">All</button>
-      <button class="filter-btn" data-filter="Rolex">Rolex</button>
-      <button class="filter-btn" data-filter="Audemars Piguet">AP</button>
-      <button class="filter-btn" data-filter="Patek Philippe">Patek</button>
-      <button class="filter-btn" data-filter="Richard Mille">RM</button>
-      <div class="filter-sep"></div>
-      <button class="filter-btn" data-filter="available" data-type="status">Available</button>
-      <select class="sort-select" id="sort-select">
-        <option value="default">Sort: Default</option>
-        <option value="price-asc">Price: Low → High</option>
-        <option value="price-desc">Price: High → Low</option>
-        <option value="year-desc">Year: Newest</option>
-      </select>
-    </div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Brand</div>
+        <ul class="filter-list" id="brand-filters">
+          <li><button class="active" data-filter="all">All Brands <span class="count" id="cnt-all"></span></button></li>
+          <li><button data-filter="Rolex">Rolex <span class="count" id="cnt-rolex"></span></button></li>
+          <li><button data-filter="Audemars Piguet">Audemars Piguet <span class="count" id="cnt-ap"></span></button></li>
+          <li><button data-filter="Patek Philippe">Patek Philippe <span class="count" id="cnt-patek"></span></button></li>
+          <li><button data-filter="Richard Mille">Richard Mille <span class="count" id="cnt-rm"></span></button></li>
+        </ul>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Availability</div>
+        <div class="toggle-row">
+          <span class="toggle-label">Available only</span>
+          <label class="toggle">
+            <input type="checkbox" id="avail-toggle" />
+            <div class="toggle-track"></div>
+          </label>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <h1>The <em>Collection</em></h1>
+          <p id="result-count">— pieces · Dubai, UAE</p>
+        </div>
+        <div class="sort-wrap">
+          <button class="mobile-filter-btn" id="mobile-filter-btn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 3h12M3 7h8M5 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Filters
+          </button>
+          <label for="sort-select" style="font-size:12px;color:var(--ink3)">Sort</label>
+          <select class="sort-select" id="sort-select">
+            <option value="default">Default</option>
+            <option value="price-asc">Price: Low → High</option>
+            <option value="price-desc">Price: High → Low</option>
+            <option value="year-desc">Year: Newest</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="watch-grid" id="grid"></div>
+    </main>
   </div>
 
-  <!-- GRID -->
-  <main>
-    <div class="collection-grid" id="grid"></div>
-  </main>
-
-  <!-- FOOTER -->
   <footer>
-    <p>© 2024 HM Watches — Dubai</p>
-    <p>All pieces verified. Inquiries by appointment.</p>
+    <p>© 2024 HM Watches — Dubai, UAE</p>
+    <p>All pieces verified &amp; certified. Inquiries by appointment.</p>
   </footer>
 
   <!-- LIGHTBOX -->
-  <div id="lightbox">
-    <button class="lb-close" id="lb-close">✕</button>
-    <div class="lb-inner">
-      <div class="lb-img-wrap">
-        <button class="lb-nav lb-prev" id="lb-prev">‹</button>
+  <div id="lightbox" role="dialog" aria-modal="true">
+    <button class="lb-close" id="lb-close" aria-label="Close">✕</button>
+    <div class="lb-layout">
+      <div class="lb-img-area">
+        <button class="lb-arrow lb-prev" id="lb-prev" aria-label="Previous">‹</button>
         <img id="lb-img" src="" alt="" />
-        <button class="lb-nav lb-next" id="lb-next">›</button>
+        <button class="lb-arrow lb-next" id="lb-next" aria-label="Next">›</button>
       </div>
-      <div class="lb-meta">
+      <div class="lb-info">
         <div class="lb-brand" id="lb-brand"></div>
-        <div class="lb-title" id="lb-title"></div>
+        <div class="lb-model" id="lb-model"></div>
+        <div class="lb-ref"   id="lb-ref"></div>
         <div class="lb-counter" id="lb-counter"></div>
       </div>
     </div>
@@ -624,7 +770,7 @@
 
   <script>
     /* ── DATA ─────────────────────────────────────────────────────────────── */
-    /* Replace with API/Supabase fetch when backend is ready.                 */
+    /* Swap this array for a Supabase fetch when the backend is ready.        */
     const WATCHES = [
       {
         id: 1,
@@ -637,10 +783,7 @@
         price: 195000,
         currency: "USD",
         status: "available",
-        photos: [
-          "assets/images/placeholder-rm6702-1.jpg",
-          "assets/images/placeholder-rm6702-2.jpg"
-        ]
+        photos: ["assets/images/placeholder-rm6702-1.jpg"]
       },
       {
         id: 2,
@@ -649,13 +792,11 @@
         ref: "116500LN",
         year: 2021,
         case: "Oystersteel",
-        dial: "Black Ceramic Bezel",
+        dial: "Black Ceramic",
         price: 38000,
         currency: "USD",
         status: "available",
-        photos: [
-          "assets/images/placeholder-daytona-1.jpg"
-        ]
+        photos: ["assets/images/placeholder-daytona-1.jpg"]
       },
       {
         id: 3,
@@ -668,9 +809,7 @@
         price: 58000,
         currency: "USD",
         status: "available",
-        photos: [
-          "assets/images/placeholder-ro-1.jpg"
-        ]
+        photos: ["assets/images/placeholder-ro-1.jpg"]
       },
       {
         id: 4,
@@ -683,9 +822,7 @@
         price: 145000,
         currency: "USD",
         status: "sold",
-        photos: [
-          "assets/images/placeholder-nautilus-1.jpg"
-        ]
+        photos: ["assets/images/placeholder-nautilus-1.jpg"]
       },
       {
         id: 5,
@@ -698,9 +835,7 @@
         price: 18500,
         currency: "USD",
         status: "available",
-        photos: [
-          "assets/images/placeholder-sub-1.jpg"
-        ]
+        photos: ["assets/images/placeholder-sub-1.jpg"]
       },
       {
         id: 6,
@@ -713,135 +848,124 @@
         price: 88000,
         currency: "USD",
         status: "available",
-        photos: [
-          "assets/images/placeholder-roo-1.jpg"
-        ]
+        photos: ["assets/images/placeholder-roo-1.jpg"]
       }
     ];
 
-    /* ── STATE ──────────────────────────────────────────────────────────────*/
-    let activeFilter = "all";
+    /* ── STATE ── */
+    let activeBrand  = "all";
+    let availOnly    = false;
     let activeSort   = "default";
     let lbWatch      = null;
     let lbIndex      = 0;
 
-    /* ── UTILS ──────────────────────────────────────────────────────────────*/
-    function formatPrice(price, currency) {
-      if (!price) return "POA";
-      return currency + " " + price.toLocaleString("en-US");
+    /* ── UTILS ── */
+    function fmtPrice(w) {
+      if (!w.price) return null;
+      return w.currency + " " + w.price.toLocaleString("en-US");
     }
 
-    /* Fallback placeholder image if asset not found */
-    function imgSrc(path) { return path; }
-
-    /* ── RENDER ─────────────────────────────────────────────────────────────*/
     function filtered() {
       let list = [...WATCHES];
-
-      if (activeFilter === "available") {
-        list = list.filter(w => w.status === "available");
-      } else if (activeFilter !== "all") {
-        list = list.filter(w => w.brand === activeFilter);
-      }
-
+      if (activeBrand !== "all") list = list.filter(w => w.brand === activeBrand);
+      if (availOnly)             list = list.filter(w => w.status === "available");
       if (activeSort === "price-asc")  list.sort((a,b) => (a.price||0) - (b.price||0));
       if (activeSort === "price-desc") list.sort((a,b) => (b.price||0) - (a.price||0));
-      if (activeSort === "year-desc")  list.sort((a,b) => (b.year||0) - (a.year||0));
-
+      if (activeSort === "year-desc")  list.sort((a,b) => (b.year||0)  - (a.year||0));
       return list;
     }
 
+    /* ── COUNTS ── */
+    function updateCounts() {
+      const base = availOnly ? WATCHES.filter(w => w.status === "available") : WATCHES;
+      const count = brand => base.filter(w => brand === "all" || w.brand === brand).length;
+      document.getElementById("cnt-all").textContent   = count("all");
+      document.getElementById("cnt-rolex").textContent = count("Rolex");
+      document.getElementById("cnt-ap").textContent    = count("Audemars Piguet");
+      document.getElementById("cnt-patek").textContent = count("Patek Philippe");
+      document.getElementById("cnt-rm").textContent    = count("Richard Mille");
+    }
+
+    /* ── RENDER ── */
     function renderGrid() {
       const grid = document.getElementById("grid");
       const list = filtered();
 
-      document.getElementById("count-label").textContent =
-        list.length + " piece" + (list.length !== 1 ? "s" : "");
+      document.getElementById("result-count").textContent =
+        list.length + " piece" + (list.length !== 1 ? "s" : "") + " · Dubai, UAE";
 
-      if (list.length === 0) {
-        grid.innerHTML = `<div class="empty-state"><p>No pieces match the current filter.</p></div>`;
+      if (!list.length) {
+        grid.innerHTML = `<div class="empty-state"><p>No pieces match this filter.</p></div>`;
         return;
       }
 
       grid.innerHTML = list.map(w => {
-        const sold = w.status === "sold";
-        const mainPhoto = w.photos && w.photos[0] ? w.photos[0] : "";
-        const photoCount = w.photos ? w.photos.length : 0;
+        const sold  = w.status === "sold";
+        const photo = w.photos && w.photos[0];
+        const price = fmtPrice(w);
 
         return `
         <article class="watch-card" data-status="${w.status}" data-id="${w.id}">
-          ${!sold ? `<div class="status-badge">Available</div>` : ""}
-          <div class="card-photo" data-action="lightbox">
-            ${mainPhoto
-              ? `<img src="${mainPhoto}" alt="${w.brand} ${w.model}"
-                   onerror="this.style.opacity='0'" loading="lazy" />`
-              : `<div style="width:100%;height:100%;display:flex;align-items:center;
-                  justify-content:center;color:var(--gray);font-size:0.5rem;
-                  letter-spacing:0.3em;text-transform:uppercase;">No Photo</div>`
+          <div class="card-img" data-action="lightbox">
+            ${photo
+              ? `<img src="${photo}" alt="${w.brand} ${w.model}" loading="lazy"
+                   onerror="this.parentElement.innerHTML='<div class=card-img-placeholder><svg width=40 height=40 viewBox=\'0 0 40 40\' fill=\'none\'><circle cx=\'20\' cy=\'20\' r=\'18\' stroke=\'%23aaa\' stroke-width=\'1.5\'/><circle cx=\'20\' cy=\'20\' r=\'6\' stroke=\'%23aaa\' stroke-width=\'1.5\'/></svg><span>Photo pending</span></div>'" />`
+              : `<div class="card-img-placeholder">
+                   <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                     <circle cx="20" cy="20" r="18" stroke="#aaa" stroke-width="1.5"/>
+                     <circle cx="20" cy="20" r="6" stroke="#aaa" stroke-width="1.5"/>
+                   </svg>
+                   <span>Photo pending</span>
+                 </div>`
             }
-            ${photoCount > 1
-              ? `<div class="photo-count">${photoCount} photos</div>`
+            ${w.photos && w.photos.length > 1
+              ? `<div class="photo-pill">${w.photos.length} photos</div>`
               : ""}
           </div>
+
           <div class="card-body">
             <div class="card-brand">${w.brand}</div>
             <div class="card-model">${w.model}</div>
             <div class="card-ref">Ref. ${w.ref}</div>
-            <div class="card-details">
-              <div class="card-detail">
-                <span class="detail-label">Year</span>
-                <span class="detail-value">${w.year || "—"}</span>
-              </div>
-              <div class="card-detail">
-                <span class="detail-label">Case</span>
-                <span class="detail-value">${w.case || "—"}</span>
-              </div>
-              <div class="card-detail">
-                <span class="detail-label">Dial</span>
-                <span class="detail-value">${w.dial || "—"}</span>
-              </div>
-              <div class="card-detail">
-                <span class="detail-label">Status</span>
-                <span class="detail-value">${sold ? "Sold" : "Available"}</span>
-              </div>
+            <div class="card-meta">
+              ${w.year ? `<span class="meta-tag">${w.year}</span>` : ""}
+              ${w.case ? `<span class="meta-tag">${w.case}</span>` : ""}
             </div>
-            <div class="card-price">
-              ${formatPrice(w.price, w.currency)}
-              ${w.price ? "" : `<span>Price on application</span>`}
-            </div>
-            <div class="card-actions">
+            <div class="card-footer">
+              <div>
+                ${price
+                  ? `<div class="card-price">${price}</div>`
+                  : `<div class="card-price ask">Price on application</div>`}
+                <div class="status-dot ${w.status}">${sold ? "Sold" : "Available"}</div>
+              </div>
               ${sold
                 ? `<button class="btn-inquire sold">Sold</button>`
-                : `<a class="btn-inquire" href="https://wa.me/971000000000?text=I'm%20interested%20in%20the%20${encodeURIComponent(w.brand + ' ' + w.model + ' Ref. ' + w.ref)}" target="_blank" rel="noopener">
-                     Inquire via WhatsApp
-                   </a>`
-              }
-              ${w.photos && w.photos.length > 0
-                ? `<button class="btn-view" data-action="lightbox">Photos</button>`
-                : ""
+                : `<a class="btn-inquire"
+                     href="https://wa.me/971000000000?text=${encodeURIComponent("Hi, I'm interested in the " + w.brand + " " + w.model + " Ref. " + w.ref)}"
+                     target="_blank" rel="noopener">Inquire</a>`
               }
             </div>
           </div>
         </article>`;
       }).join("");
 
-      /* attach lightbox triggers */
+      /* Lightbox triggers */
       grid.querySelectorAll("[data-action='lightbox']").forEach(el => {
-        el.addEventListener("click", e => {
-          const card = e.currentTarget.closest(".watch-card");
-          if (!card) return;
-          const id = parseInt(card.dataset.id);
+        el.addEventListener("click", () => {
+          const id = parseInt(el.closest(".watch-card").dataset.id);
           openLightbox(id, 0);
         });
       });
+
+      updateCounts();
     }
 
-    /* ── LIGHTBOX ───────────────────────────────────────────────────────────*/
-    function openLightbox(watchId, photoIndex) {
-      lbWatch = WATCHES.find(w => w.id === watchId);
-      if (!lbWatch || !lbWatch.photos || lbWatch.photos.length === 0) return;
-      lbIndex = photoIndex;
-      renderLightbox();
+    /* ── LIGHTBOX ── */
+    function openLightbox(id, idx) {
+      lbWatch = WATCHES.find(w => w.id === id);
+      if (!lbWatch || !lbWatch.photos || !lbWatch.photos.length) return;
+      lbIndex = idx;
+      paintLb();
       document.getElementById("lightbox").classList.add("open");
       document.body.style.overflow = "hidden";
     }
@@ -849,65 +973,68 @@
     function closeLightbox() {
       document.getElementById("lightbox").classList.remove("open");
       document.body.style.overflow = "";
-      lbWatch = null;
     }
 
-    function renderLightbox() {
-      if (!lbWatch) return;
-      document.getElementById("lb-img").src = lbWatch.photos[lbIndex];
-      document.getElementById("lb-img").alt = `${lbWatch.brand} ${lbWatch.model}`;
+    function paintLb() {
+      document.getElementById("lb-img").src    = lbWatch.photos[lbIndex];
+      document.getElementById("lb-img").alt    = `${lbWatch.brand} ${lbWatch.model}`;
       document.getElementById("lb-brand").textContent = lbWatch.brand;
-      document.getElementById("lb-title").textContent = `${lbWatch.model} — Ref. ${lbWatch.ref}`;
-      const total = lbWatch.photos.length;
-      document.getElementById("lb-counter").textContent =
-        total > 1 ? `${lbIndex + 1} / ${total}` : "";
-      document.getElementById("lb-prev").style.display = total > 1 ? "" : "none";
-      document.getElementById("lb-next").style.display = total > 1 ? "" : "none";
+      document.getElementById("lb-model").textContent = lbWatch.model;
+      document.getElementById("lb-ref").textContent   = "Ref. " + lbWatch.ref;
+      const n = lbWatch.photos.length;
+      document.getElementById("lb-counter").textContent = n > 1 ? `${lbIndex + 1} / ${n}` : "";
+      document.getElementById("lb-prev").style.visibility = n > 1 ? "visible" : "hidden";
+      document.getElementById("lb-next").style.visibility = n > 1 ? "visible" : "hidden";
     }
 
     document.getElementById("lb-close").addEventListener("click", closeLightbox);
-
     document.getElementById("lb-prev").addEventListener("click", () => {
-      if (!lbWatch) return;
       lbIndex = (lbIndex - 1 + lbWatch.photos.length) % lbWatch.photos.length;
-      renderLightbox();
+      paintLb();
     });
-
     document.getElementById("lb-next").addEventListener("click", () => {
-      if (!lbWatch) return;
       lbIndex = (lbIndex + 1) % lbWatch.photos.length;
-      renderLightbox();
+      paintLb();
     });
-
     document.getElementById("lightbox").addEventListener("click", e => {
       if (e.target === document.getElementById("lightbox")) closeLightbox();
     });
-
     document.addEventListener("keydown", e => {
       if (!document.getElementById("lightbox").classList.contains("open")) return;
-      if (e.key === "Escape")      closeLightbox();
-      if (e.key === "ArrowLeft")   { lbIndex = (lbIndex - 1 + lbWatch.photos.length) % lbWatch.photos.length; renderLightbox(); }
-      if (e.key === "ArrowRight")  { lbIndex = (lbIndex + 1) % lbWatch.photos.length; renderLightbox(); }
+      if (e.key === "Escape")     closeLightbox();
+      if (e.key === "ArrowLeft")  { lbIndex = (lbIndex - 1 + lbWatch.photos.length) % lbWatch.photos.length; paintLb(); }
+      if (e.key === "ArrowRight") { lbIndex = (lbIndex + 1) % lbWatch.photos.length; paintLb(); }
     });
 
-    /* ── FILTERS ────────────────────────────────────────────────────────────*/
-    document.querySelectorAll(".filter-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        activeFilter = btn.dataset.filter;
-        renderGrid();
-      });
+    /* ── BRAND FILTERS ── */
+    document.getElementById("brand-filters").addEventListener("click", e => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      document.querySelectorAll("#brand-filters button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeBrand = btn.dataset.filter;
+      renderGrid();
     });
 
+    /* ── AVAILABILITY ── */
+    document.getElementById("avail-toggle").addEventListener("change", e => {
+      availOnly = e.target.checked;
+      renderGrid();
+    });
+
+    /* ── SORT ── */
     document.getElementById("sort-select").addEventListener("change", e => {
       activeSort = e.target.value;
       renderGrid();
     });
 
-    /* ── INIT ───────────────────────────────────────────────────────────────*/
+    /* ── MOBILE SIDEBAR ── */
+    document.getElementById("mobile-filter-btn").addEventListener("click", () => {
+      document.getElementById("sidebar").classList.toggle("open");
+    });
+
+    /* ── INIT ── */
     renderGrid();
   </script>
-
 </body>
 </html>
