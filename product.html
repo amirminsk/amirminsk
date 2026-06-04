@@ -6,18 +6,21 @@
   <title>Watch — HM Watches</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg:      #f5f4f1;
-      --surface: #ffffff;
-      --ink:     #181714;
-      --ink2:    #5a5855;
-      --ink3:    #9a9895;
-      --rule:    #e2e0db;
-      --hover:   #f0efe9;
+      --bg:      #f4f0e8;
+      --surface: #faf8f3;
+      --ink:     #111010;
+      --ink2:    #4a4845;
+      --ink3:    #8a8885;
+      --rule:    #dedad2;
+      --hover:   #ede9e0;
+      --f-head:  'Bebas Neue', sans-serif;
+      --f-sub:   'Barlow Semi Condensed', sans-serif;
+      --f-mono:  'Space Mono', monospace;
     }
 
     html { scroll-behavior: smooth; }
@@ -25,8 +28,8 @@
     body {
       background: var(--bg);
       color: var(--ink);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
+      font-family: var(--f-mono);
+      font-size: 13px;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
     }
@@ -46,12 +49,13 @@
     }
 
     .nav-logo {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.18em;
+      font-family: var(--f-head);
+      font-size: 1.5rem;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--ink);
       text-decoration: none;
+      line-height: 1;
     }
 
     .nav-links {
@@ -61,8 +65,9 @@
     }
 
     .nav-links a {
-      font-size: 12px;
-      letter-spacing: 0.08em;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--ink2);
       text-decoration: none;
@@ -340,27 +345,30 @@
     }
 
     .pi-brand {
+      font-family: var(--f-mono);
       font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.22em;
+      font-weight: 700;
+      letter-spacing: 0.25em;
       text-transform: uppercase;
       color: var(--ink3);
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.5rem;
     }
 
     .pi-model {
-      font-family: 'DM Serif Display', serif;
-      font-size: 2.4rem;
-      font-weight: 400;
-      letter-spacing: -0.01em;
+      font-family: var(--f-head);
+      font-size: 3.2rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
       color: var(--ink);
-      line-height: 1.1;
+      line-height: 1;
       margin-bottom: 0.4rem;
     }
 
     .pi-ref {
-      font-size: 13px;
+      font-family: var(--f-mono);
+      font-size: 11px;
       color: var(--ink3);
+      letter-spacing: 0.08em;
       margin-bottom: 2rem;
     }
 
@@ -376,17 +384,17 @@
     }
 
     .pi-price {
-      font-family: 'DM Serif Display', serif;
+      font-family: var(--f-sub);
       font-size: 1.9rem;
-      font-weight: 400;
+      font-weight: 700;
+      letter-spacing: 0.02em;
       color: var(--ink);
     }
 
     .pi-price.ask {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 1.1rem;
+      font-family: var(--f-mono);
+      font-size: 1rem;
       font-weight: 400;
-      font-style: italic;
       color: var(--ink2);
     }
 
@@ -427,10 +435,10 @@
       padding: 1rem;
       background: var(--ink);
       color: #fff;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
+      font-family: var(--f-mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       border: none;
       cursor: pointer;
@@ -450,10 +458,10 @@
       padding: 0.9rem;
       background: none;
       color: var(--ink);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
+      font-family: var(--f-mono);
+      font-size: 11px;
       font-weight: 400;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       border: 1px solid var(--rule);
       cursor: pointer;
@@ -470,9 +478,10 @@
     }
 
     .specs-title {
+      font-family: var(--f-mono);
       font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.22em;
+      font-weight: 700;
+      letter-spacing: 0.25em;
       text-transform: uppercase;
       color: var(--ink3);
       margin-bottom: 1rem;
@@ -491,14 +500,17 @@
 
     .specs-table td {
       padding: 0.8rem 0;
-      font-size: 13px;
+      font-family: var(--f-mono);
+      font-size: 11px;
       vertical-align: top;
     }
 
     .specs-table td:first-child {
       color: var(--ink3);
       width: 45%;
-      font-size: 12px;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     .specs-table td:last-child {
@@ -578,9 +590,10 @@
     }
 
     .related-header h2 {
-      font-family: 'DM Serif Display', serif;
-      font-size: 1.5rem;
-      font-weight: 400;
+      font-family: var(--f-head);
+      font-size: 2rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
     }
 
     .related-header a {
@@ -631,8 +644,9 @@
     }
 
     .rel-brand {
+      font-family: var(--f-mono);
       font-size: 9px;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--ink3);
@@ -640,13 +654,17 @@
     }
 
     .rel-model {
-      font-size: 13px;
-      font-weight: 500;
+      font-family: var(--f-head);
+      font-size: 1.3rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
       color: var(--ink);
     }
 
     .rel-price {
-      font-size: 12px;
+      font-family: var(--f-sub);
+      font-size: 13px;
+      font-weight: 600;
       color: var(--ink2);
       margin-top: 0.2rem;
     }
@@ -771,7 +789,7 @@
   <!-- RELATED -->
   <div class="related-section" id="related-section" style="display:none">
     <div class="related-header">
-      <h2>More from <em id="related-brand-name"></em></h2>
+      <h2>More from <span id="related-brand-name"></span></h2>
       <a href="collection.html">View all →</a>
     </div>
     <div class="related-grid" id="related-grid"></div>
