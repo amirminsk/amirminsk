@@ -1180,19 +1180,19 @@
       // lower frame count still looks smooth, so we spend the memory budget on
       // resolution first and keep as many frames as still fit.
       const mem    = navigator.deviceMemory || 8;            // GB (Chrome caps at 8)
-      const maxMB  = mem >= 8 ? 820 : mem >= 4 ? 460 : 240;  // bitmap memory budget
+      const maxMB  = mem >= 8 ? 520 : mem >= 4 ? 320 : 200;  // bitmap memory budget
       const estN   = Math.max(1, Math.round(video.duration * 24)); // ~native frame count
       const aspect = (video.videoHeight || 9) / (video.videoWidth || 16);
-      const MIN_FRAMES = 120; // floor for smoothness (blending fills the gaps)
+      const MIN_FRAMES = 90; // floor for smoothness (blending fills the gaps)
 
       let captureW = Math.min(960, video.videoWidth || 960);
       let frameTarget = estN;
-      for (const w of [1920, 1600, 1440, 1280, 1120, 960]) {
+      for (const w of [1280, 1120, 960, 854]) {
         const cw  = Math.min(w, video.videoWidth || w);
         const ch  = Math.round(cw * aspect);
         const bpf = (cw * ch * 4) / 1e6;             // MB per frame
         const affordable = Math.floor(maxMB / bpf);  // frames that fit budget
-        if (affordable >= MIN_FRAMES || w === 960) {
+        if (affordable >= MIN_FRAMES || w === 854) {
           captureW    = cw;
           frameTarget = Math.min(estN, affordable);
           break;
@@ -1244,7 +1244,10 @@
           };
           video.muted = true;
           try { video.currentTime = 0; } catch (e) {}
-          video.playbackRate = 1;
+          /* Capture at 4× so a full pass takes ~¼ of the clip's real duration
+             while requestVideoFrameCallback still presents enough frames
+             (~60/sec) to stay smooth. Higher rates drop too many frames. */
+          video.playbackRate = 4;
           video.addEventListener('ended', stop, { once: true });
           let ok = true;
           try { await video.play(); } catch (e) { ok = false; }
@@ -1281,7 +1284,10 @@
       // Try the fast path; fall back to seeking if it produced too few frames
       // (autoplay blocked, decode hiccup, etc.) so we never end up blank.
       let built = await playbackCapture();
-      if (built.length < Math.max(24, frameTarget * 0.5)) {
+      /* Only fall back to slow seek-capture if playback gave us almost nothing
+         (autoplay blocked / decode failure). A reduced-but-usable frame set from
+         the fast 4× pass is fine — blending fills the gaps. */
+      if (built.length < 24) {
         built = await seekCapture();
       }
       frames = built;
