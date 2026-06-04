@@ -768,89 +768,8 @@
     </div>
   </div>
 
+  <script src="assets/js/watches.js"></script>
   <script>
-    /* ── DATA ─────────────────────────────────────────────────────────────── */
-    /* Swap this array for a Supabase fetch when the backend is ready.        */
-    const WATCHES = [
-      {
-        id: 1,
-        brand: "Richard Mille",
-        model: "RM 67-02",
-        ref: "RM 67-02",
-        year: 2022,
-        case: "Carbon TPT",
-        dial: "Skeleton",
-        price: 195000,
-        currency: "USD",
-        status: "available",
-        photos: ["assets/images/placeholder-rm6702-1.jpg"]
-      },
-      {
-        id: 2,
-        brand: "Rolex",
-        model: "Daytona",
-        ref: "116500LN",
-        year: 2021,
-        case: "Oystersteel",
-        dial: "Black Ceramic",
-        price: 38000,
-        currency: "USD",
-        status: "available",
-        photos: ["assets/images/placeholder-daytona-1.jpg"]
-      },
-      {
-        id: 3,
-        brand: "Audemars Piguet",
-        model: "Royal Oak",
-        ref: "15500ST.OO.1220ST.01",
-        year: 2023,
-        case: "Steel",
-        dial: "Blue",
-        price: 58000,
-        currency: "USD",
-        status: "available",
-        photos: ["assets/images/placeholder-ro-1.jpg"]
-      },
-      {
-        id: 4,
-        brand: "Patek Philippe",
-        model: "Nautilus",
-        ref: "5711/1A-010",
-        year: 2020,
-        case: "Steel",
-        dial: "Blue Sunburst",
-        price: 145000,
-        currency: "USD",
-        status: "sold",
-        photos: ["assets/images/placeholder-nautilus-1.jpg"]
-      },
-      {
-        id: 5,
-        brand: "Rolex",
-        model: "Submariner",
-        ref: "126610LN",
-        year: 2022,
-        case: "Oystersteel",
-        dial: "Black",
-        price: 18500,
-        currency: "USD",
-        status: "available",
-        photos: ["assets/images/placeholder-sub-1.jpg"]
-      },
-      {
-        id: 6,
-        brand: "Audemars Piguet",
-        model: "Royal Oak Offshore",
-        ref: "26400RO.OO.A002CA.01",
-        year: 2019,
-        case: "Rose Gold",
-        dial: "Slate",
-        price: 88000,
-        currency: "USD",
-        status: "available",
-        photos: ["assets/images/placeholder-roo-1.jpg"]
-      }
-    ];
 
     /* ── STATE ── */
     let activeBrand  = "all";
@@ -906,22 +825,24 @@
 
         return `
         <article class="watch-card" data-status="${w.status}" data-id="${w.id}">
-          <div class="card-img" data-action="lightbox">
-            ${photo
-              ? `<img src="${photo}" alt="${w.brand} ${w.model}" loading="lazy"
-                   onerror="this.parentElement.innerHTML='<div class=card-img-placeholder><svg width=40 height=40 viewBox=\'0 0 40 40\' fill=\'none\'><circle cx=\'20\' cy=\'20\' r=\'18\' stroke=\'%23aaa\' stroke-width=\'1.5\'/><circle cx=\'20\' cy=\'20\' r=\'6\' stroke=\'%23aaa\' stroke-width=\'1.5\'/></svg><span>Photo pending</span></div>'" />`
-              : `<div class="card-img-placeholder">
-                   <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                     <circle cx="20" cy="20" r="18" stroke="#aaa" stroke-width="1.5"/>
-                     <circle cx="20" cy="20" r="6" stroke="#aaa" stroke-width="1.5"/>
-                   </svg>
-                   <span>Photo pending</span>
-                 </div>`
-            }
-            ${w.photos && w.photos.length > 1
-              ? `<div class="photo-pill">${w.photos.length} photos</div>`
-              : ""}
-          </div>
+          <a class="card-img-link" href="product.html?id=${w.id}" style="display:block;text-decoration:none;">
+            <div class="card-img">
+              ${photo
+                ? `<img src="${photo}" alt="${w.brand} ${w.model}" loading="lazy"
+                     onerror="this.parentElement.innerHTML='<div class=card-img-placeholder><svg width=40 height=40 viewBox=\'0 0 40 40\' fill=\'none\'><circle cx=\'20\' cy=\'20\' r=\'18\' stroke=\'%23aaa\' stroke-width=\'1.5\'/><circle cx=\'20\' cy=\'20\' r=\'6\' stroke=\'%23aaa\' stroke-width=\'1.5\'/></svg><span>No image</span></div>'" />`
+                : `<div class="card-img-placeholder">
+                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                       <circle cx="20" cy="20" r="18" stroke="#aaa" stroke-width="1.5"/>
+                       <circle cx="20" cy="20" r="6" stroke="#aaa" stroke-width="1.5"/>
+                     </svg>
+                     <span>Photo pending</span>
+                   </div>`
+              }
+              ${w.photos && w.photos.length > 1
+                ? `<div class="photo-pill">${w.photos.length} photos</div>`
+                : ""}
+            </div>
+          </a>
 
           <div class="card-body">
             <div class="card-brand">${w.brand}</div>
@@ -929,7 +850,7 @@
             <div class="card-ref">Ref. ${w.ref}</div>
             <div class="card-meta">
               ${w.year ? `<span class="meta-tag">${w.year}</span>` : ""}
-              ${w.case ? `<span class="meta-tag">${w.case}</span>` : ""}
+              ${w.case_material ? `<span class="meta-tag">${w.case_material}</span>` : ""}
             </div>
             <div class="card-footer">
               <div>
@@ -941,21 +862,12 @@
               ${sold
                 ? `<button class="btn-inquire sold">Sold</button>`
                 : `<a class="btn-inquire"
-                     href="https://wa.me/971000000000?text=${encodeURIComponent("Hi, I'm interested in the " + w.brand + " " + w.model + " Ref. " + w.ref)}"
-                     target="_blank" rel="noopener">Inquire</a>`
+                     href="product.html?id=${w.id}">View</a>`
               }
             </div>
           </div>
         </article>`;
       }).join("");
-
-      /* Lightbox triggers */
-      grid.querySelectorAll("[data-action='lightbox']").forEach(el => {
-        el.addEventListener("click", () => {
-          const id = parseInt(el.closest(".watch-card").dataset.id);
-          openLightbox(id, 0);
-        });
-      });
 
       updateCounts();
     }
