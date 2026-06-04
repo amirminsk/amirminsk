@@ -6,9 +6,67 @@
   <title>MAISON — Haute Horlogerie</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Courier+Prime:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ════════════════════════════════════════
+       LOADING SCREEN
+       ════════════════════════════════════════ */
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #0a0906;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+      transition: opacity 0.7s ease, visibility 0.7s ease;
+    }
+
+    #loading-screen.done {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loading-logo-wrap {
+      position: relative;
+      line-height: 1;
+    }
+
+    .loading-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 12vw, 9rem);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1;
+      user-select: none;
+    }
+
+    /* Ghost / outline layer — always visible as the "empty" state */
+    .loading-logo-ghost {
+      color: rgba(255,255,255,0.08);
+    }
+
+    /* Fill layer — clips from bottom upward as progress increases */
+    .loading-logo-fill {
+      position: absolute;
+      inset: 0;
+      color: #f0ede8;
+      clip-path: inset(100% 0 0 0);
+      will-change: clip-path;
+    }
+
+    .loading-pct {
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+    }
 
     :root {
       --gold:    #c9a84c;
@@ -611,7 +669,16 @@
     }
   </style>
 </head>
-<body style="background-color: rgb(0, 0, 0)">
+<body style="background-color: rgb(0, 0, 0); overflow: hidden;">
+
+  <!-- ── LOADING SCREEN ── -->
+  <div id="loading-screen">
+    <div class="loading-logo-wrap">
+      <div class="loading-logo loading-logo-ghost">HM Watches</div>
+      <div class="loading-logo loading-logo-fill" id="loading-fill">HM Watches</div>
+    </div>
+    <div class="loading-pct" id="loading-pct">0%</div>
+  </div>
 
   <div id="progress-bar"></div>
 
@@ -989,6 +1056,53 @@
   <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
 
   <script>
+    /* ─────────────────────────────────────────
+       LOADING SCREEN
+       ───────────────────────────────────────── */
+    const loadingScreen = document.getElementById('loading-screen');
+    const loadingFill   = document.getElementById('loading-fill');
+    const loadingPct    = document.getElementById('loading-pct');
+    let loadDismissed   = false;
+
+    function setLoadProgress(p) {
+      /* p is 0..1. Fill rises from bottom: at p=0 fully clipped, at p=1 fully visible */
+      const pct = Math.min(1, Math.max(0, p));
+      const top = Math.round((1 - pct) * 100);
+      loadingFill.style.clipPath = `inset(${top}% 0 0 0)`;
+      loadingPct.textContent = Math.round(pct * 100) + '%';
+    }
+
+    function dismissLoader() {
+      if (loadDismissed) return;
+      loadDismissed = true;
+      setLoadProgress(1);
+      /* Small pause at 100% so user sees the full logo, then fade out */
+      setTimeout(() => {
+        loadingScreen.classList.add('done');
+        document.body.style.overflow = '';
+      }, 420);
+    }
+
+    /* Track video buffer fill */
+    function checkBuffer() {
+      const vid = document.getElementById('scrub-video');
+      if (!vid || !isFinite(vid.duration) || vid.duration === 0) return 0;
+      let buffered = 0;
+      for (let i = 0; i < vid.buffered.length; i++) {
+        buffered = Math.max(buffered, vid.buffered.end(i));
+      }
+      return buffered / vid.duration;
+    }
+
+    const loadInterval = setInterval(() => {
+      const p = checkBuffer();
+      setLoadProgress(p);
+      if (p >= 0.98) { clearInterval(loadInterval); dismissLoader(); }
+    }, 120);
+
+    /* Safety net: never block the user for more than 6s */
+    setTimeout(() => { clearInterval(loadInterval); dismissLoader(); }, 6000);
+
     /* ─────────────────────────────────────────
        INTRO SCROLL SCRUB
        ───────────────────────────────────────── */
