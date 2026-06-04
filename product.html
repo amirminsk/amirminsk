@@ -961,9 +961,7 @@
           const wr = imgWrap.getBoundingClientRect();
           const panelSize = 480;
           /* Try right of gallery first; if off-screen, go left */
-          const rightX = wr.right + 16;
-          const leftX  = wr.left - panelSize - 16;
-          const x = (rightX + panelSize < window.innerWidth) ? rightX : leftX;
+          const x = wr.left - panelSize - 16;
           const y = Math.min(wr.top, window.innerHeight - panelSize - 16);
           zoomPanel.style.left   = x + "px";
           zoomPanel.style.top    = y + "px";
