@@ -1546,10 +1546,15 @@
         const s = (p - CF_END) / (1 - CF_END); // 0..1 after crossfade
         const PIVOT_S = 0.60; // scroll fraction where slow zone starts
         const PIVOT_V = 0.75; // video fraction at that point
+        const FAST_V  = 0.94; // video fraction where the final ~0.5s begins
+        const FAST_S  = 0.96; // scroll fraction it starts at — small remainder = fast finale
         if (s < PIVOT_S) {
           targetP = (s / PIVOT_S) * PIVOT_V;
+        } else if (s < FAST_S) {
+          targetP = PIVOT_V + ((s - PIVOT_S) / (FAST_S - PIVOT_S)) * (FAST_V - PIVOT_V);
         } else {
-          targetP = PIVOT_V + ((s - PIVOT_S) / (1 - PIVOT_S)) * (1 - PIVOT_V);
+          // Last ~0.5s of video compressed into the final 4% of scroll → faster.
+          targetP = FAST_V + ((s - FAST_S) / (1 - FAST_S)) * (1 - FAST_V);
         }
       }
 
