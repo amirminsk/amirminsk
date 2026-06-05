@@ -1153,7 +1153,7 @@
         try { vid.pause(); } catch (e) {}
 
         for (let i = 0; i < TARGET_FRAMES; i++) {
-          const t = (i / (TARGET_FRAMES - 1)) * Math.max(0, dur - 1.0);
+          const t = (i / (TARGET_FRAMES - 1)) * Math.max(0, dur - 0.04);
           await new Promise(res => {
             const onSeeked = () => { vid.removeEventListener('seeked', onSeeked); res(); };
             vid.addEventListener('seeked', onSeeked);
@@ -1249,7 +1249,7 @@
     let framesReady  = false;
     let lastDrawn    = -1;
     let lastUsable   = 0;       // index of last frame used by the scrub (trims the end)
-    const TRIM_END_SEC = 1.0;   // drop this many seconds from the very end
+    const TRIM_END_SEC = 0.1;   // drop only the final hard-cut frame, keep the zoom-out
 
     // ── Zoom-range constants ──────────────────────────────────────────────────
     // Fraction of VIDEO progress (targetP 0..1) where the RM close-up zoom lives.
