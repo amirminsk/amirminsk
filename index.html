@@ -1113,84 +1113,120 @@
         const dur = vid.duration || 10;
         const vw  = vid.videoWidth  || 1280;
         const vh  = vid.videoHeight || 720;
-        const mem = navigator.deviceMemory || 4; // GB; Chrome caps report at 8
+        vAspect   = vh / vw;
+        const capDur = Math.max(0, dur - 0.04); // last frame is the hard cut
+        const { mem, desktop, dprCap, zoomBudgetMB } = deviceProfile();
 
-        // ── Standard tier: display-resolution cap (same as before) ──────────────
+        // ── Standard tier: display-resolution cap (wide shots, light cadence) ───
         const TARGET_FRAMES = 150;
         const cw = Math.round(Math.min(1280, vw));
-        const ch = Math.round(cw * (vh / vw));
+        const ch = Math.round(cw * vAspect);
 
-        // ── High-res tier: up to 2× display width, capped at native video width ──
-        // On low-memory / mobile (deviceMemory ≤ 2 GB) reduce to 1.5× to save RAM.
-        const hiMult = mem <= 2 ? 1.5 : 2.0;
-        const hiW    = Math.min(Math.round(cw * hiMult), vw);
-        const hiH    = Math.round(hiW * (vh / vw));
-        const hasHR  = hiW > cw; // only meaningful if source has extra resolution
+        // ── Zoom tier: NATIVE resolution (no downscale) unless the source exceeds
+        // 2× the display backing width, in which case clamp to that. This is the
+        // hero close-up, so we keep every available source pixel. ───────────────
+        const dpr        = Math.min(devicePixelRatio || 1, dprCap);
+        const displayBkW = Math.min(Math.round(innerWidth * dpr), MAX_BACKING_W);
+        const zoomMaxW   = Math.min(vw, displayBkW * 2); // ≥1 src px per display px headroom
+        let   zoomW      = zoomMaxW;
+        let   zoomH      = Math.round(zoomW * vAspect);
 
-        // Size the display canvas to the standard tier
-        canvas.width  = cw;
-        canvas.height = ch;
+        // Dense cadence inside the zoom: ZOOM_DENSITY_MULT × the wide-shot cadence,
+        // capped at the source's real frame count over that span (no point caching
+        // duplicate decoded frames).
+        const zoomSpanFrac = ZOOM_END_FRAC - ZOOM_START_FRAC;
+        const srcFps       = 30; // conservative; finer than this just dupes frames
+        const srcZoomMax   = Math.max(2, Math.round(zoomSpanFrac * capDur * srcFps));
+        let   idealZoomN   = Math.min(
+          Math.round(zoomSpanFrac * TARGET_FRAMES * ZOOM_DENSITY_MULT),
+          srcZoomMax
+        );
+
+        // ── Memory guardrail: step zoom resolution, then density, down to budget ─
+        function zoomMB(n, w, h) { return (n * w * h * 4) / 1e6; }
+        let zoomN = idealZoomN;
+        // First shave resolution (down to display backing width) if way over budget.
+        while (zoomMB(zoomN, zoomW, zoomH) > zoomBudgetMB && zoomW > displayBkW) {
+          zoomW = Math.round(zoomW * 0.85);
+          zoomH = Math.round(zoomW * vAspect);
+        }
+        // Then thin density if still over.
+        while (zoomMB(zoomN, zoomW, zoomH) > zoomBudgetMB && zoomN > 8) {
+          zoomN = Math.floor(zoomN * 0.9);
+        }
+        const zoomSteppedDown = (zoomW < zoomMaxW) || (zoomN < idealZoomN);
+
+        // Size the live canvas backing store to full (capped) DPR now.
+        sizeCanvas();
 
         function makeOff(w, h) {
           if (window.OffscreenCanvas) return new OffscreenCanvas(w, h);
           const c = document.createElement('canvas'); c.width = w; c.height = h; return c;
         }
-        const off    = makeOff(cw, ch);
-        const octx   = off.getContext('2d', { alpha: false });
-        const offHR  = hasHR ? makeOff(hiW, hiH) : null;
-        const octxHR = offHR ? offHR.getContext('2d', { alpha: false }) : null;
+        const off     = makeOff(cw, ch);
+        const octx    = off.getContext('2d', { alpha: false });
+        const offZ    = makeOff(zoomW, zoomH);
+        const octxZ   = offZ.getContext('2d', { alpha: false });
+        octxZ.imageSmoothingEnabled = true;
+        octxZ.imageSmoothingQuality = 'high';
 
-        // Pre-count zoom-range frames so progress % accounts for the extra work
-        let zoomCount = 0;
-        for (let i = 0; i < TARGET_FRAMES; i++) {
-          if (hasHR && (i / (TARGET_FRAMES - 1)) >= ZOOM_START_FRAC) zoomCount++;
-        }
-        const totalWork = TARGET_FRAMES + zoomCount * 0.5;
-        let workDone = 0;
+        // Honest progress: std frames + heavier zoom frames (weighted ~2× each
+        // because they decode at much higher resolution).
+        const ZOOM_WORK = 2;
+        const totalWork = TARGET_FRAMES + zoomN * ZOOM_WORK;
+        let   workDone  = 0;
 
-        const builtStd = [];
-        const builtHR  = {};
-        try { vid.pause(); } catch (e) {}
-
-        for (let i = 0; i < TARGET_FRAMES; i++) {
-          const t = (i / (TARGET_FRAMES - 1)) * Math.max(0, dur - 0.04);
+        async function seekTo(t) {
           await new Promise(res => {
             const onSeeked = () => { vid.removeEventListener('seeked', onSeeked); res(); };
             vid.addEventListener('seeked', onSeeked);
             try { vid.currentTime = t; } catch (e) {}
-            setTimeout(res, 1200);
+            setTimeout(res, 1500);
           });
+        }
 
-          // Standard bitmap (every frame)
+        const builtStd = [];
+        try { vid.pause(); } catch (e) {}
+
+        // Pass 1 — standard tier across the whole clip.
+        for (let i = 0; i < TARGET_FRAMES; i++) {
+          await seekTo((i / (TARGET_FRAMES - 1)) * capDur);
           octx.drawImage(vid, 0, 0, cw, ch);
           try { builtStd[i] = await createImageBitmap(off); } catch (e) {}
+          if (i === 0 && builtStd[0]) cctx.drawImage(builtStd[0], 0, 0, canvas.width, canvas.height);
+          workDone += 1;
+          setLoadProgress(workDone / totalWork);
+        }
 
-          // High-res bitmap (zoom range only, same seek — no extra cost)
-          const vf = i / (TARGET_FRAMES - 1);
-          if (hasHR && vf >= ZOOM_START_FRAC && vf <= ZOOM_END_FRAC && octxHR) {
-            octxHR.drawImage(vid, 0, 0, hiW, hiH);
-            try { builtHR[i] = await createImageBitmap(offHR); } catch (e) {}
-            workDone += 1.5;
-          } else {
-            workDone += 1;
-          }
-
-          if (i === 0 && builtStd[0]) cctx.drawImage(builtStd[0], 0, 0, cw, ch);
+        // Pass 2 — dense native-res zoom tier. Span is the usable zoom window
+        // (honours the end trim) so progress maps cleanly onto it.
+        const zStart = ZOOM_START_FRAC * capDur;
+        const zEnd   = Math.max(zStart, capDur - TRIM_END_SEC);
+        const builtZoom = [];
+        for (let i = 0; i < zoomN; i++) {
+          const t = zStart + (zoomN === 1 ? 0 : (i / (zoomN - 1)) * (zEnd - zStart));
+          await seekTo(t);
+          octxZ.drawImage(vid, 0, 0, zoomW, zoomH);
+          try { builtZoom[i] = await createImageBitmap(offZ); } catch (e) {}
+          workDone += ZOOM_WORK;
           setLoadProgress(workDone / totalWork);
         }
 
         frames      = builtStd.filter(Boolean);
-        framesHR    = builtHR; // sparse: only zoom-range indices are populated
+        zoomFrames  = builtZoom.filter(Boolean);
+        zoomReady   = zoomFrames.length > 0;
+        framesHR    = {}; // legacy path retired
         framesReady = frames.length > 0;
         const fps   = frames.length / dur;
         lastUsable  = Math.max(0, frames.length - 1 - Math.round(fps * TRIM_END_SEC));
 
-        // Diagnostic log: cache size and memory footprint
-        const hrCount = Object.keys(framesHR).length;
-        if (hrCount > 0) {
-          const hrMB = Math.round(hrCount * hiW * hiH * 4 / 1e6);
-          console.info(`[MAISON] Cache: ${frames.length} std (${cw}×${ch}), ${hrCount} hi-res (${hiW}×${hiH}, ~${hrMB} MB)`);
-        }
+        // Diagnostic log: zoom tier resolution, frame count, memory.
+        const zMB = Math.round(zoomMB(zoomFrames.length, zoomW, zoomH));
+        console.info(
+          `[MAISON] Zoom tier: ${zoomFrames.length} frames @ ${zoomW}×${zoomH} ≈ ${zMB} MB ` +
+          `(budget ${zoomBudgetMB} MB, ${zoomSteppedDown ? 'stepped down' : 'full fidelity'}). ` +
+          `Std tier: ${frames.length} @ ${cw}×${ch}. Canvas backing ${canvas.width}×${canvas.height}.`
+        );
 
         // Free the video element — decoder no longer resident
         try { vid.pause(); vid.removeAttribute('src'); vid.load(); } catch (e) {}
@@ -1245,10 +1281,13 @@
        ONCE into a set of in-memory bitmaps, then scrub by blitting the nearest
        cached frame to a canvas — effectively instant, smooth at any speed. */
     let frames       = [];      // ImageBitmap[] — standard-res, full clip
-    let framesHR     = {};      // sparse object — high-res bitmaps, zoom range only
+    let framesHR     = {};      // legacy sparse HR map (kept for safety; unused by new path)
+    let zoomFrames   = [];      // ImageBitmap[] — DENSE, native-res, zoom range only
+    let zoomReady    = false;
     let framesReady  = false;
     let lastDrawn    = -1;
     let lastUsable   = 0;       // index of last frame used by the scrub (trims the end)
+    let vAspect      = 9 / 16;  // video height/width — set once metadata is known
     const TRIM_END_SEC = 0.1;   // drop only the final hard-cut frame, keep the zoom-out
 
     // ── Zoom-range constants ──────────────────────────────────────────────────
@@ -1256,6 +1295,32 @@
     // Adjust these two values if the zoom occurs at a different point in the clip.
     const ZOOM_START_FRAC = 0.75; // zoom begins at 75% through the video
     const ZOOM_END_FRAC   = 1.00; // zoom ends at 100% (i.e. last frame)
+    // Density multiplier: how many more frames to cache per unit progress inside
+    // the zoom vs the wide-shot cadence. Memory budget may step this down.
+    const ZOOM_DENSITY_MULT = 3;
+    const MAX_BACKING_W     = 2560; // cap canvas backing width (memory + fill-rate)
+
+    // Device profile → memory budget for the native-res zoom tier and DPR cap.
+    function deviceProfile() {
+      const mem  = navigator.deviceMemory || 4;            // GB (Chrome caps at 8)
+      const desktop = innerWidth >= 1024 && !('ontouchstart' in window);
+      const dprCap  = (desktop && mem >= 8) ? 3 : 2;       // 3× only on roomy desktop
+      const zoomBudgetMB = mem <= 2 ? 150 : (desktop && mem >= 8 ? 400 : 280);
+      return { mem, desktop, dprCap, zoomBudgetMB };
+    }
+
+    // Size the canvas backing store to full (capped) DPR so high-res zoom bitmaps
+    // aren't squashed into a low-res buffer. Aspect follows the video.
+    function sizeCanvas() {
+      const { dprCap } = deviceProfile();
+      const dpr = Math.min(devicePixelRatio || 1, dprCap);
+      const w   = Math.min(Math.round(innerWidth * dpr), MAX_BACKING_W);
+      const h   = Math.round(w * vAspect);
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w; canvas.height = h;
+        lastDrawn = -1; // force a repaint at the new resolution
+      }
+    }
 
     video.addEventListener('loadedmetadata', () => { videoReady = true; });
     if (video.readyState >= 1 && isFinite(video.duration)) videoReady = true;
@@ -1403,32 +1468,50 @@
       // discrete frame steps — smoother than the native framerate alone.
       // Scrub only across the usable range (last second trimmed) so p=1 lands on
       // a clean frame, not the abrupt end cut.
+      cctx.imageSmoothingEnabled = true;
+      cctx.imageSmoothingQuality = 'high';
+      const cw = canvas.width, ch = canvas.height;
+
+      // Inside the zoom window, scrub the DENSE native-res zoom array instead of
+      // the wide-shot standard tier — full detail, more frames, buttery slow-scrub.
+      if (zoomReady && p >= ZOOM_START_FRAC) {
+        const zp   = Math.min(Math.max((p - ZOOM_START_FRAC) / (ZOOM_END_FRAC - ZOOM_START_FRAC), 0), 1);
+        const zmax = zoomFrames.length - 1;
+        const zf   = zp * zmax;
+        const z0   = Math.floor(zf);
+        const zfrac = zf - z0;
+        const z1   = Math.min(z0 + 1, zmax);
+
+        const key = 1e6 + z0 * 1000 + Math.round(zfrac * 60); // 1e6 offset = zoom namespace
+        if (key === lastDrawn) return;
+        lastDrawn = key;
+
+        cctx.globalAlpha = 1;
+        if (zoomFrames[z0]) cctx.drawImage(zoomFrames[z0], 0, 0, cw, ch);
+        if (zfrac > 0.012 && z1 !== z0 && zoomFrames[z1]) {
+          cctx.globalAlpha = zfrac;
+          cctx.drawImage(zoomFrames[z1], 0, 0, cw, ch);
+          cctx.globalAlpha = 1;
+        }
+        return;
+      }
+
+      // Wide-shot scrub — standard tier with cross-dissolve.
       const maxIdx = lastUsable || (frames.length - 1);
       const f    = p * maxIdx;
       const i0   = Math.floor(f);
       const frac = f - i0;
       const i1   = Math.min(i0 + 1, maxIdx);
 
-      // Quantise to avoid redundant repaints while keeping blend granularity.
       const key = i0 * 1000 + Math.round(frac * 60);
       if (key === lastDrawn) return;
       lastDrawn = key;
 
-      // Use high-res bitmaps inside the zoom range for maximum sharpness.
-      const vf     = maxIdx > 0 ? i0 / maxIdx : 0;
-      const inZoom = vf >= ZOOM_START_FRAC;
-      const src0   = (inZoom && framesHR[i0]) ? framesHR[i0] : frames[i0];
-      const src1   = (inZoom && framesHR[i1]) ? framesHR[i1] : frames[i1];
-
-      cctx.imageSmoothingEnabled = true;
-      cctx.imageSmoothingQuality = 'high';
-
-      const cw = canvas.width, ch = canvas.height;
       cctx.globalAlpha = 1;
-      if (src0) cctx.drawImage(src0, 0, 0, cw, ch);
-      if (frac > 0.012 && i1 !== i0 && src1) {
+      if (frames[i0]) cctx.drawImage(frames[i0], 0, 0, cw, ch);
+      if (frac > 0.012 && i1 !== i0 && frames[i1]) {
         cctx.globalAlpha = frac;
-        cctx.drawImage(src1, 0, 0, cw, ch);
+        cctx.drawImage(frames[i1], 0, 0, cw, ch);
         cctx.globalAlpha = 1;
       }
     }
@@ -1632,7 +1715,7 @@
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
+    window.addEventListener('resize', () => { sizeCanvas(); drawForProgress(targetP); onScroll(); });
     rafRunning = true; requestAnimationFrame(tick);
     onScroll();
   </script>
