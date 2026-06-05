@@ -200,7 +200,7 @@
        ════════════════════════════════════════ */
     #intro-section {
       position: relative;
-      height: 700vh;
+      height: 400vh;
     }
 
     #intro-stage {
@@ -711,7 +711,7 @@
       </div>
 
       <div id="video-layer">
-        <video id="scrub-video" muted playsinline preload="auto" poster="assets/images/intro-poster.jpg" src="assets/video/intro.mp4"></video>
+        <video id="scrub-video" muted playsinline preload="auto" poster="assets/images/intro-poster.jpg" src="assets/video/intro-opt.mp4"></video>
         <canvas id="scrub-canvas"></canvas>
       </div>
 
@@ -1083,45 +1083,85 @@
       }, 420);
     }
 
-    /* Track video buffer fill — wait for full download */
-    function checkBuffer() {
-      const vid = document.getElementById('scrub-video');
-      if (!vid || !isFinite(vid.duration) || vid.duration === 0) return 0;
-      let buffered = 0;
-      for (let i = 0; i < vid.buffered.length; i++) {
-        buffered = Math.max(buffered, vid.buffered.end(i));
-      }
-      return buffered / vid.duration;
-    }
-
-    /* Track video buffer fill, then build frame cache before entry */
-    function checkBuffer() {
-      const vid = document.getElementById('scrub-video');
-      if (!vid || !isFinite(vid.duration) || vid.duration === 0) return 0;
-      let buffered = 0;
-      for (let i = 0; i < vid.buffered.length; i++) {
-        buffered = Math.max(buffered, vid.buffered.end(i));
-      }
-      return buffered / vid.duration;
-    }
-
-    async function onVideoReady() {
-      clearInterval(loadInterval);
-      setLoadProgress(1);
-      loadingPct.textContent = 'Preparing…';
-      /* Build the frame cache NOW while the loading screen is still showing.
-         By the time the user enters, every frame is decoded and ready — no freeze. */
-      await buildFrameCache();
+    /* ── Graceful fallback: if canvas 2d or createImageBitmap is missing, skip to content ── */
+    if (!canvas.getContext || !window.createImageBitmap) {
       dismissLoader();
+      document.getElementById('scrub-video').style.opacity = '1';
+    } else {
+      /* Pre-decode the full clip into an ImageBitmap cache during the loading screen.
+         Progress 0..1 drives the fill animation so the user sees real decode progress.
+         After caching, the <video> element is freed — no seeking ever happens at scroll time. */
+      (async () => {
+        const vid = document.getElementById('scrub-video');
+
+        // Wait for metadata so we know duration + dimensions
+        if (!isFinite(vid.duration) || vid.duration === 0) {
+          await new Promise(res => {
+            vid.addEventListener('loadedmetadata', res, { once: true });
+            setTimeout(res, 6000); // hard timeout
+          });
+        }
+
+        const dur = vid.duration || 10;
+
+        // Target ~150 frames distributed evenly across the clip
+        const TARGET_FRAMES = 150;
+        const dpr   = Math.min(devicePixelRatio, 2);
+        const cw    = Math.round(Math.min(1280, vid.videoWidth  || 1280) * dpr / dpr); // display-res cap
+        const ch    = Math.round(cw * ((vid.videoHeight || 720) / (vid.videoWidth || 1280)));
+
+        // Size the canvas once here (resize handler keeps it current)
+        canvas.width  = cw;
+        canvas.height = ch;
+
+        const off  = new OffscreenCanvas ? new OffscreenCanvas(cw, ch) : (() => { const c = document.createElement('canvas'); c.width = cw; c.height = ch; return c; })();
+        const octx = off.getContext('2d', { alpha: false });
+
+        const built = [];
+        try { vid.pause(); } catch (e) {}
+
+        for (let i = 0; i < TARGET_FRAMES; i++) {
+          // Seek to evenly-spaced timestamps; skip the last 1s to avoid end-cut artefacts
+          const t = (i / (TARGET_FRAMES - 1)) * Math.max(0, dur - 1.0);
+          await new Promise(res => {
+            const onSeeked = () => { vid.removeEventListener('seeked', onSeeked); res(); };
+            vid.addEventListener('seeked', onSeeked);
+            try { vid.currentTime = t; } catch (e) {}
+            setTimeout(res, 1200); // fallback if seeked never fires
+          });
+
+          octx.drawImage(vid, 0, 0, cw, ch);
+          try { built[i] = await createImageBitmap(off); } catch (e) {}
+
+          // Draw first frame immediately so loading screen shows something
+          if (i === 0 && built[0]) cctx.drawImage(built[0], 0, 0, cw, ch);
+
+          // Report real decode progress
+          setLoadProgress((i + 1) / TARGET_FRAMES);
+        }
+
+        frames       = built.filter(Boolean);
+        framesReady  = frames.length > 0;
+        const fps    = frames.length / dur;
+        lastUsable   = Math.max(0, frames.length - 1 - Math.round(fps * TRIM_END_SEC));
+
+        // Free the video element — we never need it again
+        try {
+          vid.pause();
+          vid.removeAttribute('src');
+          vid.load();
+        } catch (e) {}
+
+        if (!framesReady) {
+          // Absolute last resort — show the static poster
+          const img = new Image();
+          img.src = 'assets/images/intro-poster.jpg';
+          img.onload = () => cctx.drawImage(img, 0, 0, cw, ch);
+        }
+
+        dismissLoader();
+      })().catch(() => dismissLoader());
     }
-
-    const loadInterval = setInterval(() => {
-      const p = checkBuffer();
-      setLoadProgress(p);
-      if (p >= 0.99) onVideoReady();
-    }, 150);
-
-    document.getElementById('scrub-video').addEventListener('canplaythrough', onVideoReady, { once: true });
 
     /* ─────────────────────────────────────────
        INTRO SCROLL SCRUB
@@ -1136,7 +1176,7 @@
     const skipBtn      = document.getElementById('skip-btn');
 
     const canvas       = document.getElementById('scrub-canvas');
-    const cctx         = canvas.getContext('2d', { alpha: false });
+    const cctx         = canvas.getContext('2d', { alpha: false, desynchronized: true });
 
     let videoReady   = false;   // metadata loaded
     let targetP      = 0;       // latest scroll progress 0..1
@@ -1407,10 +1447,16 @@
       }
     }
 
+    // Pause rendering when the intro section is fully offscreen (perf)
+    let introVisible = true;
+    let rafRunning   = false;
+    new IntersectionObserver(([e]) => {
+      introVisible = e.isIntersecting;
+      if (introVisible && !rafRunning) { rafRunning = true; requestAnimationFrame(tick); }
+    }, { threshold: 0 }).observe(introSection);
+
     function tick() {
-      // Lenis smooths the scroll position itself, so the video simply tracks the
-      // (already eased) scroll 1:1 — momentum and smoothness come from the global
-      // smooth-scroll engine, consistent with the rest of the page.
+      if (!introVisible) { rafRunning = false; return; }
       onScroll();
       drawForProgress(targetP);
       requestAnimationFrame(tick);
@@ -1529,7 +1575,7 @@
 
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
-    requestAnimationFrame(tick);
+    rafRunning = true; requestAnimationFrame(tick);
     onScroll();
   </script>
 </body>
