@@ -1,630 +1,1536 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAISON — Rare & Collectible Timepieces</title>
-<meta name="description" content="MAISON — purveyors of rare and collectible timepieces. Rolex, Audemars Piguet, Patek Philippe & Richard Mille. Private viewings in Paris · Dubai · Geneva.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --black:#0a0a0a; --charcoal:#141414; --ink:#1c1c1c;
-    --cream:#f4f1ea; --offwhite:#e8e4da;
-    --gold:#c5a572; --gold-bright:#d8b87f; --muted:#8a8579;
-    --line:rgba(197,165,114,.22);
-    --maxw:1320px;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{
-    background:var(--black); color:var(--cream);
-    font-family:'Jost',sans-serif; font-weight:300;
-    line-height:1.6; overflow-x:hidden;
-    -webkit-font-smoothing:antialiased;
-  }
-  h1,h2,h3,h4{font-family:'Cormorant Garamond',serif;font-weight:600;line-height:1.05}
-  .mono{font-family:'JetBrains Mono',monospace}
-  a{color:inherit;text-decoration:none}
-  img{display:block;max-width:100%}
-  ::selection{background:var(--gold);color:var(--black)}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MAISON — Haute Horlogerie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Courier+Prime:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 2rem}
-
-  /* ---------- buttons ---------- */
-  .btn{
-    position:relative; overflow:hidden; isolation:isolate;
-    display:inline-flex; align-items:center; justify-content:center;
-    font-family:'Jost',sans-serif; font-size:.72rem; font-weight:500;
-    letter-spacing:.28em; text-transform:uppercase;
-    padding:1rem 2.1rem; cursor:pointer; border:1px solid var(--gold);
-    background:var(--gold); color:var(--black); transition:color .4s ease;
-  }
-  .btn span{position:relative;z-index:2}
-  .btn::before{
-    content:''; position:absolute; inset:0; background:var(--black);
-    transform:translateY(101%); transition:transform .45s cubic-bezier(.7,0,.2,1); z-index:1;
-  }
-  .btn:hover{color:var(--cream)} .btn:hover::before{transform:translateY(0)}
-  .btn.ghost{background:transparent;color:var(--gold)}
-  .btn.ghost::before{background:var(--gold)}
-  .btn.ghost:hover{color:var(--black)}
-  .btn:focus-visible{outline:2px solid var(--gold-bright);outline-offset:3px}
-
-  /* ---------- nav ---------- */
-  #nav{
-    position:fixed; top:0; left:0; right:0; z-index:100;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:1.5rem 2.5rem; transition:background .4s, padding .4s, border-color .4s;
-    border-bottom:1px solid transparent;
-  }
-  #nav.scrolled{
-    background:rgba(10,10,10,.78); backdrop-filter:blur(14px);
-    border-bottom-color:var(--line); padding:1rem 2.5rem;
-  }
-  .logo{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.7rem;letter-spacing:.42em;padding-left:.42em;color:var(--cream)}
-  .nav-links{display:flex;gap:2.4rem;align-items:center}
-  .nav-links a{font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:var(--offwhite);position:relative;padding:.3rem 0;transition:color .3s}
-  .nav-links a::after{content:'';position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--gold);transition:width .35s}
-  .nav-links a:hover{color:var(--gold)} .nav-links a:hover::after{width:100%}
-  .nav-cta{font-size:.66rem !important;letter-spacing:.24em;border:1px solid var(--line);padding:.6rem 1.2rem !important;color:var(--gold)!important}
-  .nav-cta::after{display:none}
-  .nav-cta:hover{background:var(--gold);color:var(--black)!important}
-  .menu-toggle{display:none;background:none;border:none;color:var(--cream);font-size:1.5rem;cursor:pointer}
-
-  /* ---------- hero ---------- */
-  .hero{position:relative;height:100vh;min-height:680px;display:flex;align-items:center;overflow:hidden}
-  #hero-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1}
-  .hero-fallback{position:absolute;inset:0;z-index:1;display:none;
-    background:radial-gradient(circle at 60% 40%,#2a2620,#0a0a0a 70%),
-    url('https://images.pexels.com/photos/364822/rolex-watch-time-luxury-364822.jpeg?auto=compress&cs=tinysrgb&w=1400') center/cover}
-  .hero-vignette{position:absolute;inset:0;z-index:2;pointer-events:none;
-    background:radial-gradient(ellipse 80% 70% at 65% 50%,transparent 30%,rgba(10,10,10,.55) 100%),
-    linear-gradient(90deg,rgba(10,10,10,.92) 0%,rgba(10,10,10,.4) 42%,transparent 70%)}
-  .hero-content{position:relative;z-index:3;max-width:var(--maxw);margin:0 auto;padding:0 2.5rem;width:100%}
-  .hero-inner{max-width:620px}
-  .eyebrow{display:inline-flex;align-items:center;gap:.8rem;font-size:.68rem;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:1.8rem}
-  .eyebrow::before{content:'';width:34px;height:1px;background:var(--gold)}
-  .hero h1{font-size:clamp(3rem,7vw,5.8rem);font-weight:500;line-height:1.02;letter-spacing:.01em;margin-bottom:1.6rem}
-  .hero h1 em{font-style:italic;color:var(--gold);font-weight:500}
-  .hero-sub{font-size:1.05rem;font-weight:300;color:var(--offwhite);max-width:44ch;margin-bottom:2.6rem;line-height:1.7}
-  .hero-ctas{display:flex;gap:1rem;flex-wrap:wrap}
-
-  .fade-up{opacity:0;transform:translateY(26px);animation:fadeUp 1s cubic-bezier(.2,.7,.3,1) forwards}
-  .d1{animation-delay:.25s}.d2{animation-delay:.45s}.d3{animation-delay:.65s}.d4{animation-delay:.85s}
-  @keyframes fadeUp{to{opacity:1;transform:none}}
-
-  .scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:3;
-    font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);
-    display:flex;flex-direction:column;align-items:center;gap:.7rem}
-  .scroll-hint .bar{width:1px;height:42px;background:linear-gradient(var(--gold),transparent);animation:drop 2s ease-in-out infinite}
-  @keyframes drop{0%,100%{opacity:.3;transform:scaleY(.6)}50%{opacity:1;transform:scaleY(1)}}
-
-  /* ---------- section frame ---------- */
-  section{position:relative}
-  .pad{padding:7rem 0}
-  .sec-head{max-width:640px;margin-bottom:3.5rem}
-  .sec-eyebrow{display:block;font-size:.66rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
-  .sec-title{font-size:clamp(2.4rem,4.5vw,3.8rem);font-weight:500}
-  .sec-title em{font-style:italic;color:var(--gold)}
-  .sec-sub{color:var(--muted);margin-top:1rem;max-width:50ch;font-weight:300}
-
-  .reveal{opacity:0;transform:translateY(34px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.3,1)}
-  .reveal.in{opacity:1;transform:none}
-
-  /* ---------- brands ---------- */
-  #brands{background:var(--charcoal);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .brand-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
-  .brand-tile{position:relative;background:var(--charcoal);aspect-ratio:3/4;overflow:hidden;display:flex;align-items:flex-end;padding:1.6rem;cursor:pointer}
-  .brand-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.42;filter:grayscale(.4);transition:transform .8s cubic-bezier(.2,.7,.3,1),opacity .6s,filter .6s}
-  .brand-tile::after{content:'';position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(10,10,10,.9))}
-  .brand-tile:hover img{transform:scale(1.08);opacity:.6;filter:grayscale(0)}
-  .brand-label{position:relative;z-index:2}
-  .brand-label .b-name{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:var(--cream)}
-  .brand-label .b-cat{font-size:.6rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-top:.3rem}
-
-  /* ---------- arrivals ---------- */
-  .card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem}
-  .card{position:relative;background:var(--charcoal);border:1px solid var(--line);display:flex;flex-direction:column;transition:border-color .4s,transform .4s}
-  .card:hover{border-color:var(--gold);transform:translateY(-4px)}
-  .card-img{position:relative;aspect-ratio:1/1;overflow:hidden;background:#0d0d0d}
-  .card-img img{width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.2,.7,.3,1)}
-  .card:hover .card-img img{transform:scale(1.06)}
-  .scarcity-tag{position:absolute;top:.85rem;left:.85rem;background:rgba(197,165,114,.12);border:1px solid rgba(197,165,114,.4);color:var(--gold);font-size:.5rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;padding:.25rem .6rem;backdrop-filter:blur(4px)}
-  .card-body{padding:1.4rem;display:flex;flex-direction:column;flex:1}
-  .card-brand{font-size:.6rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:.45rem}
-  .card-model{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:600;line-height:1.05;color:var(--cream)}
-  .card-ref{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);margin-top:.4rem}
-  .card-foot{margin-top:auto;padding-top:1.2rem;display:flex;align-items:center;justify-content:space-between;gap:.6rem}
-  .card-price{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
-  .card-enquire{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);border:1px solid var(--line);padding:.55rem .9rem;transition:background .3s,color .3s;white-space:nowrap}
-  .card-enquire:hover{background:var(--gold);color:var(--black)}
-
-  /* ---------- stats ---------- */
-  #trust{background:var(--charcoal);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;text-align:center}
-  .stat .figure{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,5vw,4.6rem);font-weight:600;color:var(--gold);line-height:1}
-  .stat .label{font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);margin-top:.7rem}
-
-  /* ---------- appointment ---------- */
-  #appointment{text-align:center;background:
-    radial-gradient(ellipse 60% 80% at 50% 0%,rgba(197,165,114,.07),transparent 60%),var(--black)}
-  #appointment .sec-head{margin:0 auto 2.5rem}
-  #appointment h2{font-size:clamp(2.6rem,5vw,4.4rem);font-weight:500}
-  #appointment h2 em{font-style:italic;color:var(--gold)}
-  .appt-ctas{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:2.2rem}
-
-  /* ---------- footer ---------- */
-  footer{background:var(--charcoal);border-top:1px solid var(--line);padding:4rem 0 2rem}
-  .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr;gap:2.5rem;margin-bottom:3rem}
-  .foot-logo{font-family:'Cormorant Garamond',serif;font-size:1.7rem;letter-spacing:.42em;padding-left:.42em;margin-bottom:1.1rem}
-  .foot-col h4{font-family:'Jost',sans-serif;font-size:.62rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:1.1rem}
-  .foot-col a,.foot-col p{display:block;font-size:.82rem;color:var(--muted);margin-bottom:.55rem;transition:color .3s}
-  .foot-col a:hover{color:var(--cream)}
-  .foot-bot{border-top:1px solid var(--line);padding-top:1.6rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:.64rem;letter-spacing:.12em;color:var(--muted)}
-
-  /* ---------- whatsapp float ---------- */
-  .wa-float{position:fixed;bottom:1.8rem;right:1.8rem;z-index:200;width:58px;height:58px;border-radius:50%;
-    background:var(--gold);color:var(--black);display:flex;align-items:center;justify-content:center;
-    box-shadow:0 10px 30px rgba(0,0,0,.5);transition:transform .3s}
-  .wa-float:hover{transform:scale(1.08)}
-  .wa-float svg{width:28px;height:28px}
-  .wa-float::before{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid var(--gold);animation:pulse 2.4s ease-out infinite}
-  @keyframes pulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
-
-  /* ---------- responsive ---------- */
-  @media(max-width:900px){
-    .nav-links{display:none}
-    .menu-toggle{display:block}
-    .brand-grid{grid-template-columns:repeat(2,1fr)}
-    .card-grid{grid-template-columns:repeat(2,1fr)}
-    .stats{grid-template-columns:repeat(2,1fr);gap:2.5rem}
-    .foot-grid{grid-template-columns:1fr 1fr}
-    .pad{padding:5rem 0}
-  }
-  @media(max-width:560px){
-    .wrap,.hero-content{padding-left:1.4rem;padding-right:1.4rem}
-    #nav{padding:1.2rem 1.4rem}
-    .card-grid{grid-template-columns:1fr}
-    .brand-grid{grid-template-columns:1fr 1fr}
-    .stats{grid-template-columns:1fr 1fr;gap:2rem}
-    .foot-grid{grid-template-columns:1fr}
-    .hero-ctas .btn{flex:1}
-  }
-  @media(prefers-reduced-motion:reduce){
-    .fade-up,.reveal{animation:none!important;transition:none!important;opacity:1!important;transform:none!important}
-    .wa-float::before,.scroll-hint .bar{animation:none}
-  }
-</style>
-</head>
-<body>
-
-<!-- NAV -->
-<nav id="nav" aria-label="Primary">
-  <a href="#" class="logo" aria-label="MAISON home">MAISON</a>
-  <div class="nav-links">
-    <a href="#brands">Brands</a>
-    <a href="#arrivals">New Arrivals</a>
-    <a href="#trust">The House</a>
-    <a href="#appointment">Private Viewing</a>
-    <a href="#appointment" class="nav-cta">Book Appointment</a>
-  </div>
-  <button class="menu-toggle" aria-label="Open menu" onclick="document.querySelector('.nav-links').style.display='flex'">☰</button>
-</nav>
-
-<!-- HERO -->
-<header class="hero">
-  <canvas id="hero-canvas" aria-hidden="true"></canvas>
-  <div class="hero-fallback" id="hero-fallback" aria-hidden="true"></div>
-  <div class="hero-vignette" aria-hidden="true"></div>
-
-  <div class="hero-content">
-    <div class="hero-inner">
-      <span class="eyebrow fade-up d1">Paris · Dubai · Geneva</span>
-      <h1 class="fade-up d2">Timepieces for the <em>Discerning</em> Few</h1>
-      <p class="hero-sub fade-up d3">A privately curated inventory of the world's most coveted references — authenticated, guaranteed, and delivered with absolute discretion.</p>
-      <div class="hero-ctas fade-up d4">
-        <a href="#arrivals" class="btn"><span>View Collection</span></a>
-        <a href="#appointment" class="btn ghost"><span>Book a Private Viewing</span></a>
-      </div>
-    </div>
-  </div>
-
-  <div class="scroll-hint" aria-hidden="true"><span>Scroll</span><span class="bar"></span></div>
-</header>
-
-<!-- BRANDS -->
-<section id="brands" class="pad">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="sec-eyebrow">Maisons We Carry</span>
-      <h2 class="sec-title">The <em>Greats</em></h2>
-      <p class="sec-sub">Four houses define the summit of haute horlogerie. We specialise in their rarest and most sought-after references.</p>
-    </div>
-    <div class="brand-grid reveal">
-      <a class="brand-tile" href="#arrivals" aria-label="Rolex collection">
-        <img loading="lazy" src="https://images.pexels.com/photos/364822/rolex-watch-time-luxury-364822.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Rolex Daytona on dark surface">
-        <span class="brand-label"><span class="b-name">Rolex</span><span class="b-cat">Sport · Professional</span></span>
-      </a>
-      <a class="brand-tile" href="#arrivals" aria-label="Audemars Piguet collection">
-        <img loading="lazy" src="https://images.pexels.com/photos/2783873/pexels-photo-2783873.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Audemars Piguet Royal Oak detail">
-        <span class="brand-label"><span class="b-name">Audemars Piguet</span><span class="b-cat">Royal Oak</span></span>
-      </a>
-      <a class="brand-tile" href="#arrivals" aria-label="Patek Philippe collection">
-        <img loading="lazy" src="https://images.pexels.com/photos/236915/pexels-photo-236915.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Patek Philippe Nautilus on wrist">
-        <span class="brand-label"><span class="b-name">Patek Philippe</span><span class="b-cat">Grand Complications</span></span>
-      </a>
-      <a class="brand-tile" href="#arrivals" aria-label="Richard Mille collection">
-        <img loading="lazy" src="https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Richard Mille skeleton movement">
-        <span class="brand-label"><span class="b-name">Richard Mille</span><span class="b-cat">Haute Horlogerie</span></span>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ARRIVALS -->
-<section id="arrivals" class="pad">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="sec-eyebrow">Just Acquired</span>
-      <h2 class="sec-title">New <em>Arrivals</em></h2>
-      <p class="sec-sub">Fresh to the showroom. Pricing furnished privately — contact us for the most accurate, up-to-date figures on every reference.</p>
-    </div>
-    <div class="card-grid reveal" id="card-grid"></div>
-  </div>
-</section>
-
-<!-- TRUST -->
-<section id="trust" class="pad">
-  <div class="wrap">
-    <div class="sec-head reveal" style="max-width:none;text-align:center;margin-left:auto;margin-right:auto">
-      <span class="sec-eyebrow">The House</span>
-      <h2 class="sec-title">Trust, <em>Earned</em></h2>
-    </div>
-    <div class="stats reveal">
-      <div class="stat"><div class="figure" data-count="38" data-suffix="">0</div><div class="label">Years Trading</div></div>
-      <div class="stat"><div class="figure" data-count="4200" data-suffix="+">0</div><div class="label">Pieces Placed</div></div>
-      <div class="stat"><div class="figure" data-count="100" data-suffix="%">0</div><div class="label">Authenticated</div></div>
-      <div class="stat"><div class="figure" data-count="3" data-suffix="">0</div><div class="label">Global Showrooms</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- APPOINTMENT -->
-<section id="appointment" class="pad">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="sec-eyebrow">By Appointment</span>
-      <h2>A Private <em>Viewing</em></h2>
-      <p class="sec-sub" style="margin-left:auto;margin-right:auto">Step inside one of our salons — or let us bring the collection to you. Every viewing is confidential and unhurried.</p>
-    </div>
-    <div class="appt-ctas reveal">
-      <a href="https://wa.me/PHONENUMBER?text=Hello%20MAISON%2C%20I%27d%20like%20to%20book%20a%20private%20viewing." target="_blank" rel="noopener" class="btn"><span>Book a Private Viewing</span></a>
-      <a href="#arrivals" class="btn ghost"><span>Browse the Collection</span></a>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="wrap">
-    <div class="foot-grid">
-      <div class="foot-col">
-        <div class="foot-logo">MAISON</div>
-        <p style="max-width:34ch">Purveyors of rare and collectible timepieces since 1987. Discretion, authenticity, and uncompromising standards.</p>
-      </div>
-      <div class="foot-col">
-        <h4>Explore</h4>
-        <a href="#brands">Brands</a>
-        <a href="#arrivals">New Arrivals</a>
-        <a href="#trust">The House</a>
-      </div>
-      <div class="foot-col">
-        <h4>Salons</h4>
-        <p>Paris — 8e</p>
-        <p>Dubai — DIFC</p>
-        <p>Geneva — Rue du Rhône</p>
-      </div>
-      <div class="foot-col">
-        <h4>Enquiries</h4>
-        <a href="https://wa.me/PHONENUMBER?text=Hello%20MAISON" target="_blank" rel="noopener">WhatsApp Concierge</a>
-        <a href="mailto:concierge@maison.example">concierge@maison.example</a>
-        <p>By appointment only</p>
-      </div>
-    </div>
-    <div class="foot-bot">
-      <span>© 1987–2026 MAISON Horlogerie. All rights reserved.</span>
-      <span>Authenticity guaranteed on every reference.</span>
-    </div>
-  </div>
-</footer>
-
-<!-- WHATSAPP FLOAT -->
-<a class="wa-float" href="https://wa.me/PHONENUMBER?text=Hello%20MAISON%2C%20I%27m%20interested%20in%20your%20collection." target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-</a>
-
-<!-- ============ SCRIPTS ============ -->
-<script type="importmap">
-{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
-</script>
-
-<script>
-/* ---------- inventory data + arrivals render (no three.js) ---------- */
-const WA='PHONENUMBER';
-const WATCHES=[
-  {brand:'Rolex',model:'Cosmograph Daytona',ref:'116500LN',tag:'Just acquired',photo:'https://images.pexels.com/photos/364822/rolex-watch-time-luxury-364822.jpeg?auto=compress&cs=tinysrgb&w=700'},
-  {brand:'Audemars Piguet',model:'Royal Oak',ref:'15500ST.OO.1220ST.01',tag:'1 available',photo:'https://images.pexels.com/photos/2783873/pexels-photo-2783873.jpeg?auto=compress&cs=tinysrgb&w=700'},
-  {brand:'Patek Philippe',model:'Nautilus',ref:'5711/1A-014',tag:'Rare',photo:'https://images.pexels.com/photos/236915/pexels-photo-236915.jpeg?auto=compress&cs=tinysrgb&w=700'},
-  {brand:'Richard Mille',model:'RM 11-03',ref:'RM 11-03',tag:null,photo:'https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?auto=compress&cs=tinysrgb&w=700'},
-  {brand:'Rolex',model:'GMT-Master II',ref:'126710BLRO',tag:'Reserved',photo:'https://images.pexels.com/photos/1697214/pexels-photo-1697214.jpeg?auto=compress&cs=tinysrgb&w=700'},
-  {brand:'Patek Philippe',model:'Aquanaut',ref:'5167A-001',tag:null,photo:'https://images.pexels.com/photos/2113994/pexels-photo-2113994.jpeg?auto=compress&cs=tinysrgb&w=700'},
-];
-function waLink(w){
-  const msg=encodeURIComponent(`Hello MAISON, I'm interested in the ${w.brand} ${w.model} ref. ${w.ref} — is it available?`);
-  return `https://wa.me/${WA}?text=${msg}`;
-}
-document.getElementById('card-grid').innerHTML=WATCHES.map(w=>`
-  <article class="card">
-    <div class="card-img">${w.tag?`<span class="scarcity-tag">${w.tag}</span>`:''}
-      <img loading="lazy" src="${w.photo}" alt="${w.brand} ${w.model} reference ${w.ref}"></div>
-    <div class="card-body">
-      <span class="card-brand">${w.brand}</span>
-      <h3 class="card-model">${w.model}</h3>
-      <span class="card-ref">${w.ref}</span>
-      <div class="card-foot">
-        <span class="card-price">Price on Request</span>
-        <a class="card-enquire" href="${waLink(w)}" target="_blank" rel="noopener">Enquire on WhatsApp</a>
-      </div>
-    </div>
-  </article>`).join('');
-
-/* ---------- nav scroll state ---------- */
-const nav=document.getElementById('nav');
-addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passive:true});
-
-/* ---------- scroll reveal ---------- */
-const io=new IntersectionObserver(es=>{
-  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})
-},{threshold:.14});
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-
-/* ---------- count-up ---------- */
-const cio=new IntersectionObserver(es=>{
-  es.forEach(e=>{if(e.isIntersecting){animate(e.target);cio.unobserve(e.target)}})
-},{threshold:.6});
-document.querySelectorAll('[data-count]').forEach(c=>cio.observe(c));
-function animate(el){
-  const end=+el.dataset.count, suf=el.dataset.suffix||''; let t0=null;
-  (function step(t){if(!t0)t0=t;const p=Math.min((t-t0)/1500,1);const e=1-Math.pow(1-p,3);
-    el.textContent=Math.floor(e*end).toLocaleString()+suf; if(p<1)requestAnimationFrame(step)})(performance.now());
-}
-</script>
-
-<script type="module">
-/* ===================================================================
-   PROCEDURAL 3D WATCH — built entirely from Three.js primitives
-   =================================================================== */
-import * as THREE from 'three';
-
-const canvas = document.getElementById('hero-canvas');
-const fallback = document.getElementById('hero-fallback');
-
-// --- WebGL capability check / graceful fallback ---
-function webglOK(){
-  try{const c=document.createElement('canvas');
-    return !!(window.WebGLRenderingContext && (c.getContext('webgl')||c.getContext('experimental-webgl')));
-  }catch(e){return false}
-}
-if(!webglOK()){
-  canvas.style.display='none';
-  fallback.style.display='block';
-} else {
-  initWatch();
-}
-
-function initWatch(){
-  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.08;
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-  camera.position.set(0, 0.4, 9);
-
-  // --- environment (PMREM from a procedural gradient) for luxury reflections ---
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(gradientEnvScene(), 0.04).texture;
-
-  function gradientEnvScene(){
-    const s = new THREE.Scene();
-    const geo = new THREE.SphereGeometry(50, 32, 32);
-    const mat = new THREE.ShaderMaterial({
-      side: THREE.BackSide,
-      uniforms:{ top:{value:new THREE.Color(0x3a352c)}, bot:{value:new THREE.Color(0x070707)} },
-      vertexShader:`varying vec3 vP; void main(){vP=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
-      fragmentShader:`varying vec3 vP; uniform vec3 top; uniform vec3 bot;
-        void main(){ float h=normalize(vP).y*0.5+0.5; gl_FragColor=vec4(mix(bot,top,pow(h,1.3)),1.); }`
-    });
-    s.add(new THREE.Mesh(geo, mat));
-    // a couple of bright cards as reflective highlights ("softbox" glints)
-    const glow = new THREE.Mesh(new THREE.PlaneGeometry(14,14),
-      new THREE.MeshBasicMaterial({color:0xffffff}));
-    glow.position.set(-8,6,4); glow.lookAt(0,0,0); s.add(glow);
-    const glow2 = glow.clone(); glow2.position.set(7,3,6); glow2.lookAt(0,0,0);
-    glow2.material = new THREE.MeshBasicMaterial({color:0xe9dcc0}); s.add(glow2);
-    return s;
-  }
-
-  // --- materials ---
-  const steel = new THREE.MeshPhysicalMaterial({color:0xd8dadd, metalness:1, roughness:0.18, clearcoat:0.3, clearcoatRoughness:0.25});
-  const steelBrushed = new THREE.MeshPhysicalMaterial({color:0xb9bcc0, metalness:1, roughness:0.34});
-  const gold = new THREE.MeshPhysicalMaterial({color:0xc5a572, metalness:1, roughness:0.22, clearcoat:0.4, clearcoatRoughness:0.2});
-  const goldBright = new THREE.MeshStandardMaterial({color:0xd8b87f, metalness:1, roughness:0.28});
-  const dialMat = new THREE.MeshPhysicalMaterial({color:0x0d0f12, metalness:0.55, roughness:0.42, clearcoat:0.6, clearcoatRoughness:0.3});
-  const glassMat = new THREE.MeshPhysicalMaterial({color:0xffffff, metalness:0, roughness:0.02, transmission:0.92, transparent:true, opacity:0.32, ior:1.5, thickness:0.4});
-
-  // --- watch group ---
-  const watch = new THREE.Group();
-  scene.add(watch);
-
-  const R = 2.5; // dial radius reference
-
-  // Case body (lathe profile for a rounded, polished case)
-  const profile = [];
-  profile.push(new THREE.Vector2(0.0, -0.55));
-  profile.push(new THREE.Vector2(R*0.55, -0.55));
-  profile.push(new THREE.Vector2(R*0.9, -0.42));
-  profile.push(new THREE.Vector2(R*1.0, -0.1));
-  profile.push(new THREE.Vector2(R*1.0, 0.18));
-  profile.push(new THREE.Vector2(R*0.92, 0.3));
-  const caseBody = new THREE.Mesh(new THREE.LatheGeometry(profile, 96), steel);
-  caseBody.rotation.x = Math.PI/2;
-  watch.add(caseBody);
-
-  // Caseback plate
-  const back = new THREE.Mesh(new THREE.CylinderGeometry(R*0.9, R*0.9, 0.12, 96), steelBrushed);
-  back.rotation.x = Math.PI/2; back.position.z = -0.55;
-  watch.add(back);
-
-  // Bezel (gold ring — torus)
-  const bezel = new THREE.Mesh(new THREE.TorusGeometry(R*0.95, 0.18, 28, 120), gold);
-  bezel.position.z = 0.3;
-  watch.add(bezel);
-
-  // Dial face
-  const dial = new THREE.Mesh(new THREE.CylinderGeometry(R*0.86, R*0.86, 0.08, 96), dialMat);
-  dial.rotation.x = Math.PI/2; dial.position.z = 0.22;
-  watch.add(dial);
-
-  // subtle radial guilloché rings on dial
-  for(let i=1;i<=4;i++){
-    const ring = new THREE.Mesh(
-      new THREE.TorusGeometry(R*0.18*i, 0.006, 8, 120),
-      new THREE.MeshStandardMaterial({color:0x1a1d22, metalness:0.5, roughness:0.5}));
-    ring.position.z = 0.27;
-    watch.add(ring);
-  }
-
-  // Hour markers (gold) — 12 around the dial
-  for(let i=0;i<12;i++){
-    const a = (i/12)*Math.PI*2;
-    const isCardinal = i%3===0;
-    const m = new THREE.Mesh(
-      new THREE.BoxGeometry(isCardinal?0.14:0.09, isCardinal?0.4:0.28, 0.06),
-      goldBright);
-    const rr = R*0.7;
-    m.position.set(Math.sin(a)*rr, Math.cos(a)*rr, 0.29);
-    m.rotation.z = -a;
-    watch.add(m);
-  }
-
-  // Hands (pivot groups so they rotate around center)
-  function hand(len, w, depth, mat, z){
-    const g = new THREE.Group();
-    const bar = new THREE.Mesh(new THREE.BoxGeometry(w, len, depth), mat);
-    bar.position.y = len/2 - len*0.16; // offset so a tail shows
-    g.add(bar);
-    g.position.z = z;
-    watch.add(g);
-    return g;
-  }
-  const hourHand = hand(R*0.5, 0.12, 0.05, goldBright, 0.32);
-  const minHand  = hand(R*0.78, 0.08, 0.05, goldBright, 0.35);
-  const secHand  = hand(R*0.85, 0.03, 0.04, gold, 0.38);
-  // center cap
-  const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.12,0.12,32), gold);
-  cap.rotation.x = Math.PI/2; cap.position.z = 0.4; watch.add(cap);
-
-  // Crown (cylinder on the side, 3 o'clock)
-  const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.24,0.24,0.3,24), gold);
-  crown.rotation.z = Math.PI/2; crown.position.set(R*1.05, 0, 0);
-  watch.add(crown);
-  const crownGuard = new THREE.Mesh(new THREE.BoxGeometry(0.35,0.5,0.5), steel);
-  crownGuard.position.set(R*0.95,0,0); watch.add(crownGuard);
-
-  // Lugs (4 boxes where the strap attaches)
-  const lugPos = [[ R*0.55, R*0.95],[ -R*0.55, R*0.95],[ R*0.55,-R*0.95],[ -R*0.55,-R*0.95]];
-  lugPos.forEach(([x,y])=>{
-    const lug = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.7,0.55), steel);
-    lug.position.set(x,y,-0.05);
-    lug.rotation.z = (y>0?1:-1)*x*0.05;
-    watch.add(lug);
-  });
-
-  // Sapphire crystal (slightly domed) over dial
-  const crystal = new THREE.Mesh(new THREE.SphereGeometry(R*0.9, 64, 32, 0, Math.PI*2, 0, Math.PI*0.18), glassMat);
-  crystal.rotation.x = -Math.PI/2; crystal.position.z = 0.3;
-  watch.add(crystal);
-
-  // tilt the whole watch a touch for a flattering 3/4 angle
-  watch.rotation.x = -0.18;
-  watch.scale.setScalar(0.92);
-
-  // --- studio lighting: key + rim + fill ---
-  const key = new THREE.DirectionalLight(0xfff4e2, 2.6);
-  key.position.set(-5, 6, 6); scene.add(key);
-  const rim = new THREE.DirectionalLight(0xc5a572, 2.2);
-  rim.position.set(6, 2, -5); scene.add(rim);
-  const fill = new THREE.DirectionalLight(0x88909c, 0.7);
-  fill.position.set(4, -3, 5); scene.add(fill);
-  scene.add(new THREE.AmbientLight(0x404040, 0.4));
-
-  // --- mouse parallax ---
-  let mx=0, my=0, tmx=0, tmy=0;
-  addEventListener('pointermove', e=>{
-    tmx = (e.clientX/innerWidth - 0.5);
-    tmy = (e.clientY/innerHeight - 0.5);
-  }, {passive:true});
-
-  // --- resize ---
-  function resize(){
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    if(canvas.width!==w || canvas.height!==h){
-      renderer.setSize(w, h, false);
-      camera.aspect = w/h; camera.updateProjectionMatrix();
+    /* ════════════════════════════════════════
+       LOADING SCREEN
+       ════════════════════════════════════════ */
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #0a0906;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+      transition: opacity 0.7s ease, visibility 0.7s ease;
     }
-  }
 
-  // --- pause when hero is offscreen ---
-  let visible = true;
-  new IntersectionObserver(es=>{visible=es[0].isIntersecting; if(visible) loop();},{threshold:0})
-    .observe(canvas);
+    #loading-screen.done {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
 
-  // --- animation loop ---
-  let running=false;
-  function loop(){
-    if(running) return; running=true;
-    requestAnimationFrame(function frame(){
-      if(!visible){running=false; return;}
-      requestAnimationFrame(frame);
-      resize();
+    .loading-logo-wrap {
+      position: relative;
+      line-height: 1;
+    }
 
-      const now = Date.now()/1000;
-      // gentle continuous spin
-      watch.rotation.y += 0.004;
-      // parallax tilt (lerp)
-      mx += (tmx-mx)*0.05; my += (tmy-my)*0.05;
-      watch.rotation.z = -mx*0.25;
-      watch.rotation.x = -0.18 + my*0.25;
+    .loading-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 12vw, 9rem);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1;
+      user-select: none;
+    }
 
-      // hands: smooth sweep based on real-ish time
-      const t = now;
-      secHand.rotation.z = -((t%60)/60)*Math.PI*2;
-      minHand.rotation.z = -(((t/60)%60)/60)*Math.PI*2;
-      hourHand.rotation.z = -(((t/3600)%12)/12)*Math.PI*2 - Math.PI/3;
+    /* Ghost / outline layer — always visible as the "empty" state */
+    .loading-logo-ghost {
+      color: rgba(255,255,255,0.08);
+    }
 
-      renderer.render(scene, camera);
+    /* Fill layer — clips from bottom upward as progress increases */
+    .loading-logo-fill {
+      position: absolute;
+      inset: 0;
+      color: #f0ede8;
+      clip-path: inset(100% 0 0 0);
+      will-change: clip-path;
+    }
+
+    .loading-pct {
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+    }
+
+    :root {
+      --gold:    #c9a84c;
+      --gold2:   #e8c97a;
+      --black:   #070604;
+      --deep:    #0c0b09;
+      --white:   #f0ede8;
+      --gray:    #7a7874;
+      --panel:   rgba(7, 6, 4, 0.85);
+    }
+
+    html { scroll-behavior: auto; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Courier Prime', monospace;
+      overflow-x: hidden;
+    }
+
+    /* ════════════════════════════════════════
+       PERSISTENT NAV
+       ════════════════════════════════════════ */
+    #nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 500;
+      padding: 1.6rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+      transition: background 0.5s;
+    }
+
+    #nav.scrolled {
+      background: linear-gradient(to bottom, rgba(7,6,4,0.9) 0%, transparent 100%);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-weight: 300;
+      letter-spacing: 0.55em;
+      text-transform: uppercase;
+      color: var(--white);
+      pointer-events: auto;
+      cursor: pointer;
+      transition: color 0.4s;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 2.4rem;
+      pointer-events: auto;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 0.6rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a.active { color: var(--gold); }
+
+    /* Sound toggle */
+    #sound-btn {
+      background: none;
+      border: 1px solid #2a2a27;
+      color: var(--gray);
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 0.45rem 0.9rem;
+      cursor: pointer;
+      transition: border-color 0.3s, color 0.3s;
+    }
+
+    #sound-btn:hover { border-color: var(--gold); color: var(--gold); }
+    #sound-btn.on { border-color: var(--gold); color: var(--gold); }
+
+    /* Over the white logo intro, flip nav text to dark so it stays legible. */
+    #nav.on-light .nav-logo { color: #070604; }
+    #nav.on-light .nav-links a { color: #6b6862; }
+    #nav.on-light .nav-links a:hover,
+    #nav.on-light .nav-links a.active { color: #9a7d2e; }
+    #nav.on-light #sound-btn { border-color: #c9c5bd; color: #6b6862; }
+    #nav.on-light #sound-btn:hover { border-color: #9a7d2e; color: #9a7d2e; }
+
+    /* Skip button */
+    #skip-btn {
+      position: fixed;
+      top: 1.6rem;
+      right: 3rem;
+      z-index: 600;
+      background: none;
+      border: 1px solid #252320;
+      color: var(--gray);
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 0.45rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #skip-btn.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #skip-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ════════════════════════════════════════
+       INTRO — scroll scrub
+       ════════════════════════════════════════ */
+    #intro-section {
+      position: relative;
+      height: 700vh;
+    }
+
+    #intro-stage {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+      background: var(--black);
+    }
+
+    /* Logo layer */
+    #logo-layer {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      pointer-events: none;
+      background: var(--white);
+    }
+
+    #logo-lockup {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* Nudge the lockup to sit exactly where the video emblem is centred
+         (offsets from cross-correlating the flat mark onto the engraved grooves). */
+      transform: translate(var(--emblem-x, 0.95vmin), var(--emblem-y, 0.5vmin));
+    }
+
+    #logo-emblem {
+      /* Sized to match the engraved emblem in the video's first frame so the
+         crossfade reads as the SAME mark turning to steel. Value found by
+         cross-correlating the flat lines onto the engraved grooves. */
+      height: var(--emblem-h, 106.1vmin);
+      width: auto;
+      display: block;
+    }
+
+    /* Video layer */
+    #video-layer {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+    }
+
+    #scrub-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* Used only as a decode source for the frame cache — kept off-screen. */
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #scrub-canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Vignette over video */
+    #video-layer::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(7,6,4,0.55) 100%);
+      pointer-events: none;
+    }
+
+    /* Scroll hint */
+    #scroll-hint {
+      position: absolute;
+      bottom: 2.8rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    #scroll-hint span {
+      font-size: 0.52rem;
+      letter-spacing: 0.42em;
+      color: var(--gray);
+      text-transform: uppercase;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 38px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: pulse 1.9s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.25; transform: scaleY(1); }
+      50%       { opacity: 1;    transform: scaleY(1.15); }
+    }
+
+    /* Progress bar */
+    #progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 1px;
+      width: 0%;
+      background: linear-gradient(to right, transparent, var(--gold), var(--gold2), var(--gold));
+      z-index: 600;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    /* ════════════════════════════════════════
+       CINEMATIC STOP SECTIONS
+       Each stop: full viewport, sticky-style
+       backdrop, floating content panel
+       ════════════════════════════════════════ */
+    .stop-section {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 8vw;
+      overflow: hidden;
+    }
+
+    .stop-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--black);
+      z-index: 0;
+    }
+
+    /* Mechanical grid background — feels like watch movement */
+    .stop-bg {
+      position: absolute;
+      inset: 0;
+      opacity: 0.06;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 39px, #c9a84c 39px, #c9a84c 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 39px, #c9a84c 39px, #c9a84c 40px);
+      z-index: 1;
+    }
+
+    /* Left: decorative watch fragment art — different per section */
+    .stop-art {
+      position: absolute;
+      left: -2vw;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 55vw;
+      height: 100%;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1.4s ease 0.2s, transform 1.4s ease 0.2s;
+      transform: translateY(-50%) translateX(-40px);
+    }
+
+    .stop-art.in {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
+
+    .stop-art svg {
+      width: 100%;
+      height: auto;
+      max-height: 80vh;
+    }
+
+    /* Right: content panel */
+    .stop-panel {
+      position: relative;
+      z-index: 10;
+      width: min(520px, 90vw);
+      padding: 3.5rem;
+      background: var(--panel);
+      border: 1px solid #1c1a17;
+      border-left: 3px solid var(--gold);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      transform: translateX(50px);
+      transition: opacity 1s ease 0.4s, transform 1s ease 0.4s;
+    }
+
+    .stop-panel.in {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .stop-index {
+      display: block;
+      font-size: 0.52rem;
+      letter-spacing: 0.5em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1.6rem;
+    }
+
+    .stop-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.4rem);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      color: var(--white);
+    }
+
+    .stop-rule {
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.5;
+      margin-bottom: 1.6rem;
+    }
+
+    .stop-body {
+      font-size: 0.8rem;
+      line-height: 2;
+      color: var(--gray);
+      margin-bottom: 2.4rem;
+    }
+
+    .stop-action {
+      display: inline-block;
+      padding: 0.85rem 2.4rem;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      transition: all 0.35s;
+      cursor: pointer;
+      background: none;
+      font-family: 'Courier Prime', monospace;
+    }
+
+    .stop-action:hover {
+      background: var(--gold);
+      color: var(--black);
+    }
+
+    /* Section-specific accent colours */
+    #stop-collection { background: #050403; }
+    #stop-about      { background: #040506; flex-direction: row-reverse; }
+    #stop-about .stop-panel { border-left: none; border-right: 3px solid var(--gold); }
+    #stop-about .stop-art   { left: auto; right: -2vw; transform: translateY(-50%) translateX(40px); }
+    #stop-about .stop-art.in { transform: translateY(-50%) translateX(0); }
+    #stop-appointment { background: #050404; }
+    #stop-why         { background: #040504; flex-direction: row-reverse; }
+    #stop-why .stop-panel   { border-left: none; border-right: 3px solid var(--gold); }
+    #stop-why .stop-art     { left: auto; right: -2vw; transform: translateY(-50%) translateX(40px); }
+    #stop-why .stop-art.in  { transform: translateY(-50%) translateX(0); }
+
+    /* Collection grid inside panel */
+    .brand-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+    }
+
+    .brand-item {
+      border: 1px solid #1c1a17;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .brand-item:hover {
+      border-color: var(--gold);
+      background: rgba(201,168,76,0.05);
+    }
+
+    .brand-item span {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      color: var(--white);
+    }
+
+    .brand-item small {
+      display: block;
+      font-size: 0.52rem;
+      letter-spacing: 0.2em;
+      color: var(--gray);
+      text-transform: uppercase;
+      margin-top: 0.25rem;
+    }
+
+    /* Appointment form */
+    .appt-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      margin-bottom: 2rem;
+    }
+
+    .appt-fields input,
+    .appt-fields select {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid #1c1a17;
+      color: var(--white);
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+      appearance: none;
+    }
+
+    .appt-fields input::placeholder { color: #3a3835; }
+
+    .appt-fields input:focus,
+    .appt-fields select:focus { border-color: var(--gold); }
+
+    .appt-fields select option { background: var(--deep); }
+
+    /* Why buy from us — stat row */
+    .why-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: #1c1a17;
+      margin-bottom: 2rem;
+    }
+
+    .why-stat {
+      background: var(--black);
+      padding: 1.1rem 1rem;
+      text-align: center;
+    }
+
+    .why-stat strong {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+
+    .why-stat small {
+      font-size: 0.52rem;
+      letter-spacing: 0.2em;
+      color: var(--gray);
+      text-transform: uppercase;
+    }
+
+    /* ════════════════════════════════════════
+       FOOTER
+       ════════════════════════════════════════ */
+    footer {
+      background: var(--deep);
+      border-top: 1px solid #141210;
+      padding: 5rem 8vw 3rem;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 4rem;
+      padding-bottom: 4rem;
+      border-bottom: 1px solid #141210;
+    }
+
+    .footer-brand h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 300;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-brand p {
+      font-size: 0.72rem;
+      line-height: 1.9;
+      color: var(--gray);
+      max-width: 280px;
+    }
+
+    .footer-col h4 {
+      font-size: 0.55rem;
+      letter-spacing: 0.45em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1.4rem;
+    }
+
+    .footer-col ul { list-style: none; }
+
+    .footer-col ul li {
+      margin-bottom: 0.7rem;
+    }
+
+    .footer-col ul li a {
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      transition: color 0.3s;
+    }
+
+    .footer-col ul li a:hover { color: var(--white); }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-bottom span {
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      color: #2e2b26;
+      text-transform: uppercase;
+    }
+
+    .footer-locations {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .footer-locations span {
+      color: #2e2b26;
+    }
+
+    /* ════════════════════════════════════════
+       RESPONSIVE
+       ════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+      .footer-brand { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 680px) {
+      .stop-section { justify-content: center; padding: 4vh 6vw; }
+      .stop-art { display: none; }
+      #stop-about, #stop-why { flex-direction: column; }
+      .stop-panel { width: 100%; padding: 2rem; }
+      #nav { padding: 1.2rem 1.5rem; }
+      .nav-links { display: none; }
+      #skip-btn { right: 1.5rem; top: 1.2rem; }
+      .footer-top { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body style="background-color: rgb(0, 0, 0); overflow: hidden;">
+
+  <!-- ── LOADING SCREEN ── -->
+  <div id="loading-screen">
+    <div class="loading-logo-wrap">
+      <div class="loading-logo loading-logo-ghost">HM Watches</div>
+      <div class="loading-logo loading-logo-fill" id="loading-fill">HM Watches</div>
+    </div>
+    <div class="loading-pct" id="loading-pct">0%</div>
+  </div>
+
+  <div id="progress-bar"></div>
+
+  <!-- ── NAV ── -->
+  <nav id="nav">
+    <div class="nav-logo" onclick="scrollToTop()">Maison</div>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="collection.html">Collection</a></li>
+        <li><a href="#stop-about"      data-target="stop-about">About</a></li>
+        <li><a href="#stop-appointment" data-target="stop-appointment">Appointment</a></li>
+        <li><a href="#stop-why"        data-target="stop-why">Our Guarantee</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── SKIP BUTTON ── -->
+  <button id="skip-btn" onclick="skipIntro()">Skip &#8594;</button>
+
+  <!-- ════════════════════════════════════════
+       INTRO — sticky scroll scrub
+       ════════════════════════════════════════ -->
+  <div id="intro-section">
+    <div id="intro-stage">
+
+      <div id="logo-layer">
+        <div id="logo-lockup">
+          <img id="logo-emblem" src="assets/images/logo-emblem-cut.png" alt="Maison emblem" />
+        </div>
+      </div>
+
+      <div id="video-layer">
+        <video id="scrub-video" muted playsinline preload="auto" poster="assets/images/intro-poster.jpg" src="assets/video/intro.mp4"></video>
+        <canvas id="scrub-canvas"></canvas>
+      </div>
+
+      <div id="scroll-hint">
+        <span>Scroll to enter</span>
+        <div class="scroll-line"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       STOP 1 — COLLECTION
+       ════════════════════════════════════════ -->
+  <section class="stop-section" id="stop-collection">
+    <div class="stop-bg"></div>
+
+    <!-- Watch gear / crown art -->
+    <div class="stop-art" id="art-collection">
+      <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="200" cy="200" r="195" stroke="#c9a84c" stroke-width="0.5" opacity="0.25"/>
+        <circle cx="200" cy="200" r="160" stroke="#c9a84c" stroke-width="0.3" opacity="0.15"/>
+        <circle cx="200" cy="200" r="120" stroke="#c9a84c" stroke-width="0.5" opacity="0.3"/>
+        <circle cx="200" cy="200" r="80"  stroke="#c9a84c" stroke-width="0.3" opacity="0.2"/>
+        <!-- Gear teeth on outer ring -->
+        <g stroke="#c9a84c" stroke-width="1" opacity="0.5">
+          <!-- 24 tick marks -->
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(0 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(15 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(30 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(45 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(60 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(75 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(90 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(105 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(120 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(135 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(150 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(165 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(180 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(195 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(210 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(225 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(240 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(255 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(270 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(285 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(300 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(315 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="25"  transform="rotate(330 200 200)"/>
+          <line x1="200" y1="5"   x2="200" y2="18"  transform="rotate(345 200 200)"/>
+        </g>
+        <!-- Cross-hatch bridge -->
+        <path d="M120 200 L280 200 M200 120 L200 280" stroke="#c9a84c" stroke-width="0.5" opacity="0.2"/>
+        <path d="M144 144 L256 256 M256 144 L144 256" stroke="#c9a84c" stroke-width="0.3" opacity="0.15"/>
+        <!-- Centre jewel -->
+        <circle cx="200" cy="200" r="18" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.5"/>
+        <circle cx="200" cy="200" r="6"  fill="#c9a84c" opacity="0.25"/>
+        <!-- Hour markers -->
+        <rect x="198" y="45"  width="4" height="14" fill="#c9a84c" opacity="0.6" transform="rotate(0 200 200)"/>
+        <rect x="198" y="45"  width="4" height="14" fill="#c9a84c" opacity="0.6" transform="rotate(90 200 200)"/>
+        <rect x="198" y="45"  width="4" height="14" fill="#c9a84c" opacity="0.6" transform="rotate(180 200 200)"/>
+        <rect x="198" y="45"  width="4" height="14" fill="#c9a84c" opacity="0.6" transform="rotate(270 200 200)"/>
+        <!-- Hands -->
+        <line x1="200" y1="200" x2="200" y2="80" stroke="#c9a84c" stroke-width="1.5" opacity="0.7" stroke-linecap="round"/>
+        <line x1="200" y1="200" x2="270" y2="200" stroke="#c9a84c" stroke-width="1" opacity="0.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div class="stop-panel" id="panel-collection">
+      <span class="stop-index">01 — Collection</span>
+      <h2 class="stop-title">Only the most<br/>consequential<br/>pieces.</h2>
+      <div class="stop-rule"></div>
+      <p class="stop-body">We carry an exclusive selection from the four houses that define contemporary haute horlogerie. Each piece is authenticated, serviced, and accompanied by full provenance.</p>
+      <div class="brand-grid">
+        <div class="brand-item">
+          <span>Rolex</span>
+          <small>Est. 1905</small>
+        </div>
+        <div class="brand-item">
+          <span>Audemars Piguet</span>
+          <small>Est. 1875</small>
+        </div>
+        <div class="brand-item">
+          <span>Patek Philippe</span>
+          <small>Est. 1839</small>
+        </div>
+        <div class="brand-item">
+          <span>Richard Mille</span>
+          <small>Est. 2001</small>
+        </div>
+      </div>
+      <a href="collection.html" class="stop-action">Browse Collection</a>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       STOP 2 — ABOUT US
+       ════════════════════════════════════════ -->
+  <section class="stop-section" id="stop-about">
+    <div class="stop-bg"></div>
+
+    <!-- Escapement wheel art -->
+    <div class="stop-art" id="art-about">
+      <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Escapement wheel — 15 teeth -->
+        <circle cx="200" cy="200" r="140" stroke="#c9a84c" stroke-width="0.5" opacity="0.2"/>
+        <circle cx="200" cy="200" r="90"  stroke="#c9a84c" stroke-width="0.3" opacity="0.15"/>
+        <circle cx="200" cy="200" r="30"  fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.4"/>
+        <!-- Teeth -->
+        <g fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.55">
+          <path d="M200 200 L340 200" transform="rotate(0 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(24 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(48 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(72 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(96 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(120 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(144 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(168 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(192 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(216 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(240 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(264 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(288 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(312 200 200)"/>
+          <path d="M200 200 L340 200" transform="rotate(336 200 200)"/>
+        </g>
+        <!-- Pallet fork -->
+        <path d="M290 130 L200 200 L310 270" stroke="#c9a84c" stroke-width="1.5" opacity="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="200" cy="200" r="8" fill="#c9a84c" opacity="0.3"/>
+        <!-- Concentric arcs -->
+        <path d="M 60 200 A 140 140 0 0 1 200 60" stroke="#c9a84c" stroke-width="0.3" opacity="0.2"/>
+        <path d="M 340 200 A 140 140 0 0 1 200 340" stroke="#c9a84c" stroke-width="0.3" opacity="0.2"/>
+      </svg>
+    </div>
+
+    <div class="stop-panel" id="panel-about">
+      <span class="stop-index">02 — Maison</span>
+      <h2 class="stop-title">Curated by<br/>those who<br/>understand.</h2>
+      <div class="stop-rule"></div>
+      <p class="stop-body">Founded by collectors, for collectors. Every watch that enters our atelier is personally examined, authenticated and serviced by our master watchmaker before it is ever offered to a client. We do not move volume — we move masterpieces.</p>
+      <p class="stop-body" style="margin-bottom: 0;">Three locations. One standard of excellence. Paris, Dubai, Geneva.</p>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       STOP 3 — BOOK AN APPOINTMENT
+       ════════════════════════════════════════ -->
+  <section class="stop-section" id="stop-appointment">
+    <div class="stop-bg"></div>
+
+    <!-- Balance spring / spiral art -->
+    <div class="stop-art" id="art-appointment">
+      <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Spiral — approximated with arcs -->
+        <path d="M200 200
+          C200 185 215 175 225 185
+          C240 200 230 225 210 235
+          C185 248 160 230 155 205
+          C148 172 172 145 205 140
+          C245 134 280 162 282 200
+          C286 245 255 282 210 285
+          C160 290 118 255 115 205
+          C110 148 148 105 205 100
+          C268 94 320 138 322 200
+          C326 268 280 322 210 325"
+          stroke="#c9a84c" stroke-width="1.2" opacity="0.5" fill="none" stroke-linecap="round"/>
+        <!-- Centre pivot -->
+        <circle cx="200" cy="200" r="10" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.4"/>
+        <circle cx="200" cy="200" r="3"  fill="#c9a84c" opacity="0.35"/>
+        <!-- Radial lines -->
+        <line x1="200" y1="60"  x2="200" y2="80"  stroke="#c9a84c" stroke-width="0.5" opacity="0.3"/>
+        <line x1="320" y1="140" x2="305" y2="153" stroke="#c9a84c" stroke-width="0.5" opacity="0.3"/>
+        <line x1="340" y1="200" x2="318" y2="200" stroke="#c9a84c" stroke-width="0.5" opacity="0.3"/>
+        <line x1="80"  y1="200" x2="100" y2="200" stroke="#c9a84c" stroke-width="0.5" opacity="0.3"/>
+        <!-- Outer decorative circle -->
+        <circle cx="200" cy="200" r="185" stroke="#c9a84c" stroke-width="0.3" stroke-dasharray="4 8" opacity="0.2"/>
+      </svg>
+    </div>
+
+    <div class="stop-panel" id="panel-appointment">
+      <span class="stop-index">03 — Private Visit</span>
+      <h2 class="stop-title">By appointment<br/>only.</h2>
+      <div class="stop-rule"></div>
+      <p class="stop-body">Reserve an hour with one of our curators. Arrive to a private room, a curated selection, and no pressure. We sell time — yours is not to be wasted.</p>
+      <div class="appt-fields">
+        <input type="text"  placeholder="Full Name" />
+        <input type="email" placeholder="Email Address" />
+        <select>
+          <option value="" disabled selected>Preferred Location</option>
+          <option>Paris — 8th Arrondissement</option>
+          <option>Dubai — DIFC</option>
+          <option>Geneva — Rue du Rhône</option>
+        </select>
+        <input type="text"  placeholder="Preferred Date" onfocus="this.type='date'" onblur="this.type='text'" />
+      </div>
+      <button class="stop-action">Request Appointment</button>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       STOP 4 — WHY BUY FROM US
+       ════════════════════════════════════════ -->
+  <section class="stop-section" id="stop-why">
+    <div class="stop-bg"></div>
+
+    <!-- Tourbillon cage art -->
+    <div class="stop-art" id="art-why">
+      <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Outer cage rings -->
+        <circle cx="200" cy="200" r="180" stroke="#c9a84c" stroke-width="0.4" opacity="0.2"/>
+        <circle cx="200" cy="200" r="150" stroke="#c9a84c" stroke-width="0.8" opacity="0.3"/>
+        <circle cx="200" cy="200" r="120" stroke="#c9a84c" stroke-width="0.4" opacity="0.2"/>
+        <circle cx="200" cy="200" r="85"  stroke="#c9a84c" stroke-width="1.2" opacity="0.45"/>
+        <!-- Cage spokes -->
+        <g stroke="#c9a84c" stroke-width="1" opacity="0.4">
+          <line x1="200" y1="115" x2="200" y2="50"  />
+          <line x1="200" y1="285" x2="200" y2="350" />
+          <line x1="115" y1="200" x2="50"  y2="200" />
+          <line x1="285" y1="200" x2="350" y2="200" />
+          <line x1="260" y1="140" x2="300" y2="100" transform="rotate(0 200 200)"/>
+          <line x1="260" y1="140" x2="300" y2="100" transform="rotate(90 200 200)"/>
+          <line x1="260" y1="140" x2="300" y2="100" transform="rotate(180 200 200)"/>
+          <line x1="260" y1="140" x2="300" y2="100" transform="rotate(270 200 200)"/>
+        </g>
+        <!-- Inner flying tourbillon -->
+        <circle cx="200" cy="200" r="55" fill="none" stroke="#c9a84c" stroke-width="0.5" opacity="0.25" stroke-dasharray="3 6"/>
+        <circle cx="200" cy="200" r="35" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.35"/>
+        <circle cx="200" cy="200" r="15" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+        <circle cx="200" cy="200" r="5"  fill="#c9a84c" opacity="0.3"/>
+        <!-- Tiny balance wheel implied by hash marks on inner ring -->
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(0 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(30 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(60 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(90 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(120 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(150 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(180 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(210 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(240 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(270 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(300 200 200)"/>
+        <line x1="200" y1="165" x2="200" y2="175" stroke="#c9a84c" stroke-width="1" opacity="0.6" transform="rotate(330 200 200)"/>
+      </svg>
+    </div>
+
+    <div class="stop-panel" id="panel-why">
+      <span class="stop-index">04 — Our Guarantee</span>
+      <h2 class="stop-title">Every piece<br/>earns its<br/>place here.</h2>
+      <div class="stop-rule"></div>
+      <div class="why-stats">
+        <div class="why-stat">
+          <strong>100%</strong>
+          <small>Authenticated</small>
+        </div>
+        <div class="why-stat">
+          <strong>5 yr</strong>
+          <small>Service Warranty</small>
+        </div>
+        <div class="why-stat">
+          <strong>Full</strong>
+          <small>Provenance Docs</small>
+        </div>
+        <div class="why-stat">
+          <strong>Private</strong>
+          <small>Discretion Pledge</small>
+        </div>
+      </div>
+      <p class="stop-body" style="margin-bottom: 2rem;">We source only from private estates, authorised dealers, and personal collections. Every reference is verified against manufacturer records before it reaches your wrist.</p>
+      <a href="#" class="stop-action">Our Philosophy</a>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       FOOTER
+       ════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <h2>Maison</h2>
+        <p>Private dealers in consequence-grade timepieces. By appointment only. Paris · Dubai · Geneva.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Collection</h4>
+        <ul>
+          <li><a href="#">Rolex</a></li>
+          <li><a href="#">Audemars Piguet</a></li>
+          <li><a href="#">Patek Philippe</a></li>
+          <li><a href="#">Richard Mille</a></li>
+          <li><a href="#">View All</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Maison</h4>
+        <ul>
+          <li><a href="#">Our Story</a></li>
+          <li><a href="#">Authentication</a></li>
+          <li><a href="#">Atelier</a></li>
+          <li><a href="#">Concierge</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Visit</h4>
+        <ul>
+          <li><a href="#">Book Appointment</a></li>
+          <li><a href="#">Paris</a></li>
+          <li><a href="#">Dubai</a></li>
+          <li><a href="#">Geneva</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Maison — All rights reserved</span>
+      <div class="footer-locations">
+        <span>Paris</span>
+        <span>Dubai</span>
+        <span>Geneva</span>
+      </div>
+      <span>Authorised Independent Retailer</span>
+    </div>
+  </footer>
+
+  <!-- ════════════════════════════════════════
+       AUDIO — mechanical ambient
+       ════════════════════════════════════════ -->
+  <audio id="ambient-audio" loop>
+    <!-- Swap src with actual mechanical ambient track when available -->
+    <!-- <source src="ambient.mp3" type="audio/mpeg" /> -->
+  </audio>
+
+  <!-- Lenis — smooth (inertial) scrolling. Native scroll, refined by a
+       smoothing formula, so the whole page glides with momentum and the
+       scroll-driven video scrub inherits that smoothness. -->
+  <style>
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+    .lenis.lenis-stopped { overflow: hidden; }
+    .lenis.lenis-smooth iframe { pointer-events: none; }
+  </style>
+  <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+
+  <script>
+    /* ─────────────────────────────────────────
+       LOADING SCREEN
+       ───────────────────────────────────────── */
+    const loadingScreen = document.getElementById('loading-screen');
+    const loadingFill   = document.getElementById('loading-fill');
+    const loadingPct    = document.getElementById('loading-pct');
+    let loadDismissed   = false;
+
+    function setLoadProgress(p) {
+      /* p is 0..1. Fill rises from bottom: at p=0 fully clipped, at p=1 fully visible */
+      const pct = Math.min(1, Math.max(0, p));
+      const top = Math.round((1 - pct) * 100);
+      loadingFill.style.clipPath = `inset(${top}% 0 0 0)`;
+      loadingPct.textContent = Math.round(pct * 100) + '%';
+    }
+
+    function dismissLoader() {
+      if (loadDismissed) return;
+      loadDismissed = true;
+      setLoadProgress(1);
+      /* Small pause at 100% so user sees the full logo, then fade out */
+      setTimeout(() => {
+        loadingScreen.classList.add('done');
+        document.body.style.overflow = '';
+      }, 420);
+    }
+
+    /* Track video buffer fill — wait for full download */
+    function checkBuffer() {
+      const vid = document.getElementById('scrub-video');
+      if (!vid || !isFinite(vid.duration) || vid.duration === 0) return 0;
+      let buffered = 0;
+      for (let i = 0; i < vid.buffered.length; i++) {
+        buffered = Math.max(buffered, vid.buffered.end(i));
+      }
+      return buffered / vid.duration;
+    }
+
+    /* Track video buffer fill, then build frame cache before entry */
+    function checkBuffer() {
+      const vid = document.getElementById('scrub-video');
+      if (!vid || !isFinite(vid.duration) || vid.duration === 0) return 0;
+      let buffered = 0;
+      for (let i = 0; i < vid.buffered.length; i++) {
+        buffered = Math.max(buffered, vid.buffered.end(i));
+      }
+      return buffered / vid.duration;
+    }
+
+    async function onVideoReady() {
+      clearInterval(loadInterval);
+      setLoadProgress(1);
+      loadingPct.textContent = 'Preparing…';
+      /* Build the frame cache NOW while the loading screen is still showing.
+         By the time the user enters, every frame is decoded and ready — no freeze. */
+      await buildFrameCache();
+      dismissLoader();
+    }
+
+    const loadInterval = setInterval(() => {
+      const p = checkBuffer();
+      setLoadProgress(p);
+      if (p >= 0.99) onVideoReady();
+    }, 150);
+
+    document.getElementById('scrub-video').addEventListener('canplaythrough', onVideoReady, { once: true });
+
+    /* ─────────────────────────────────────────
+       INTRO SCROLL SCRUB
+       ───────────────────────────────────────── */
+    const introSection = document.getElementById('intro-section');
+    const logoLayer    = document.getElementById('logo-layer');
+    const videoLayer   = document.getElementById('video-layer');
+    const video        = document.getElementById('scrub-video');
+    const scrollHint   = document.getElementById('scroll-hint');
+    const progressBar  = document.getElementById('progress-bar');
+    const nav          = document.getElementById('nav');
+    const skipBtn      = document.getElementById('skip-btn');
+
+    const canvas       = document.getElementById('scrub-canvas');
+    const cctx         = canvas.getContext('2d', { alpha: false });
+
+    let videoReady   = false;   // metadata loaded
+    let targetP      = 0;       // latest scroll progress 0..1
+    let displayP     = 0;       // eased progress actually shown
+    let scrubVel     = 0;       // current velocity (frames-progress per tick)
+    let prevTargetP  = 0;       // targetP last tick (to detect active scrolling)
+    let scrollDir    = 1;       // last scroll direction (+down / -up)
+    let idleTicks    = 99;      // ticks since scroll input (release detection)
+    let coastAnchor  = 0;       // displayP captured at release (caps coast length)
+    let navVisible   = false;
+    let introComplete = false;
+
+    // Inertia tuning. While scrolling, the frame follows you (FOLLOW). When you
+    // stop, leftover velocity coasts the frame further in the same direction and
+    // FRICTION bleeds it to rest — momentum with NO spring pull-back. MAX_COAST
+    // caps how far past your scroll point it may drift, so it stays in sync.
+    const SCRUB_FOLLOW    = 0.42; // how tightly it tracks active scrolling
+    const SCRUB_FRICTION  = 0.89; // higher = longer coast after release
+    const SCRUB_MAX_COAST = 0.072; // max coast distance (~10 frames of 141)
+
+    /* ── Frame cache ──────────────────────────
+       Seeking a compressed video on every scroll step is slow (each seek
+       decodes from a distant keyframe → ~200ms+). Instead we decode the clip
+       ONCE into a set of in-memory bitmaps, then scrub by blitting the nearest
+       cached frame to a canvas — effectively instant, smooth at any speed. */
+    let frames       = [];      // ImageBitmap[]
+    let framesReady  = false;
+    let lastDrawn    = -1;
+    let lastUsable   = 0;       // index of last frame used by the scrub (trims the end)
+    const TRIM_END_SEC = 1.0;   // drop this many seconds from the very end
+
+    video.addEventListener('loadedmetadata', () => { videoReady = true; });
+    if (video.readyState >= 1 && isFinite(video.duration)) videoReady = true;
+
+    async function buildFrameCache() {
+      // Wait for metadata if needed.
+      if (!isFinite(video.duration)) {
+        await new Promise((r) => video.addEventListener('loadedmetadata', r, { once: true }));
+      }
+
+      // Capture resolution & framerate — chosen to maximise *crispness* within
+      // a memory budget. Now that the scrub cross-dissolves between frames, a
+      // lower frame count still looks smooth, so we spend the memory budget on
+      // resolution first and keep as many frames as still fit.
+      const mem    = navigator.deviceMemory || 8;            // GB (Chrome caps at 8)
+      const maxMB  = mem >= 8 ? 520 : mem >= 4 ? 320 : 200;  // bitmap memory budget
+      const estN   = Math.max(1, Math.round(video.duration * 24)); // ~native frame count
+      const aspect = (video.videoHeight || 9) / (video.videoWidth || 16);
+      const MIN_FRAMES = 90; // floor for smoothness (blending fills the gaps)
+
+      let captureW = Math.min(960, video.videoWidth || 960);
+      let frameTarget = estN;
+      for (const w of [1280, 1120, 960, 854]) {
+        const cw  = Math.min(w, video.videoWidth || w);
+        const ch  = Math.round(cw * aspect);
+        const bpf = (cw * ch * 4) / 1e6;             // MB per frame
+        const affordable = Math.floor(maxMB / bpf);  // frames that fit budget
+        if (affordable >= MIN_FRAMES || w === 854) {
+          captureW    = cw;
+          frameTarget = Math.min(estN, affordable);
+          break;
+        }
+      }
+      const captureH = Math.round(captureW * aspect);
+      // Keep frames evenly via a fractional accumulator so we land *exactly* on
+      // frameTarget (integer striding would only allow all-or-half).
+      const keepRatio = Math.min(1, frameTarget / estN);
+      canvas.width  = captureW;
+      canvas.height = captureH;
+
+      // Shared offscreen canvas for seek-based capture.
+      const off  = document.createElement('canvas');
+      off.width  = captureW;
+      off.height = captureH;
+      const octx = off.getContext('2d', { alpha: false });
+
+      // ── Fast capture: PLAY the clip once and grab each decoded frame via
+      // requestVideoFrameCallback (native framerate, quick). Needs muted
+      // autoplay; returns [] if that isn't available so we can fall back.
+      async function playbackCapture() {
+        if (typeof video.requestVideoFrameCallback !== 'function') return [];
+        return await new Promise(async (resolve) => {
+          const pending = [];
+          let stopped = false;
+          let keepAcc = 0;
+          const stop = () => {
+            if (stopped) return;
+            stopped = true;
+            try { video.pause(); } catch (e) {}
+            Promise.all(pending).then((a) => resolve(a.filter(Boolean)));
+          };
+          const onFrame = () => {
+            keepAcc += keepRatio;
+            if (keepAcc >= 1) {
+              keepAcc -= 1;
+              pending.push(
+                createImageBitmap(video, {
+                  resizeWidth: captureW, resizeHeight: captureH, resizeQuality: 'high',
+                }).catch(() => null)
+              );
+              if (pending.length === 1) {
+                pending[0].then((bmp) => { if (bmp && lastDrawn < 0) cctx.drawImage(bmp, 0, 0, captureW, captureH); });
+              }
+            }
+            if (!video.ended && !stopped) video.requestVideoFrameCallback(onFrame);
+            else stop();
+          };
+          video.muted = true;
+          try { video.currentTime = 0; } catch (e) {}
+          /* Capture at 4× so a full pass takes ~¼ of the clip's real duration
+             while requestVideoFrameCallback still presents enough frames
+             (~60/sec) to stay smooth. Higher rates drop too many frames. */
+          video.playbackRate = 4;
+          video.addEventListener('ended', stop, { once: true });
+          let ok = true;
+          try { await video.play(); } catch (e) { ok = false; }
+          if (!ok) { resolve([]); return; }       // autoplay blocked → fall back
+          video.requestVideoFrameCallback(onFrame);
+          setTimeout(stop, (video.duration + 5) * 1000); // safety
+        });
+      }
+
+      // ── Reliable fallback: seek to N timestamps and capture each. Slower, but
+      // needs no autoplay and always works.
+      async function seekCapture() {
+        const N = Math.max(24, Math.min(frameTarget, 200));
+        try { video.pause(); } catch (e) {}
+        const built = [];
+        for (let i = 0; i < N; i++) {
+          /* Last frame seeks exactly to the end so no frames are clipped */
+          const t = i < N - 1
+            ? (i / (N - 1)) * video.duration * 0.9995
+            : Math.max(0, video.duration - 0.04);
+          await new Promise((res) => {
+            const d = () => { video.removeEventListener('seeked', d); res(); };
+            video.addEventListener('seeked', d);
+            try { video.currentTime = t; } catch (e) {}
+            setTimeout(d, 1500);
+          });
+          octx.drawImage(video, 0, 0, captureW, captureH);
+          try { built[i] = await createImageBitmap(off); } catch (e) {}
+          if (i === 0 && built[0]) cctx.drawImage(built[0], 0, 0, captureW, captureH);
+        }
+        return built.filter(Boolean);
+      }
+
+      // Try the fast path; fall back to seeking if it produced too few frames
+      // (autoplay blocked, decode hiccup, etc.) so we never end up blank.
+      let built = await playbackCapture();
+      /* Only fall back to slow seek-capture if playback gave us almost nothing
+         (autoplay blocked / decode failure). A reduced-but-usable frame set from
+         the fast 4× pass is fine — blending fills the gaps. */
+      if (built.length < 24) {
+        built = await seekCapture();
+      }
+      frames = built;
+      framesReady = frames.length > 0;
+      // Trim the last TRIM_END_SEC of frames from the scrub range so the clip's
+      // final frame(s) — where the hard cut/jump lives — are never shown.
+      const fps = frames.length / video.duration;
+      lastUsable = Math.max(0, frames.length - 1 - Math.round(fps * TRIM_END_SEC));
+      if (frames.length) {
+        drawForProgress(targetP);
+      } else {
+        // Last resort: reveal the <video> itself so something shows.
+        video.style.opacity = '1';
+      }
+    }
+
+    function drawForProgress(p) {
+      if (!framesReady || !frames.length) return;
+      // Map progress to a *fractional* frame position and cross-dissolve between
+      // the two neighbouring frames by the fractional amount. The source is only
+      // 24fps, but blending makes the scrub read as continuous motion rather than
+      // discrete frame steps — smoother than the native framerate alone.
+      // Scrub only across the usable range (last second trimmed) so p=1 lands on
+      // a clean frame, not the abrupt end cut.
+      const maxIdx = lastUsable || (frames.length - 1);
+      const f    = p * maxIdx;
+      const i0   = Math.floor(f);
+      const frac = f - i0;
+      const i1   = Math.min(i0 + 1, maxIdx);
+
+      // Quantise to avoid redundant repaints while keeping blend granularity.
+      const key = i0 * 1000 + Math.round(frac * 60);
+      if (key === lastDrawn) return;
+      lastDrawn = key;
+
+      const cw = canvas.width, ch = canvas.height;
+      cctx.globalAlpha = 1;
+      cctx.drawImage(frames[i0], 0, 0, cw, ch);
+      if (frac > 0.012 && i1 !== i0) {
+        cctx.globalAlpha = frac;
+        cctx.drawImage(frames[i1], 0, 0, cw, ch);
+        cctx.globalAlpha = 1;
+      }
+    }
+
+    function getIntroProgress() {
+      const rect       = introSection.getBoundingClientRect();
+      const scrollable = introSection.offsetHeight - window.innerHeight;
+      const scrolled   = Math.min(Math.max(-rect.top, 0), scrollable);
+      return scrollable > 0 ? scrolled / scrollable : 0;
+    }
+
+    function onScroll() {
+      const p = getIntroProgress();
+
+      // Crossfade logo → video over the first stretch of scroll. The video is
+      // HELD on frame 0 throughout the fade (see targetP below) so the flat
+      // emblem dissolves into a stationary steel emblem — same size, same place.
+      const CF_END = 0.10;
+      const cf = Math.min(p / CF_END, 1);
+      logoLayer.style.opacity  = 1 - cf;
+      videoLayer.style.opacity = cf;
+
+      // While the white logo screen is still showing, flip nav text to dark.
+      nav.classList.toggle('on-light', (1 - cf) > 0.4);
+
+      // Scrub: pinned to frame 0 during the crossfade, then play the clip.
+      // The last 25% of video content is stretched over 40% of scroll distance
+      // so the "escape/hole" finale has time to breathe instead of rushing past.
+      if (p <= CF_END) {
+        targetP = 0;
+      } else {
+        const s = (p - CF_END) / (1 - CF_END); // 0..1 after crossfade
+        const PIVOT_S = 0.60; // scroll fraction where slow zone starts
+        const PIVOT_V = 0.75; // video fraction at that point
+        if (s < PIVOT_S) {
+          targetP = (s / PIVOT_S) * PIVOT_V;
+        } else {
+          targetP = PIVOT_V + ((s - PIVOT_S) / (1 - PIVOT_S)) * (1 - PIVOT_V);
+        }
+      }
+
+      // Progress bar
+      progressBar.style.opacity = p > 0.01 ? '1' : '0';
+      progressBar.style.width   = (p * 100) + '%';
+
+      // Scroll hint
+      scrollHint.style.opacity = p < 0.03 ? '1' : '0';
+
+      // Skip button shows after a brief scroll
+      if (p > 0.04 && !introComplete) {
+        skipBtn.classList.add('show');
+      }
+
+      // Nav visibility — appears once intro fully scrubbed
+      if (p >= 0.97) {
+        if (!navVisible) {
+          navVisible = true;
+          introComplete = true;
+          nav.classList.add('visible');
+          skipBtn.classList.remove('show');
+        }
+      } else if (p < 0.85 && navVisible) {
+        navVisible = false;
+        introComplete = false;
+        nav.classList.remove('visible');
+      }
+
+      // Mark nav as scrolled once user is past intro
+      const pastIntro = window.scrollY > introSection.offsetHeight;
+      nav.classList.toggle('scrolled', pastIntro);
+      if (pastIntro && !navVisible) {
+        navVisible = true;
+        nav.classList.add('visible');
+      }
+    }
+
+    function tick() {
+      // Lenis smooths the scroll position itself, so the video simply tracks the
+      // (already eased) scroll 1:1 — momentum and smoothness come from the global
+      // smooth-scroll engine, consistent with the rest of the page.
+      onScroll();
+      drawForProgress(targetP);
+      requestAnimationFrame(tick);
+    }
+
+    /* ─────────────────────────────────────────
+       SKIP INTRO
+       ───────────────────────────────────────── */
+    function skipIntro() {
+      const target = introSection.offsetTop + introSection.offsetHeight;
+      window.smoothScrollTo(target);
+      skipBtn.classList.remove('show');
+    }
+
+    function scrollToTop() {
+      window.smoothScrollTo(0);
+    }
+
+    /* ─────────────────────────────────────────
+       NAV LINK — SMOOTH SCROLL
+       ───────────────────────────────────────── */
+    document.querySelectorAll('.nav-links a[data-target]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const id  = link.dataset.target;
+        const el  = document.getElementById(id);
+        if (el) window.smoothScrollTo(el);
+      });
     });
-  }
-  resize(); loop();
 
-  addEventListener('resize', resize);
-}
-</script>
+    /* ─────────────────────────────────────────
+       SECTION REVEAL — IntersectionObserver
+       ───────────────────────────────────────── */
+    const stopObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const panel = entry.target.querySelector('.stop-panel');
+          const art   = entry.target.querySelector('.stop-art');
+          if (panel) panel.classList.add('in');
+          if (art)   art.classList.add('in');
+        }
+      });
+    }, { threshold: 0.25 });
 
+    document.querySelectorAll('.stop-section').forEach(s => stopObserver.observe(s));
+
+    /* Highlight active nav link based on scroll position */
+    const sections = ['stop-collection','stop-about','stop-appointment','stop-why'];
+    const navLinks = {};
+    sections.forEach(id => {
+      const a = document.querySelector(`.nav-links a[data-target="${id}"]`);
+      if (a) navLinks[id] = a;
+    });
+
+    const activeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const link = navLinks[entry.target.id];
+        if (link) link.classList.toggle('active', entry.isIntersecting);
+      });
+    }, { threshold: 0.5 });
+
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) activeObserver.observe(el);
+    });
+
+    /* ─────────────────────────────────────────
+       SOUND
+       ───────────────────────────────────────── */
+    const audio    = document.getElementById('ambient-audio');
+    const soundBtn = document.getElementById('sound-btn');
+    let soundOn = false;
+
+    function toggleSound() {
+      if (!audio.src || audio.src === window.location.href) {
+        // No audio source yet — update button to indicate unavailable
+        soundBtn.textContent = '— No audio';
+        return;
+      }
+      if (soundOn) {
+        audio.pause();
+        soundOn = false;
+        soundBtn.textContent = '▶ Sound';
+        soundBtn.classList.remove('on');
+      } else {
+        audio.volume = 0.35;
+        audio.play().catch(() => {});
+        soundOn = true;
+        soundBtn.textContent = '■ Sound';
+        soundBtn.classList.add('on');
+      }
+    }
+
+    /* ─────────────────────────────────────────
+       BOOT
+       ───────────────────────────────────────── */
+    // Smooth scrolling — the whole page eases with momentum (like the reference).
+    let lenis = null;
+    if (window.Lenis) {
+      lenis = new Lenis({
+        lerp: 0.085,          // smoothing — lower = longer, glassier glide
+        wheelMultiplier: 1,
+        smoothWheel: true,
+        syncTouch: true,      // smooth on touch devices too
+      });
+      const lenisRaf = (time) => { lenis.raf(time); requestAnimationFrame(lenisRaf); };
+      requestAnimationFrame(lenisRaf);
+      lenis.on('scroll', onScroll);
+    }
+    // Unified smooth-scroll helper for skip / nav / top.
+    window.smoothScrollTo = (target) => {
+      if (lenis) lenis.scrollTo(target, { offset: 0 });
+      else if (typeof target === 'number') window.scrollTo({ top: target, behavior: 'smooth' });
+      else if (target && target.scrollIntoView) target.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    requestAnimationFrame(tick);
+    onScroll();
+  </script>
 </body>
 </html>
