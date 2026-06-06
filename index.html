@@ -1097,153 +1097,213 @@
       dismissLoader();
       document.getElementById('scrub-video').style.opacity = '1';
     } else {
-      /* Pre-decode the full clip into a DUAL-RESOLUTION frame cache during the loading screen.
-         Standard-res bitmaps cover the whole clip.
-         High-res bitmaps cover only the RM zoom range (ZOOM_START_FRAC..ZOOM_END_FRAC of
-         video progress) so we have real pixel detail to magnify into without blowing up RAM.
-         After caching the <video> element is freed — no seeking ever at scroll time. */
       (async () => {
         const vid = document.getElementById('scrub-video');
 
-        // Wait for metadata so we know duration + dimensions
         if (!isFinite(vid.duration) || vid.duration === 0) {
           await new Promise(res => {
             vid.addEventListener('loadedmetadata', res, { once: true });
             setTimeout(res, 6000);
           });
         }
-        // After the await above, all outer const/let declarations have been reached by
-        // synchronous execution — canvas, cctx, frames, framesHR, ZOOM_START_FRAC etc.
-        // are fully accessible from here onward.
+        // All outer declarations (canvas, cctx, frames, ZOOM_START_FRAC …) are
+        // live now — synchronous code past the first await has already run.
 
-        const dur = vid.duration || 10;
-        const vw  = vid.videoWidth  || 1280;
-        const vh  = vid.videoHeight || 720;
-        vAspect   = vh / vw;
-        const capDur = Math.max(0, dur - 0.04); // last frame is the hard cut
+        const dur    = vid.duration || 10;
+        const vw     = vid.videoWidth  || 1280;
+        const vh     = vid.videoHeight || 720;
+        vAspect      = vh / vw;
+        const capDur = Math.max(0, dur - 0.04);
+
+        // ── Device profile ────────────────────────────────────────────────────
+        // Scale down work on slow/low-memory devices so the blocking batch is fast
+        // everywhere. Keys: mem (GB), cores, desktop flag, DPR cap, budgets.
         const { mem, desktop, dprCap, zoomBudgetMB } = deviceProfile();
+        const cores    = navigator.hardwareConcurrency || 2;
+        const lowEnd   = mem <= 2 || cores <= 2 || (!desktop && devicePixelRatio < 2);
+        const midRange = !lowEnd && (mem <= 4 || !desktop);
 
-        // ── Standard tier: display-resolution cap (wide shots, light cadence) ───
-        const TARGET_FRAMES = 150;
-        const cw = Math.round(Math.min(1280, vw));
-        const ch = Math.round(cw * vAspect);
+        // Standard tier frame count scaled by device power.
+        const TARGET_FRAMES = lowEnd ? 60 : midRange ? 100 : 150;
 
-        // ── Zoom tier: NATIVE resolution (no downscale) unless the source exceeds
-        // 2× the display backing width, in which case clamp to that. This is the
-        // hero close-up, so we keep every available source pixel. ───────────────
-        const dpr        = Math.min(devicePixelRatio || 1, dprCap);
-        const displayBkW = Math.min(Math.round(innerWidth * dpr), MAX_BACKING_W);
-        const zoomMaxW   = Math.min(vw, displayBkW * 2); // ≥1 src px per display px headroom
+        // Fraction of std frames to decode before revealing the page (~20%).
+        // First batch covers 0→FIRST_BATCH_FRAC of the video to support early
+        // scrolling immediately after the loader drops.
+        const FIRST_BATCH_FRAC = 0.20;
+        const FIRST_BATCH_N    = Math.max(8, Math.round(TARGET_FRAMES * FIRST_BATCH_FRAC));
+
+        // Standard tier resolution: display-size, DPR capped at 2 for std frames.
+        const dpr = Math.min(devicePixelRatio || 1, 2);
+        const cw  = Math.round(Math.min(innerWidth * dpr, 1280, vw));
+        const ch  = Math.round(cw * vAspect);
+
+        // ── Zoom tier sizing (same guardrail logic as before) ─────────────────
+        const displayBkW = Math.min(Math.round(innerWidth * Math.min(devicePixelRatio || 1, dprCap)), MAX_BACKING_W);
+        const zoomMaxW   = Math.min(vw, displayBkW * 2);
         let   zoomW      = zoomMaxW;
         let   zoomH      = Math.round(zoomW * vAspect);
-
-        // Dense cadence inside the zoom: ZOOM_DENSITY_MULT × the wide-shot cadence,
-        // capped at the source's real frame count over that span (no point caching
-        // duplicate decoded frames).
         const zoomSpanFrac = ZOOM_END_FRAC - ZOOM_START_FRAC;
-        const srcFps       = 30; // conservative; finer than this just dupes frames
+        const srcFps       = 30;
         const srcZoomMax   = Math.max(2, Math.round(zoomSpanFrac * capDur * srcFps));
-        let   idealZoomN   = Math.min(
-          Math.round(zoomSpanFrac * TARGET_FRAMES * ZOOM_DENSITY_MULT),
-          srcZoomMax
-        );
-
-        // ── Memory guardrail: step zoom resolution, then density, down to budget ─
+        // Reduced density on low-end so zoom decode is quick too.
+        const densityMult  = lowEnd ? 1 : midRange ? 2 : ZOOM_DENSITY_MULT;
+        let   idealZoomN   = Math.min(Math.round(zoomSpanFrac * TARGET_FRAMES * densityMult), srcZoomMax);
         function zoomMB(n, w, h) { return (n * w * h * 4) / 1e6; }
         let zoomN = idealZoomN;
-        // First shave resolution (down to display backing width) if way over budget.
         while (zoomMB(zoomN, zoomW, zoomH) > zoomBudgetMB && zoomW > displayBkW) {
-          zoomW = Math.round(zoomW * 0.85);
-          zoomH = Math.round(zoomW * vAspect);
+          zoomW = Math.round(zoomW * 0.85); zoomH = Math.round(zoomW * vAspect);
         }
-        // Then thin density if still over.
         while (zoomMB(zoomN, zoomW, zoomH) > zoomBudgetMB && zoomN > 8) {
           zoomN = Math.floor(zoomN * 0.9);
         }
         const zoomSteppedDown = (zoomW < zoomMaxW) || (zoomN < idealZoomN);
 
-        // Size the live canvas backing store to full (capped) DPR now.
         sizeCanvas();
 
         function makeOff(w, h) {
           if (window.OffscreenCanvas) return new OffscreenCanvas(w, h);
           const c = document.createElement('canvas'); c.width = w; c.height = h; return c;
         }
-        const off     = makeOff(cw, ch);
-        const octx    = off.getContext('2d', { alpha: false });
-        const offZ    = makeOff(zoomW, zoomH);
-        const octxZ   = offZ.getContext('2d', { alpha: false });
+        const off   = makeOff(cw, ch);
+        const octx  = off.getContext('2d', { alpha: false });
+        const offZ  = makeOff(zoomW, zoomH);
+        const octxZ = offZ.getContext('2d', { alpha: false });
         octxZ.imageSmoothingEnabled = true;
         octxZ.imageSmoothingQuality = 'high';
 
-        // Honest progress: std frames + heavier zoom frames (weighted ~2× each
-        // because they decode at much higher resolution).
-        const ZOOM_WORK = 2;
-        const totalWork = TARGET_FRAMES + zoomN * ZOOM_WORK;
-        let   workDone  = 0;
-
         async function seekTo(t) {
           await new Promise(res => {
-            const onSeeked = () => { vid.removeEventListener('seeked', onSeeked); res(); };
-            vid.addEventListener('seeked', onSeeked);
+            const done = () => { vid.removeEventListener('seeked', done); res(); };
+            vid.addEventListener('seeked', done);
             try { vid.currentTime = t; } catch (e) {}
             setTimeout(res, 1500);
           });
         }
 
-        const builtStd = [];
+        function idleChunk(fn) {
+          // Run fn in an idle slot; fall back to a yielding rAF if rIC unavailable.
+          if (window.requestIdleCallback) {
+            requestIdleCallback(fn, { timeout: 2000 });
+          } else {
+            setTimeout(() => requestAnimationFrame(fn), 50);
+          }
+        }
+
+        // ── BLOCKING FIRST BATCH (loading screen stays up) ───────────────────
+        // Decode only the first FIRST_BATCH_N std frames that cover the opening
+        // scroll, then dismiss the loader. Progress bar reflects this batch only.
         try { vid.pause(); } catch (e) {}
-
-        // Pass 1 — standard tier across the whole clip.
-        for (let i = 0; i < TARGET_FRAMES; i++) {
-          await seekTo((i / (TARGET_FRAMES - 1)) * capDur);
-          octx.drawImage(vid, 0, 0, cw, ch);
-          try { builtStd[i] = await createImageBitmap(off); } catch (e) {}
-          if (i === 0 && builtStd[0]) cctx.drawImage(builtStd[0], 0, 0, canvas.width, canvas.height);
-          workDone += 1;
-          setLoadProgress(workDone / totalWork);
-        }
-
-        // Pass 2 — dense native-res zoom tier. Span is the usable zoom window
-        // (honours the end trim) so progress maps cleanly onto it.
-        const zStart = ZOOM_START_FRAC * capDur;
-        const zEnd   = Math.max(zStart, capDur - TRIM_END_SEC);
-        const builtZoom = [];
-        for (let i = 0; i < zoomN; i++) {
-          const t = zStart + (zoomN === 1 ? 0 : (i / (zoomN - 1)) * (zEnd - zStart));
+        for (let i = 0; i < FIRST_BATCH_N; i++) {
+          const t = (i / (TARGET_FRAMES - 1)) * capDur;
           await seekTo(t);
-          octxZ.drawImage(vid, 0, 0, zoomW, zoomH);
-          try { builtZoom[i] = await createImageBitmap(offZ); } catch (e) {}
-          workDone += ZOOM_WORK;
-          setLoadProgress(workDone / totalWork);
+          octx.drawImage(vid, 0, 0, cw, ch);
+          try { frames[i] = await createImageBitmap(off); } catch (e) {}
+          if (i === 0 && frames[0]) cctx.drawImage(frames[0], 0, 0, canvas.width, canvas.height);
+          setLoadProgress((i + 1) / FIRST_BATCH_N);
         }
 
-        frames      = builtStd.filter(Boolean);
-        zoomFrames  = builtZoom.filter(Boolean);
-        zoomReady   = zoomFrames.length > 0;
-        framesHR    = {}; // legacy path retired
-        framesReady = frames.length > 0;
-        const fps   = frames.length / dur;
-        lastUsable  = Math.max(0, frames.length - 1 - Math.round(fps * TRIM_END_SEC));
+        framesReady = frames.filter(Boolean).length > 0;
+        const fpsDur = frames.filter(Boolean).length / dur;
+        lastUsable  = Math.max(0, TARGET_FRAMES - 1 - Math.round(fpsDur * TRIM_END_SEC));
+        // ^ will be recomputed when full std tier is done; seed it now so draws work.
 
-        // Diagnostic log: zoom tier resolution, frame count, memory.
-        const zMB = Math.round(zoomMB(zoomFrames.length, zoomW, zoomH));
-        console.info(
-          `[MAISON] Zoom tier: ${zoomFrames.length} frames @ ${zoomW}×${zoomH} ≈ ${zMB} MB ` +
-          `(budget ${zoomBudgetMB} MB, ${zoomSteppedDown ? 'stepped down' : 'full fidelity'}). ` +
-          `Std tier: ${frames.length} @ ${cw}×${ch}. Canvas backing ${canvas.width}×${canvas.height}.`
-        );
+        console.info(`[MAISON] Blocking batch: ${FIRST_BATCH_N}/${TARGET_FRAMES} std frames (${cw}×${ch}). Revealing page.`);
+        dismissLoader();
 
-        // Free the video element — decoder no longer resident
-        try { vid.pause(); vid.removeAttribute('src'); vid.load(); } catch (e) {}
+        // ── BACKGROUND DECODE — remaining std frames ──────────────────────────
+        // Chunks of ~5 frames each; each chunk yields to idle/rAF between.
+        // Priority: decode chunks closest to targetP first so the user never
+        // sees a fallback frame while scrolling normally.
+        const STD_CHUNK = 5;
+        let bgDone = false;
+
+        async function decodeStdChunk(startIdx) {
+          const end = Math.min(startIdx + STD_CHUNK, TARGET_FRAMES);
+          for (let i = startIdx; i < end; i++) {
+            if (frames[i]) continue; // already decoded (shouldn't happen, but guard)
+            const t = (i / (TARGET_FRAMES - 1)) * capDur;
+            await seekTo(t);
+            octx.drawImage(vid, 0, 0, cw, ch);
+            try { frames[i] = await createImageBitmap(off); } catch (e) {}
+          }
+        }
+
+        // Build an ordered decode schedule: prioritise the chunk nearest targetP,
+        // then work outward. Runs entirely in idle/rAF time.
+        async function runStdBackground() {
+          // Indices still to decode, sorted by proximity to current targetP.
+          const pending = [];
+          for (let i = FIRST_BATCH_N; i < TARGET_FRAMES; i++) {
+            if (!frames[i]) pending.push(i);
+          }
+
+          while (pending.length > 0) {
+            // Re-sort each iteration so we always pick the closest-to-cursor chunk.
+            const curIdx = Math.round(targetP * (TARGET_FRAMES - 1));
+            pending.sort((a, b) => Math.abs(a - curIdx) - Math.abs(b - curIdx));
+            const batch = pending.splice(0, STD_CHUNK);
+
+            // Sort batch in sequential order for seek efficiency.
+            batch.sort((a, b) => a - b);
+            await new Promise(res => idleChunk(res));
+            for (const i of batch) {
+              const t = (i / (TARGET_FRAMES - 1)) * capDur;
+              await seekTo(t);
+              octx.drawImage(vid, 0, 0, cw, ch);
+              try { frames[i] = await createImageBitmap(off); } catch (e) {}
+            }
+          }
+
+          // Recompute lastUsable now that std tier is complete.
+          const f2 = frames.filter(Boolean);
+          framesReady = f2.length > 0;
+          lastUsable  = Math.max(0, frames.length - 1 - Math.round((f2.length / dur) * TRIM_END_SEC));
+          bgDone = true;
+          console.info(`[MAISON] Std tier complete: ${f2.length} frames @ ${cw}×${ch}.`);
+        }
+
+        // ── BACKGROUND DECODE — zoom tier ─────────────────────────────────────
+        async function runZoomBackground() {
+          // Wait until std background is done (video still needed for seeks).
+          while (!bgDone) await new Promise(res => idleChunk(res));
+
+          const zStart = ZOOM_START_FRAC * capDur;
+          const zEnd   = Math.max(zStart, capDur - TRIM_END_SEC);
+          const builtZoom = [];
+
+          for (let i = 0; i < zoomN; i++) {
+            const t = zStart + (zoomN === 1 ? 0 : (i / (zoomN - 1)) * (zEnd - zStart));
+            // Yield every few frames so the page stays responsive.
+            if (i % 3 === 0) await new Promise(res => idleChunk(res));
+            await seekTo(t);
+            octxZ.drawImage(vid, 0, 0, zoomW, zoomH);
+            try { builtZoom[i] = await createImageBitmap(offZ); } catch (e) {}
+          }
+
+          zoomFrames = builtZoom.filter(Boolean);
+          zoomReady  = zoomFrames.length > 0;
+          framesHR   = {};
+
+          const zMB = Math.round(zoomMB(zoomFrames.length, zoomW, zoomH));
+          console.info(
+            `[MAISON] Zoom tier complete: ${zoomFrames.length} frames @ ${zoomW}×${zoomH} ≈ ${zMB} MB ` +
+            `(budget ${zoomBudgetMB} MB, ${zoomSteppedDown ? 'stepped down' : 'full fidelity'}).`
+          );
+
+          // Free the video — no more seeks needed ever.
+          try { vid.pause(); vid.removeAttribute('src'); vid.load(); } catch (e) {}
+        }
 
         if (!framesReady) {
           const img = new Image();
           img.src = 'assets/images/intro-poster.jpg';
-          img.onload = () => cctx.drawImage(img, 0, 0, cw, ch);
+          img.onload = () => cctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         }
 
-        dismissLoader();
+        // Fire both background passes; they self-sequence (zoom waits for std).
+        runStdBackground().catch(() => {});
+        runZoomBackground().catch(() => {});
+
       })().catch(() => dismissLoader());
     }
 
@@ -1478,31 +1538,48 @@
       cctx.imageSmoothingQuality = 'high';
       const cw = canvas.width, ch = canvas.height;
 
-      // Inside the zoom window, scrub the DENSE native-res zoom array instead of
-      // the wide-shot standard tier — full detail, more frames, buttery slow-scrub.
-      if (zoomReady && p >= ZOOM_START_FRAC) {
-        const zp   = Math.min(Math.max((p - ZOOM_START_FRAC) / (ZOOM_END_FRAC - ZOOM_START_FRAC), 0), 1);
-        const zmax = zoomFrames.length - 1;
-        const zf   = zp * zmax;
-        const z0   = Math.floor(zf);
-        const zfrac = zf - z0;
-        const z1   = Math.min(z0 + 1, zmax);
-
-        const key = 1e6 + z0 * 1000 + Math.round(zfrac * 60); // 1e6 offset = zoom namespace
-        if (key === lastDrawn) return;
-        lastDrawn = key;
-
-        cctx.globalAlpha = 1;
-        if (zoomFrames[z0]) cctx.drawImage(zoomFrames[z0], 0, 0, cw, ch);
-        if (zfrac > 0.012 && z1 !== z0 && zoomFrames[z1]) {
-          cctx.globalAlpha = zfrac;
-          cctx.drawImage(zoomFrames[z1], 0, 0, cw, ch);
-          cctx.globalAlpha = 1;
+      // Helper: walk back from idx to find the nearest already-decoded frame in arr.
+      function nearest(arr, idx) {
+        if (arr[idx]) return arr[idx];
+        for (let d = 1; d < arr.length; d++) {
+          if (idx - d >= 0 && arr[idx - d]) return arr[idx - d];
+          if (idx + d < arr.length && arr[idx + d]) return arr[idx + d];
         }
-        return;
+        return null;
       }
 
-      // Wide-shot scrub — standard tier with cross-dissolve.
+      // Inside the zoom window, scrub the DENSE native-res zoom array instead of
+      // the wide-shot standard tier — full detail, more frames, buttery slow-scrub.
+      // Falls back to std tier if zoom not yet decoded (background still working).
+      if (p >= ZOOM_START_FRAC) {
+        if (zoomReady) {
+          const zp    = Math.min(Math.max((p - ZOOM_START_FRAC) / (ZOOM_END_FRAC - ZOOM_START_FRAC), 0), 1);
+          const zmax  = zoomFrames.length - 1;
+          const zf    = zp * zmax;
+          const z0    = Math.floor(zf);
+          const zfrac = zf - z0;
+          const z1    = Math.min(z0 + 1, zmax);
+
+          const key = 1e6 + z0 * 1000 + Math.round(zfrac * 60);
+          if (key === lastDrawn) return;
+          lastDrawn = key;
+
+          const s0 = nearest(zoomFrames, z0);
+          const s1 = nearest(zoomFrames, z1);
+          cctx.globalAlpha = 1;
+          if (s0) cctx.drawImage(s0, 0, 0, cw, ch);
+          if (zfrac > 0.012 && z1 !== z0 && s1) {
+            cctx.globalAlpha = zfrac;
+            cctx.drawImage(s1, 0, 0, cw, ch);
+            cctx.globalAlpha = 1;
+          }
+          return;
+        }
+        // Zoom tier not ready yet — fall through to std tier below.
+      }
+
+      // Wide-shot scrub (and zoom fallback while background decode is in progress).
+      if (!framesReady) return;
       const maxIdx = lastUsable || (frames.length - 1);
       const f    = p * maxIdx;
       const i0   = Math.floor(f);
@@ -1513,11 +1590,15 @@
       if (key === lastDrawn) return;
       lastDrawn = key;
 
+      // nearest() ensures we always draw *something* even if this exact frame
+      // hasn't been decoded in the background yet.
+      const s0 = nearest(frames, i0);
+      const s1 = nearest(frames, i1);
       cctx.globalAlpha = 1;
-      if (frames[i0]) cctx.drawImage(frames[i0], 0, 0, cw, ch);
-      if (frac > 0.012 && i1 !== i0 && frames[i1]) {
+      if (s0) cctx.drawImage(s0, 0, 0, cw, ch);
+      if (frac > 0.012 && i1 !== i0 && s1) {
         cctx.globalAlpha = frac;
-        cctx.drawImage(frames[i1], 0, 0, cw, ch);
+        cctx.drawImage(s1, 0, 0, cw, ch);
         cctx.globalAlpha = 1;
       }
     }
