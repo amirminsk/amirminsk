@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Collection — MAISON</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600&family=Courier+Prime:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="design-system.css" />
+</head>
+<body>
+  <nav class="site-nav">
+    <a class="site-nav__logo" href="index.html">
+      <img src="../assets/images/logo-emblem.png" alt="" />
+      MAISON
+    </a>
+    <ul class="site-nav__links text-label-lg">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="collection.html" aria-current="page">Collection</a></li>
+    </ul>
+  </nav>
+
+  <section class="section">
+    <div class="container">
+      <div class="section__header">
+        <h1 class="section__title">The Collection</h1>
+        <span class="text-body-sm" style="color: var(--color-tertiary);" id="collection-count"></span>
+      </div>
+      <div class="grid" id="collection-grid"></div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <span>© 2026 MAISON. All rights reserved.</span>
+    <span>Design system: <a href="../DESIGN.md">DESIGN.md</a></span>
+  </footer>
+
+  <script src="../assets/js/watches.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    renderCollection("#collection-grid");
+    document.getElementById("collection-count").textContent = `${WATCHES.length} pieces`;
+  </script>
+</body>
+</html>

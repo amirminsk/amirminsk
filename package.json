@@ -5,10 +5,12 @@
   "private": true,
   "scripts": {
     "design:lint": "design.md lint DESIGN.md",
-    "design:spec": "design.md spec --rules"
+    "design:spec": "design.md spec --rules",
+    "build:tokens": "node scripts/build-tokens.mjs"
   },
   "devDependencies": {
-    "@google/design.md": "^0.3.0"
+    "@google/design.md": "^0.3.0",
+    "yaml": "^2.9.0"
   },
   "repository": {
     "type": "git",
