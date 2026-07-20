@@ -6,19 +6,28 @@ const money = (n, currency) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(n);
 
 function watchCard(w) {
-  const a = document.createElement("a");
-  a.className = "card";
-  a.href = `product.html?id=${w.id}`;
-  a.innerHTML = `
-    <div class="card__media"><img src="${w.photos[0]}" alt="${w.brand} ${w.model}" loading="lazy" /></div>
-    <div class="card__body">
-      <span class="card__eyebrow">${w.brand}</span>
-      <h3 class="card__title">${w.model}</h3>
-      <span class="card__meta">${w.ref} · ${w.year} · ${w.case_material}</span>
-      ${w.status === "sold" ? `<span class="card__status">Sold</span>` : `<span class="card__price">${money(w.price, w.currency)}</span>`}
+  const el = document.createElement("article");
+  el.className = "card";
+  const sold = w.status === "sold";
+  el.innerHTML = `
+    <a class="card__link" href="product.html?id=${w.id}">
+      <div class="card__media"><img src="${w.photos[0]}" alt="${w.brand} ${w.model}" loading="lazy" /></div>
+      <div class="card__body">
+        <span class="card__eyebrow">${w.brand}</span>
+        <h3 class="card__title">${w.model}</h3>
+        <span class="card__meta">${w.ref} · ${w.year} · ${w.case_material}</span>
+      </div>
+    </a>
+    <div class="card__foot">
+      ${sold
+        ? `<span class="card__status">Sold</span>`
+        : `<span class="card__price">${money(w.price, w.currency)}</span>`}
+      ${sold
+        ? `<button class="btn btn-secondary btn--sm" disabled>Sold</button>`
+        : `<button class="btn btn-primary btn--sm" data-add="${w.id}">Add to Bag</button>`}
     </div>
   `;
-  return a;
+  return el;
 }
 
 function renderCollection(targetSelector, { limit } = {}) {
@@ -68,7 +77,16 @@ function renderProduct(targetSelector) {
         </tbody>
       </table>
       <div class="product__actions">
-        <button class="btn btn-primary" ${w.status === "sold" ? "disabled" : ""}>${w.status === "sold" ? "Sold" : "Inquire"}</button>
+        ${
+          w.status === "sold"
+            ? `<button class="btn btn-primary" disabled>Sold</button>`
+            : `<div class="qty-stepper qty-stepper--lg" aria-label="Quantity">
+                 <button class="qty-stepper__btn" id="pd-dec" aria-label="Decrease quantity">−</button>
+                 <span class="qty-stepper__val" id="pd-qty">1</span>
+                 <button class="qty-stepper__btn" id="pd-inc" aria-label="Increase quantity">+</button>
+               </div>
+               <button class="btn btn-primary" id="pd-add">Add to Bag</button>`
+        }
         <a class="btn btn-secondary" href="collection.html">Back to Collection</a>
       </div>
     </div>
@@ -81,4 +99,18 @@ function renderProduct(targetSelector) {
       thumb.classList.add("is-active");
     });
   });
+
+  if (w.status !== "sold") {
+    const qtyEl = target.querySelector("#pd-qty");
+    const getQty = () => Number(qtyEl.textContent) || 1;
+    target.querySelector("#pd-dec").addEventListener("click", () => {
+      qtyEl.textContent = Math.max(1, getQty() - 1);
+    });
+    target.querySelector("#pd-inc").addEventListener("click", () => {
+      qtyEl.textContent = getQty() + 1;
+    });
+    target.querySelector("#pd-add").addEventListener("click", () => {
+      if (Cart.add(w.id, getQty())) cartToast(`Added ${getQty()} to your bag`);
+    });
+  }
 }
